@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#120A06">
+<meta name="robots" content="noindex">
+<title>Live board | Kiros helper</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23F08C00'/%3E%3Cstop offset='1' stop-color='%23C92A2A'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='%23120A06'/%3E%3Ccircle cx='16' cy='16' r='7' fill='url(%23g)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+[hidden]{display:none!important}
+:root{
+  --bg:#120A06; --surface:#1D110A; --line:rgba(255,170,90,.17); --line-strong:rgba(255,165,85,.4);
+  --ink:#FFF3E6; --muted:#CDB7A3; --peri:#FF9F54; --amber:#FFC94A; --up:#4ADE80; --down:#FF6B5E; --flat:#9A8F86;
+  --grad-text:linear-gradient(100deg,#FFD166 0%,#FF9A3D 50%,#F0603A 100%);
+  --grad-btn:linear-gradient(100deg,#CC4A10,#A8301A);
+  --display:"Sora","Segoe UI",system-ui,sans-serif; --body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--body);overflow-x:clip;
+  background-image:radial-gradient(900px 420px at 85% -10%,rgba(240,96,58,.16),transparent 70%),radial-gradient(700px 380px at 0% 0%,rgba(255,159,84,.10),transparent 70%);background-repeat:no-repeat}
+.wrap{max-width:1080px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-.02em;line-height:1.12;margin:0}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--peri);outline-offset:3px;border-radius:8px}
+.label{font:500 .74rem/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--peri)}
+.mono{font-family:var(--mono)}
+
+/* header */
+.top{padding:calc(12px + env(safe-area-inset-top,0px)) 0 12px}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font:700 1.05rem/1 var(--display);text-decoration:none;letter-spacing:-.01em}
+.brand b{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.navlinks{display:flex;align-items:center;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--ink);font:600 .9rem/1 var(--body);text-decoration:none;cursor:pointer}
+.chip:hover{border-color:var(--line-strong)}
+
+/* buttons */
+.btn{appearance:none;border:0;cursor:pointer;min-height:48px;padding:0 22px;border-radius:14px;background:var(--grad-btn);color:#fff;font:600 1rem/1 var(--body);box-shadow:0 10px 30px -12px rgba(232,89,12,.7)}
+.btn:hover{filter:brightness(1.08)}
+.btn[disabled]{opacity:.6;cursor:progress}
+.link{appearance:none;border:0;background:none;color:var(--muted);font:500 .9rem/1 var(--body);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:10px 4px;min-height:40px}
+.link:hover{color:var(--ink)}
+
+/* gate */
+.gate{margin:18px auto 22px;max-width:520px;padding:26px 22px;border-radius:22px;border:1px solid var(--line-strong);background:linear-gradient(180deg,#2A170D,#1A0F08);box-shadow:0 24px 60px -30px rgba(0,0,0,.8)}
+.gate h1{font-size:clamp(2rem,7vw,2.7rem);margin:8px 0 10px}
+.gate .sub{color:var(--muted)}
+.gate form{margin-top:20px;display:grid;gap:12px}
+.gate label.l{font:600 .85rem/1 var(--body);color:var(--muted)}
+.gate input[type=text]{width:100%;min-height:52px;padding:0 16px;border-radius:14px;border:1px solid var(--line-strong);background:#120A06;color:var(--ink);font:500 1.15rem/1 var(--mono);letter-spacing:.04em}
+.gate input[type=text]::placeholder{color:#7C6A5C}
+.keep{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:.92rem;cursor:pointer}
+.keep input{width:20px;height:20px;accent-color:#E8590C}
+.msg{min-height:1.4em;font-size:.95rem}
+.msg.err{color:#FFB4A8}
+.msg.ok{color:var(--up)}
+.fine{margin-top:14px;color:var(--muted);font-size:.9rem}
+.fine a{color:var(--peri)}
+
+/* sample behind the gate */
+.sample{position:relative;max-height:430px;overflow:hidden;filter:blur(5px) saturate(.9);opacity:.55;pointer-events:none;user-select:none}
+.sample::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,var(--bg) 100%)}
+.samplewrap{position:relative}
+.samplewrap .tag{position:absolute;z-index:3;top:8px;left:50%;transform:translateX(-50%);padding:6px 12px;border-radius:999px;background:rgba(18,10,6,.85);border:1px solid var(--line);font:500 .72rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+
+/* board */
+.coins{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
+@media(min-width:760px){.coins{grid-template-columns:repeat(7,1fr)}}
+.coinbtn{appearance:none;cursor:pointer;min-height:48px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--ink);font:600 .95rem/1 var(--body);display:flex;align-items:center;justify-content:center;gap:6px;padding:0 6px}
+.coinbtn:hover{border-color:var(--line-strong)}
+.coinbtn[aria-pressed=true]{background:var(--grad-btn);border-color:transparent;box-shadow:0 8px 22px -12px rgba(232,89,12,.9)}
+.status{display:flex;align-items:center;gap:10px;margin:14px 0 12px;color:var(--muted);font-size:.9rem;flex-wrap:wrap}
+.status .sp{flex:1}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--flat);flex:none}
+.dot.live{background:var(--up);box-shadow:0 0 0 0 rgba(74,222,128,.6);animation:pulse 2s infinite}
+.dot.slow{background:var(--amber)}
+.dot.dead{background:var(--down)}
+@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(74,222,128,0)}100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}}
+@media(prefers-reduced-motion:reduce){.dot.live{animation:none}}
+.card{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,#22140C,#190E08);padding:18px}
+.callcard{display:grid;gap:16px}
+@media(min-width:760px){.callcard{grid-template-columns:1.1fr 1fr;align-items:center;padding:22px 24px}}
+.who{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.who h2{font-size:1.25rem}
+.who .tick{font:500 .78rem/1 var(--mono);color:var(--muted)}
+.big{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:6px}
+.side{font:700 clamp(2.6rem,9vw,3.8rem)/1 var(--display);letter-spacing:-.03em}
+.side.UP{color:var(--up)} .side.DOWN{color:var(--down)} .side.flat{color:var(--flat)}
+.pct{font:600 clamp(1.6rem,5vw,2.1rem)/1 var(--mono)}
+.conf{padding:6px 10px;border-radius:999px;border:1px solid var(--line-strong);font:600 .74rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--amber)}
+.calltext{margin-top:10px;color:var(--ink);font-weight:500}
+.clock{display:grid;gap:10px}
+.cd{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.cd .t{font:600 clamp(2rem,7vw,2.8rem)/1 var(--mono);letter-spacing:-.02em}
+.cd .s{color:var(--muted);font-size:.88rem;text-align:right}
+.pbar{position:relative;height:14px;border-radius:999px;background:rgba(255,107,94,.35);overflow:hidden}
+.pbar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#2FBF6B,#4ADE80);border-radius:999px 0 0 999px;transition:width .6s ease}
+.plab{display:flex;justify-content:space-between;font:500 .8rem/1 var(--mono);color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+@media(min-width:760px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)}
+.stat .k{font:500 .72rem/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.stat .v{margin-top:6px;font:600 1.2rem/1.2 var(--mono);word-break:break-word}
+.stat .n{margin-top:4px;color:var(--muted);font-size:.85rem}
+.chartcard{margin-top:12px;padding:12px 10px 10px}
+.chartcard canvas{display:block;width:100%;height:300px;border-radius:12px}
+@media(max-width:600px){.chartcard canvas{height:250px}}
+.cap{display:flex;gap:14px;flex-wrap:wrap;padding:8px 8px 2px;color:var(--muted);font-size:.8rem}
+.cap span::before{content:"";display:inline-block;width:12px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle;background:currentColor}
+.cap .tg{color:#F1C40F}.cap .sp2{color:#fff}.cap .up2{color:var(--up)}.cap .dn2{color:var(--down)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;margin-top:12px}
+.cards .card h3{font-size:.95rem;color:var(--peri);font-family:var(--mono);font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.cards .card p,.cards .card li{color:var(--ink)}
+.cards .card .m{color:var(--muted);font-size:.92rem}
+.cards ul{margin:0;padding-left:18px;display:grid;gap:6px}
+.cards .big2{font:700 1.6rem/1.1 var(--display);margin-bottom:6px}
+.up{color:var(--up)}.down{color:var(--down)}.warn{color:var(--amber)}
+.mini{height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin:6px 0 10px}
+.mini i{display:block;height:100%;background:linear-gradient(90deg,#FFC94A,#FF8A3D);border-radius:999px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-family:var(--mono);font-size:.92rem}
+.kv span:nth-child(odd){color:var(--muted)}
+.scalpbox{border-radius:12px;padding:12px;border:1px solid var(--line-strong);background:rgba(255,255,255,.03)}
+.scalpbox.on{border-color:rgba(74,222,128,.55);background:rgba(74,222,128,.07)}
+.scalpbox.on.DOWN{border-color:rgba(255,107,94,.55);background:rgba(255,107,94,.07)}
+.skeleton{padding:40px 16px;text-align:center;color:var(--muted)}
+.banner{margin:12px 0 0;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,201,74,.45);background:rgba(255,201,74,.08);color:var(--ink);font-size:.95rem}
+.banner.bad{border-color:rgba(255,107,94,.5);background:rgba(255,107,94,.08)}
+.foot{margin:26px 0 40px;color:var(--muted);font-size:.85rem;max-width:62em}
+/* owner panel */
+.pill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;border:1px solid rgba(255,201,74,.55);background:rgba(255,201,74,.1);color:var(--amber);font:600 .7rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.owner{margin:12px 0 0;padding:0}
+.owner>summary{list-style:none;cursor:pointer;padding:16px 18px;font:600 1rem/1.2 var(--body);display:flex;align-items:center;gap:10px;min-height:56px}
+.owner>summary::-webkit-details-marker{display:none}
+.owner>summary::after{content:"+";margin-left:auto;font:500 1.4rem/1 var(--mono);color:var(--peri)}
+.owner[open]>summary::after{content:"\2212"}
+.ownerbody{padding:0 18px 18px}
+.ownertools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.ownerbody h4{margin:18px 0 8px;font:500 .74rem/1.3 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--peri)}
+.prow{display:grid;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+@media(min-width:700px){.prow{grid-template-columns:1.2fr 1.4fr auto;align-items:center}}
+.prow .pmain{display:grid;gap:2px;min-width:0}
+.prow .pmain b{font-weight:600;overflow-wrap:anywhere}
+.prow .pmain span{font:500 .85rem/1.3 var(--mono);color:var(--muted)}
+.prow .pmeta{color:var(--muted);font-size:.9rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dotsm{width:9px;height:9px;border-radius:50%;background:var(--flat);flex:none}
+.dotsm.on{background:var(--up)}
+.pbtns{display:flex;gap:8px;flex-wrap:wrap}
+.pbtns button,.ownertools button{appearance:none;cursor:pointer;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--ink);font:600 .9rem/1 var(--body)}
+.pbtns button:hover,.ownertools button:hover{border-color:var(--peri)}
+.pbtns button.danger,.ownertools button.danger{border-color:rgba(255,107,94,.55);color:#FFB4A8}
+.pbtns button.armed,.ownertools button.armed{background:rgba(255,107,94,.22);border-color:var(--down);color:#fff}
+.empty{color:var(--muted);font-size:.92rem;padding:8px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./">Kiros <b>helper</b></a>
+    <nav class="navlinks"><span class="chip" id="liveTag" aria-hidden="true">📡 Live board</span><a class="chip" href="./">Home</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <noscript><p class="foot">The live board needs JavaScript. Turn it on for this page and reload.</p></noscript>
+  <!-- 1) the receipt gate -->
+  <section class="gate" id="gate" aria-labelledby="gateTitle" hidden>
+    <div class="label">Members only</div>
+    <h1 id="gateTitle">Live board</h1>
+    <p class="sub">Every market, live in your browser: instant calls, the live chart and all the info, refreshed every few seconds. Type the receipt number from your Stripe email to open it.</p>
+    <form id="gateForm" autocomplete="off" novalidate>
+      <label class="l" for="rcpt">Receipt number</label>
+      <input type="text" id="rcpt" name="receipt-number" inputmode="text" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="60" placeholder="1234-5678" aria-describedby="gateMsg">
+      <label class="keep"><input type="checkbox" id="keep" checked> Keep me signed in on this device</label>
+      <button class="btn" id="go" type="submit">Open the live board</button>
+      <p class="msg" id="gateMsg" role="status" aria-live="polite"></p>
+    </form>
+    <p class="fine">It&rsquo;s in the Stripe receipt email, written like 1234-5678. One receipt works on up to 2 devices. The free Discord trial doesn&rsquo;t include the live board. <a href="./#get">Get access</a></p>
+  </section>
+
+  <!-- 2) the live board (blurred sample behind the gate, real data after sign-in) -->
+  <div class="samplewrap" id="sampleWrap" hidden><span class="tag">Preview, not live data</span><div class="sample" id="sample" aria-hidden="true" inert></div></div>
+
+  <section id="board" hidden aria-label="Live board">
+    <div class="coins" id="coins" role="group" aria-label="Pick a market"></div>
+    <div class="status" id="status">
+      <span class="dot" id="dot"></span><span id="statusTxt" aria-live="polite">Connecting...</span><span class="pill" id="ownerPill" hidden>Owner</span><span class="sp"></span>
+      <button type="button" class="link" id="signout">Sign out</button>
+    </div>
+    <div id="banner" class="banner" hidden role="status"></div>
+    <details class="card owner" id="owner" hidden>
+      <summary><span id="ownerSum">&#128736;&#65039; Owner panel</span></summary>
+      <div class="ownerbody">
+        <div class="ownertools"><button type="button" id="ownerRefresh">Refresh</button><button type="button" class="danger" id="ownerKickAll">Sign out everyone</button></div>
+        <p class="msg" id="ownerMsg" role="status" aria-live="polite"></p>
+        <h4>On the board</h4>
+        <div id="ownerList"><p class="empty">Loading...</p></div>
+        <h4>Blocked receipts</h4>
+        <div id="ownerBlocked"><p class="empty">Nobody is blocked.</p></div>
+      </div>
+    </details>
+    <div id="view"></div>
+    <p class="foot">Not financial advice. These are estimates from the bot&rsquo;s own model and can be wrong. Prices move fast, so check Kalshi before you act. UP = Yes, DOWN = No.</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var API_URL = "https://dgpxbinbtpapjoganfmw.supabase.co";
+  var API_KEY = "sb_publishable_q9asvXJt3nJgEH_5Ikac9A_zb1j1oDa";
+  var POLL_MS = 3000, IDLE_MS = 15 * 60 * 1000;
+  var COINS = [["BTC", "🟠"], ["ETH", "🔷"], ["SOL", "🟣"], ["XRP", "💧"], ["DOGE", "🐶"], ["BNB", "🟡"], ["HYPE", "🌊"]];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var S = { token: null, coin: "BTC", dev: null, view: {}, chart: {}, chartTs: {}, timer: null, fails: 0, idle: false, lastTouch: Date.now(), busy: false, signing: false, quiet: 0 };
+
+  /* ---------- small helpers ---------- */
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} return null; }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function newDevice() {
+    var a = new Uint8Array(16);
+    (window.crypto || window.msCrypto).getRandomValues(a);
+    return Array.prototype.map.call(a, function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+  }
+  function device() { if (!S.dev) { S.dev = store("kh_live_dev"); if (!S.dev || S.dev.length < 16) { S.dev = newDevice(); store("kh_live_dev", S.dev); } } return S.dev; }
+  function money(p) { var a = Math.abs(p), d = a >= 10 ? 2 : a >= 1 ? 4 : 5; return (p < 0 ? "-$" : "$") + a.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
+  function dollars(x, ref) { ref = Math.abs(ref); var d = ref >= 1000 ? 0 : ref >= 10 ? 2 : ref >= 1 ? 4 : 5; return Math.abs(x).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
+  function axisFmt(hi) { var d = hi >= 1000 ? 0 : hi >= 10 ? 2 : hi >= 1 ? 4 : 5; return function (p) { return p.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }; }
+  function mmss(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); }
+  function leftText(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + "m " + ("0" + (s % 60)).slice(-2) + "s"; }
+  function signed(x, d) { if (x == null || !isFinite(x)) return "-"; return (x >= 0 ? "+" : "") + Number(x).toFixed(d); }
+
+  /* ---------- talking to the database (only through its locked-down functions) ---------- */
+  function rpc(name, args) {
+    var h = { "apikey": API_KEY, "Content-Type": "application/json" };
+    if (/^eyJ/.test(API_KEY)) h["Authorization"] = "Bearer " + API_KEY;
+    var ctl = ("AbortController" in window) ? new AbortController() : null;
+    var to = ctl ? setTimeout(function () { ctl.abort(); }, 12000) : null;
+    return fetch(API_URL.replace(/\/+$/, "") + "/rest/v1/rpc/" + name, { method: "POST", headers: h, body: JSON.stringify(args || {}), signal: ctl ? ctl.signal : undefined, cache: "no-store" })
+      .then(function (r) {
+        if (to) clearTimeout(to);
+        return r.text().then(function (t) {
+          var j = null; try { j = t ? JSON.parse(t) : null; } catch (e) {}
+          if (!r.ok) { var err = new Error((j && j.message) || ("HTTP " + r.status)); err.status = r.status; throw err; }
+          return j;
+        });
+      }, function (e) { if (to) clearTimeout(to); var err = new Error("network"); err.net = true; throw err; });
+  }
+
+  /* ---------- view switching ---------- */
+  function showGate(msg, kind) {
+    stopPolling();
+    S.token = null; store("kh_live_tok", null);
+    $("board").hidden = true;
+    $("gate").hidden = false;
+    $("sampleWrap").hidden = false;
+    $("liveTag").hidden = true;
+    ownerOn(false); O.loaded = false; store("kh_live_owner", null);
+    renderSample();
+    setMsg(msg || "", kind || "");
+    $("go").disabled = false;
+    $("go").textContent = "Open the live board";
+    var saved = store("kh_live_rcpt"); if (saved && !$("rcpt").value) $("rcpt").value = saved;
+  }
+  function showBoard() {
+    $("gate").hidden = true;
+    $("sampleWrap").hidden = true;
+    $("board").hidden = false;
+    $("liveTag").hidden = false;
+    buildCoinButtons();
+    startPolling();
+  }
+  function setMsg(t, kind) { var m = $("gateMsg"); m.textContent = t; m.className = "msg" + (kind ? " " + kind : ""); }
+
+  /* ---------- sign in: receipt -> database -> bot checks it with Stripe -> a sign-in comes back ---------- */
+  function friendly(e) {
+    var m = String((e && e.message) || "");
+    if (e && e.net) return "Couldn't reach the server. Check your connection and try again.";
+    if (/slow down/i.test(m)) return "Too many tries from this device. Wait a few minutes and try again.";
+    if (/busy/i.test(m)) return "Lots of people are signing in right now. Try again in a minute.";
+    if (/bad receipt/i.test(m)) return "That doesn't look like a receipt number. It's in your Stripe receipt email, written like 1234-5678.";
+    return "Something went wrong on our side. Try again in a minute.";
+  }
+  function signIn(receipt, opts) {
+    opts = opts || {};
+    if (S.signing) return;
+    S.signing = true;
+    var dev = device();
+    function done(fn) { S.signing = false; fn(); }
+    function fail(msg, keepReceipt, kind) { done(function () { if (!keepReceipt) store("kh_live_rcpt", null); showGate(msg, kind || "err"); }); }
+    return rpc("live_request", { p_receipt: receipt, p_device: dev }).then(function (id) {
+      var t0 = Date.now(), n = 0;
+      function poll() {
+        if (Date.now() - t0 > 100000) return fail("This is taking longer than usual. The bot may be restarting, so try again in a minute.", true);
+        rpc("live_result", { p_id: id, p_device: dev }).then(function (r) {
+          if (!r || r.status === "pending") { n = 0; return setTimeout(poll, 1200); }
+          if (r.status === "ok" && r.token) {
+            S.token = r.token; store("kh_live_tok", r.token);
+            if ($("keep").checked || opts.silent) store("kh_live_rcpt", receipt); else store("kh_live_rcpt", null);
+            return done(function () { $("rcpt").value = ""; showBoard(); });
+          }
+          if (r.status === "bad") return fail(r.message || "That receipt didn't work.", false);
+          if (r.status === "missing") return fail("That sign-in got lost. Please try again.", true);
+          return fail(r.message || "I couldn't check that just now. Try again in a minute.", true);
+        }, function (e) { if (++n > 4) return fail(friendly(e), true); setTimeout(poll, 1500); });
+      }
+      setTimeout(poll, 700);
+    }, function (e) {
+      if (/bad device/i.test(String(e.message))) { S.dev = null; store("kh_live_dev", null); }
+      fail(friendly(e), true);
+    });
+  }
+  $("gateForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var v = $("rcpt").value.trim();
+    if (v.replace(/[^A-Za-z0-9]/g, "").length < 6) { setMsg("Type the receipt number from your Stripe email first. It looks like 1234-5678.", "err"); $("rcpt").focus(); return; }
+    $("go").disabled = true; $("go").textContent = "Checking your receipt...";
+    setMsg("Checking with Stripe. This takes a few seconds.", "");
+    signIn(v);
+  });
+  $("signout").addEventListener("click", function () {
+    store("kh_live_rcpt", null); S.view = {}; S.chart = {}; S.chartTs = {};
+    showGate("You're signed out on this device.", "ok");
+  });
+
+  /* ---------- polling ---------- */
+  function startPolling() { stopPolling(); S.fails = 0; S.idle = false; S.lastTouch = Date.now(); schedule(0); tickClock(); }
+  function stopPolling() { if (S.timer) clearTimeout(S.timer); S.timer = null; if (S.clock) cancelAnimationFrame(S.clock); S.clock = null; S.polling = false; }
+  function schedule(ms) { if (S.timer) clearTimeout(S.timer); S.timer = setTimeout(poll, ms); }
+  function poll() {
+    S.timer = null;
+    if (!S.token) return;
+    if (document.hidden) return;                                     // a hidden tab asks for nothing; it catches up the moment you come back
+    if (Date.now() - S.lastTouch > IDLE_MS) { S.idle = true; showBanner("Paused because you've been away. <button type='button' class='link' id='resume'>Tap to resume</button>", false); var r = $("resume"); if (r) r.onclick = function () { S.lastTouch = Date.now(); S.idle = false; hideBanner(); schedule(0); }; return; }
+    var coin = S.coin;
+    rpc("live_get", { p_token: S.token, p_coin: coin, p_have: S.chartTs[coin] || 0 }).then(function (r) {
+      if (!S.token) return;
+      S.fails = 0; S.net = false;
+      if (!r || r.ok === false) {
+        if (r && r.reason === "expired") return expired();
+        return schedule(POLL_MS);
+      }
+      if (r.owner) { if (!S.owner) ownerOn(true); if (!O.loaded) { O.loaded = true; ownerLoad(true); } }
+      else if (S.owner) { ownerOn(false); store("kh_live_owner", null); }
+      if (r.wait) { S.waiting = coin; renderView(); return schedule(1500); }
+      S.waiting = null;
+      if (r.chart) { S.chart[coin] = r.chart; S.chartTs[coin] = r.chart_ts; }
+      S.view[coin] = { data: r.data, age: Number(r.age) || 0, recv: performance.now() };
+      if (coin === S.coin) renderView();
+      hideBannerIf("net");
+      schedule(POLL_MS);
+    }, function (e) {
+      S.fails++; S.net = true;
+      if (S.fails >= 2) showBanner("Connection trouble. Trying again...", false, "net");
+      schedule(Math.min(POLL_MS * Math.pow(2, S.fails - 1), 20000));
+    });
+  }
+  function expired() {
+    var saved = store("kh_live_rcpt"), wasOwner = S.owner || store("kh_live_owner");
+    stopPolling(); S.token = null; store("kh_live_tok", null);
+    if (wasOwner) return showGate("Your owner link ended. Run /livepanel in Discord to get a new one.", "err");
+    if (!saved) return showGate("Your sign-in ended. Enter your receipt number again.", "err");
+    $("status").hidden = false; setStatus("slow", "Refreshing your sign-in...");
+    S.signing = false;
+    signIn(saved, { silent: true });
+  }
+  document.addEventListener("visibilitychange", function () { if (!document.hidden && S.token && !S.idle) schedule(0); });
+  ["pointerdown", "keydown", "touchstart", "scroll", "mousemove"].forEach(function (ev) {
+    window.addEventListener(ev, function () { var wasIdle = S.idle; S.lastTouch = Date.now(); if (wasIdle && S.token) { S.idle = false; hideBanner(); schedule(0); } }, { passive: true });
+  });
+  window.addEventListener("online", function () { if (S.token) schedule(0); });
+
+  /* ---------- banners and the little status line ---------- */
+  function showBanner(html, bad, key) { var b = $("banner"); if (!b.hidden && b.innerHTML === html && b.dataset.key === (key || "")) return; b.innerHTML = html; b.className = "banner" + (bad ? " bad" : ""); b.hidden = false; b.dataset.key = key || ""; }
+  function hideBanner() { $("banner").hidden = true; }
+  function hideBannerIf(key) { var b = $("banner"); if (!b.hidden && b.dataset.key === key) b.hidden = true; }
+  function setStatus(kind, text) { $("dot").className = "dot " + kind; $("statusTxt").textContent = text; }
+
+  /* ---------- coin buttons ---------- */
+  function buildCoinButtons() {
+    var box = $("coins");
+    if (box.children.length) { refreshCoinButtons(); return; }
+    COINS.forEach(function (c) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "coinbtn"; b.dataset.coin = c[0];
+      b.innerHTML = "<span aria-hidden='true'>" + c[1] + "</span>" + c[0];
+      b.addEventListener("click", function () {
+        if (S.coin === c[0]) return;
+        S.coin = c[0]; store("kh_live_coin", c[0]); S.waiting = null;
+        refreshCoinButtons(); renderView();
+        if (S.token) { hideBannerIf("stale"); schedule(0); }
+      });
+      box.appendChild(b);
+    });
+    var saved = store("kh_live_coin"); if (saved && COINS.some(function (c) { return c[0] === saved; })) S.coin = saved;
+    refreshCoinButtons();
+  }
+  function refreshCoinButtons() { Array.prototype.forEach.call($("coins").children, function (b) { b.setAttribute("aria-pressed", b.dataset.coin === S.coin ? "true" : "false"); }); }
+
+  /* ---------- how long is left? Uses the bot's own clock, never this device's clock ---------- */
+  function ageNow(v) { return v.age + (performance.now() - v.recv) / 1000; }
+  function leftNow(v) { return v.data.left_s - ageNow(v); }
+
+  /* ---------- drawing the page ---------- */
+  var viewEl = $("view");
+  function renderView() {
+    refreshCoinButtons();
+    var v = S.view[S.coin];
+    if (!v) { viewEl.innerHTML = "<div class='card skeleton'>" + (S.waiting === S.coin ? "Getting the latest " + esc(S.coin) + " call. The first one can take a few seconds..." : "Loading " + esc(S.coin) + "...") + "</div>"; setStatus("slow", "Loading..."); return; }
+    drawInto(viewEl, v, S.chart[S.coin] || []);
+    updateStatus(v);
+  }
+  function updateStatus(v) {
+    var a = ageNow(v), left = leftNow(v);
+    if (a > 60) { setStatus("dead", "No fresh data for " + Math.round(a) + "s. The bot may be restarting."); showBanner("The live feed is paused right now, so what you see is old. It comes back on its own.", true, "stale"); }
+    else if (a > 20) { setStatus("slow", "Updated " + Math.round(a) + "s ago, waiting for the next one"); hideBannerIf("stale"); }
+    else { setStatus("live", "Live, updated " + (a < 1.5 ? "just now" : Math.round(a) + "s ago")); hideBannerIf("stale"); }
+  }
+  function tickClock() {
+    var last = 0;
+    function f(ts) {
+      S.clock = requestAnimationFrame(f);
+      if (ts - last < 250) return; last = ts;
+      var v = S.view[S.coin]; if (!v || !S.token) return;
+      var left = leftNow(v), el = $("cdT");
+      if (el) { el.textContent = left > 0 ? mmss(left) : "0:00"; var s2 = $("cdS"); if (s2) s2.textContent = left > 0 ? "until this market closes" : "closed, the next market is loading"; }
+      updateStatus(v);
+    }
+    S.clock = requestAnimationFrame(f);
+  }
+
+  function drawInto(root, v, candles, sample) {
+    var d = v.data, c = d.call, left = sample ? d.left_s : leftNow(v);
+    var side = c.conf === "TOSS-UP" ? "flat" : c.side;
+    var upShare = Math.max(0, Math.min(1, d.p_up)) * 100;
+    var above = d.diff >= 0;
+    var close = new Date(d.close_ts * 1000);
+    var closeTxt = ""; try { closeTxt = close.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); } catch (e) {}
+    var fin = d.finish || {};
+    var finishTxt = fin.exp != null ? "~" + money(fin.exp) : "-";
+    var finishNote = fin.band != null ? money(fin.exp - fin.band) + " to " + money(fin.exp + fin.band) : "where it should end";
+    var html = "";
+    html += "<article class='card callcard'>";
+    html += "<div><div class='who'><h2>" + esc(d.name) + "</h2><span class='tick'>" + esc(d.coin) + " 15m</span></div>";
+    html += "<div class='big'><span class='side " + side + "'>" + (c.side === "UP" ? "&#9650; UP" : "&#9660; DOWN") + "</span><span class='pct'>" + Math.round(c.prob * 100) + "%</span><span class='conf'>" + esc(c.conf) + "</span></div>";
+    html += "<p class='calltext'>" + esc(c.text) + "</p></div>";
+    html += "<div class='clock'><div class='cd'><span class='t' id='cdT'>" + mmss(left) + "</span><span class='s'><span id='cdS'>" + (left > 0 ? "until this market closes" : "closed, the next market is loading") + "</span>" + (closeTxt ? "<br>closes " + esc(closeTxt) : "") + "</span></div>";
+    html += "<div><div class='pbar' role='img' aria-label='Chance of UP " + upShare.toFixed(0) + " percent'><i style='width:" + upShare.toFixed(1) + "%'></i></div><div class='plab'><span>UP " + upShare.toFixed(0) + "%</span><span>DOWN " + (100 - upShare).toFixed(0) + "%</span></div></div></div>";
+    html += "</article>";
+    html += "<div class='stats'>";
+    html += stat("Price now", money(d.spot), "$" + dollars(d.diff, d.spot) + (above ? " above" : " below") + " the target");
+    html += stat("Target (" + esc(d.target_src || "Kalshi") + ")", money(d.target), "price to beat");
+    html += stat("Likely finish", finishTxt, finishNote);
+    html += stat("Trend", d.trend === "SIDEWAYS" ? "Sideways" : d.trend, "5m " + signed(d.chg5, 3) + "% | 15m " + signed(d.chg15, 3) + "%");
+    html += "</div>";
+    html += "<div class='card chartcard'><canvas id='chart' role='img' aria-label='Live chart of the last hour with the target line'></canvas><div class='cap'><span class='up2'>up candle</span><span class='dn2'>down candle</span><span class='tg'>target</span><span class='sp2'>price now</span></div></div>";
+    html += "<div class='cards'>" + cards(d, left) + "</div>";
+    root.innerHTML = html;
+    var cv = root.querySelector("canvas");
+    if (cv) drawChart(cv, v, candles, sample);
+  }
+  function stat(k, v, n) { return "<div class='stat'><div class='k'>" + k + "</div><div class='v'>" + esc(v) + "</div><div class='n'>" + esc(n) + "</div></div>"; }
+
+  function cards(d, left) {
+    var h = "", f = d.flip || {}, k = d.kalshi || {}, s = d.scalp || {};
+    var pct = f.pct == null ? 0 : f.pct, pctTxt = pct < 1 ? "under 1%" : Math.round(pct) + "%";
+    var other = f.leader === "UP" ? "DOWN" : "UP", where = d.diff >= 0 ? "above" : "below";
+    var fl = "<div class='big2'>" + pctTxt + " <span class='m' style='font-size:.9rem;font-weight:500'>" + esc(f.level || "") + "</span></div><div class='mini'><i style='width:" + Math.min(100, Math.max(2, pct)).toFixed(0) + "%'></i></div>";
+    fl += "<p>" + esc(d.coin) + " is $" + dollars(f.gap == null ? d.diff : f.gap, d.spot) + " " + where + " the target, so it's leaning " + esc(f.leader || d.call.side) + ".";
+    if (d.finish && d.finish.band != null) fl += " To end " + other + " it has to move $" + dollars(f.gap == null ? d.diff : f.gap, d.spot) + " the other way in " + leftText(left) + " (a normal swing from here is about &plusmn;$" + dollars(d.finish.band, d.spot) + ").";
+    fl += "</p>";
+    if (f.cross != null) fl += "<p class='m' style='margin-top:6px'>Chance it touches the target again: <b>" + Math.round(f.cross) + "%</b>" + (f.crossings != null ? " | crossed it " + f.crossings + "x so far" : "") + "</p>";
+    h += card("Chance it flips", fl);
+
+    var tr = "<div class='big2 " + (d.trend === "UP" ? "up" : d.trend === "DOWN" ? "down" : "") + "'>" + (d.trend === "SIDEWAYS" ? "Sideways" : esc(d.trend)) + "</div>";
+    if (d.tf) { var parts = []; Object.keys(d.tf).forEach(function (x) { parts.push(esc(x) + " " + esc(d.tf[x])); }); if (parts.length) tr += "<p class='m'>" + parts.join(" | ") + "</p>"; }
+    tr += "<p class='m' style='margin-top:6px'>5m " + signed(d.chg5, 3) + "% | 15m " + signed(d.chg15, 3) + "%" + (d.rsi != null ? " | RSI " + Math.round(d.rsi) : "") + "</p>";
+    h += card("Trend", tr);
+
+    var ch = "<p>" + esc(d.charts) + "</p>";
+    if (d.votes && d.votes.length) ch += "<ul style='margin-top:8px;list-style:none;padding:0' class='m'>" + d.votes.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
+    h += card("Chart votes", ch);
+
+    var kk = "<div class='kv'><span>Yes (Up)</span><span>" + (k.yes_ask != null ? k.yes_ask + "c to buy" : "-") + (k.yes_bid != null ? " | " + k.yes_bid + "c to sell" : "") + "</span><span>No (Down)</span><span>" + (k.no_ask != null ? k.no_ask + "c to buy" : "-") + (k.no_bid != null ? " | " + k.no_bid + "c to sell" : "") + "</span></div>";
+    kk += "<p style='margin-top:10px'>" + esc(k.buy || "No price available right now.") + "</p>";
+    if (d.call.edge != null) kk += "<p class='m' style='margin-top:6px'>Our odds vs Kalshi's price: " + signed(d.call.edge, 0) + " points</p>";
+    h += card("Kalshi price", kk);
+
+    var sc;
+    if (s.on) sc = "<div class='scalpbox on " + esc(s.side) + "'><b>" + (s.side === "UP" ? "&#9650;" : "&#9660;") + " Scalp: buy " + esc(s.side) + " now, about " + Math.round(s.entry) + "c</b><div class='kv' style='margin-top:8px'><span>Sell for profit</span><span>~" + Math.round(s.tp) + "c</span><span>Get out if it falls to</span><span>~" + Math.round(s.sl) + "c</span></div></div><p class='m' style='margin-top:8px'>On Kalshi, open the " + esc(d.coin) + " 15-minute market and buy " + (s.side === "UP" ? "Yes (Up)" : "No (Down)") + ".</p>";
+    else sc = "<div class='scalpbox'><b>No scalp right now</b><p class='m' style='margin-top:4px'>" + esc(s.why || "conditions not met") + "</p></div>";
+    h += card("Scalp", sc);
+
+    if (d.why && d.why.length) h += card("Why this call", "<ul>" + d.why.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>");
+    if (d.feeds) { var rows = Object.keys(d.feeds).map(function (n) { return "<span>" + esc(n) + "</span><span>" + money(d.feeds[n]) + "</span>"; }).join(""); if (rows) h += card("Price feeds", "<div class='kv'>" + rows + "</div>"); }
+    return h;
+  }
+  function card(title, inner) { return "<article class='card'><h3>" + title + "</h3>" + inner + "</article>"; }
+
+  /* ---------- the chart ---------- */
+  function drawChart(cv, v, rows, sample) {
+    var d = v.data, dpr = Math.min(window.devicePixelRatio || 1, 3);
+    var W = cv.clientWidth || 600, H = cv.clientHeight || 300;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    var g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var css = getComputedStyle(document.documentElement);
+    var UPc = css.getPropertyValue("--up").trim() || "#4ADE80", DNc = css.getPropertyValue("--down").trim() || "#FF6B5E";
+    var small = W < 480, fs = small ? 10.5 : 12, L = 8, T = 22, B = 26;
+    var left = sample ? d.left_s : leftNow(v), nowS = d.close_ts - left;
+    var spot = d.spot, target = d.target;
+    var cs = rows.slice();
+    var cur = d.cur ? d.cur.slice() : null;
+    if (cur) { cur[4] = spot; cur[2] = Math.max(cur[2], spot); cur[3] = Math.min(cur[3], spot); cs.push(cur); }
+    var t0 = nowS - 3600, t1 = Math.max(d.close_ts, nowS + 30) + 30;
+    cs = cs.filter(function (c) { return c[0] + 60 >= t0; });
+    var lo = Math.min(target, spot), hi = Math.max(target, spot);
+    cs.forEach(function (c) { lo = Math.min(lo, c[3]); hi = Math.max(hi, c[2]); });
+    var pad = Math.max((hi - lo) * 0.10, hi * 0.0003); lo -= pad; hi += pad;
+    var fmt = axisFmt(hi);
+    g.font = fs + "px 'JetBrains Mono',ui-monospace,monospace";
+    var R = Math.ceil(Math.max(g.measureText("target " + fmt(target)).width, g.measureText("now " + fmt(spot)).width, g.measureText(fmt(hi)).width)) + 20;
+    R = Math.min(R, Math.round(W * 0.38));
+    var pw = W - L - R, ph = H - T - B;
+    function X(t) { return L + (t - t0) / (t1 - t0) * pw; }
+    function Y(p) { return T + (hi - p) / (hi - lo) * ph; }
+    g.clearRect(0, 0, W, H);
+    g.fillStyle = "#150C07"; g.fillRect(0, 0, W, H);
+    // this market's 15 minutes
+    var wx0 = Math.max(X(d.close_ts - 900), L), wx1 = Math.min(X(d.close_ts), L + pw);
+    g.fillStyle = "rgba(255,159,84,.09)"; g.fillRect(wx0, T, Math.max(wx1 - wx0, 0), ph);
+    g.font = fs + "px 'JetBrains Mono',ui-monospace,monospace"; g.textBaseline = "middle";
+    g.strokeStyle = "rgba(255,170,90,.12)"; g.lineWidth = 1; g.fillStyle = "#CDB7A3";
+    for (var i = 0; i < 6; i++) { var p = lo + (hi - lo) * i / 5, y = Math.round(Y(p)) + .5; g.beginPath(); g.moveTo(L, y); g.lineTo(L + pw, y); g.stroke(); g.textAlign = "left"; g.fillText(fmt(p), L + pw + 6, y); }
+    g.textAlign = "center";
+    for (var j = -6; j <= 2; j++) { var t = nowS + 600 * j; if (t < t0 || t >= t1) continue; var x = Math.round(X(t)) + .5; g.beginPath(); g.moveTo(x, T); g.lineTo(x, T + ph); g.stroke(); g.fillText(j === 0 ? "now" : (j > 0 ? "+" : "") + (j * 10) + "m", x, T + ph + 14); }
+    // candles
+    var bw = Math.max(2, Math.floor(pw * 60 / (t1 - t0) * 0.7));
+    cs.forEach(function (c) {
+      var col = c[4] >= c[1] ? UPc : DNc, cx = Math.round(X(c[0] + 30)) + .5;
+      g.strokeStyle = col; g.fillStyle = col; g.lineWidth = 1;
+      g.beginPath(); g.moveTo(cx, Y(c[2])); g.lineTo(cx, Y(c[3])); g.stroke();
+      var top = Y(Math.max(c[1], c[4])), bot = Y(Math.min(c[1], c[4])); if (bot - top < 1) bot = top + 1;
+      g.fillRect(cx - bw / 2, top, bw, bot - top);
+    });
+    // market close
+    var xc = Math.round(X(d.close_ts)) + .5;
+    g.setLineDash([4, 4]); g.strokeStyle = "#CDB7A3"; g.beginPath(); g.moveTo(xc, T); g.lineTo(xc, T + ph); g.stroke(); g.setLineDash([]);
+    g.fillStyle = "#CDB7A3"; g.textAlign = "center"; g.fillText("close", Math.min(xc, L + pw - 14), T - 10);
+    // target + spot
+    var yt = Y(target), ys = Y(spot);
+    g.setLineDash([7, 5]); g.strokeStyle = "#F1C40F"; g.lineWidth = 2; g.beginPath(); g.moveTo(L, yt); g.lineTo(L + pw, yt); g.stroke(); g.setLineDash([]);
+    g.strokeStyle = "rgba(255,255,255,.85)"; g.lineWidth = 1; g.beginPath(); g.moveTo(L, ys); g.lineTo(L + pw, ys); g.stroke();
+    var lt = yt, ls = ys; if (Math.abs(lt - ls) < 20) { if (ls >= lt) ls = lt + 20; else ls = lt - 20; }
+    function tag(y, text, bg) { var w = g.measureText(text).width + 10; g.fillStyle = bg; g.fillRect(L + pw + 2, y - 10, w, 20); g.fillStyle = "#000"; g.textAlign = "left"; g.fillText(text, L + pw + 7, y + 1); }
+    tag(lt, "target " + fmt(target), "#F1C40F"); tag(ls, "now " + fmt(spot), "#FFFFFF");
+    cv.setAttribute("aria-label", d.coin + " last hour. Price " + money(spot) + ", target " + money(target) + ", " + (d.diff >= 0 ? "above" : "below") + " the target.");
+  }
+  var rz; window.addEventListener("resize", function () { clearTimeout(rz); rz = setTimeout(function () { if (!$("board").hidden) { var v = S.view[S.coin]; var cv = viewEl.querySelector("canvas"); if (v && cv) drawChart(cv, v, S.chart[S.coin] || []); } }, 150); });
+
+  /* ---------- the blurred preview behind the gate (made-up numbers, clearly labelled) ---------- */
+  function renderSample() {
+    var el = $("sample"); if (el.dataset.done) return; el.dataset.done = "1";
+    var seed = 7, rnd = function () { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    var now = Math.floor(Date.now() / 1000 / 60) * 60, px = 100000, rows = [];
+    for (var i = 59; i >= 0; i--) { var o = px; px = px * (1 + (rnd() - 0.47) * 0.0008); var hi = Math.max(o, px) * (1 + rnd() * 0.0002), lo = Math.min(o, px) * (1 - rnd() * 0.0002); rows.push([now - i * 60, o, hi, lo, px]); }
+    var spot = px, target = spot - 38;
+    var data = { coin: "BTC", name: "Bitcoin", ticker: "SAMPLE", details: true, close_ts: now + 460, left_s: 460, spot: spot, target: target, target_src: "Kalshi", diff: spot - target,
+      call: { side: "UP", prob: 0.71, conf: "CONFIDENT", text: "Sample call, not live data", price: 66, edge: 5 }, p_up: 0.71,
+      flip: { pct: 14, level: "MEDIUM", leader: "UP", gap: 38, cross: 22, crossings: 1 }, trend: "UP", chg5: 0.042, chg15: 0.11, rsi: 58, charts: "Most charts back UP.",
+      finish: { exp: spot + 12, band: 85 }, kalshi: { yes_ask: 66, yes_bid: 64, no_ask: 36, no_bid: 34, buy: "Buy Yes (Up) at 66c." }, scalp: { on: false, why: "too early" },
+      why: ["Price is a fair way above the target.", "The charts agree.", "The overall trend is up."], feeds: { Coinbase: spot, Kraken: spot - 3 }, tf: { "1m": "UP", "5m": "UP", "15m": "flat" }, votes: [], cur: null };
+    drawInto(el, { data: data, age: 0, recv: performance.now() }, rows, true);
+    Array.prototype.forEach.call(el.querySelectorAll("[id]"), function (n) { n.removeAttribute("id"); });   // the real board uses these ids
+  }
+
+  /* ---------- owner panel (only works with the private link from /livepanel in Discord) ---------- */
+  var O = { timer: null, open: false, loaded: false };
+  function ago(s) { s = Math.max(0, Math.round(s)); return s < 60 ? s + "s" : s < 3600 ? Math.floor(s / 60) + "m" : s < 86400 ? Math.floor(s / 3600) + "h" : Math.floor(s / 86400) + "d"; }
+  function ownerOn(on) { S.owner = !!on; $("owner").hidden = !on; $("ownerPill").hidden = !on; if (!on) { ownerStop(); O.open = false; $("owner").open = false; } }
+  function ownerStop() { if (O.timer) clearTimeout(O.timer); O.timer = null; }
+  function ownerSchedule(ms) { ownerStop(); if (S.owner && O.open) O.timer = setTimeout(function () { ownerLoad(false); }, ms); }
+  function ownerLoad(force) {
+    O.timer = null;
+    if (!S.owner || !S.token || (!O.open && !force)) return;
+    if (document.hidden) return ownerSchedule(8000);
+    rpc("live_admin_list", { p_token: S.token }).then(function (r) { renderOwner(r); ownerSchedule(8000); }, ownerFail);
+  }
+  function ownerFail(e) {
+    if (/owner only/i.test(String((e && e.message) || ""))) return expired();
+    $("ownerMsg").className = "msg err"; $("ownerMsg").textContent = (e && e.net) ? "Couldn't reach the server. Try Refresh." : "Something went wrong. Try Refresh.";
+    ownerSchedule(10000);
+  }
+  function ownerSay(t, ok) { $("ownerMsg").className = "msg " + (ok ? "ok" : "err"); $("ownerMsg").textContent = t; }
+  function renderOwner(r) {
+    if (!r || !r.people) return;
+    var online = r.people.filter(function (p) { return !p.owner && p.last_seen_s < 90; }).length;
+    $("ownerSum").textContent = "\uD83D\uDEE0\uFE0F Owner panel \u00B7 " + online + " on now";
+    if ($("owner").querySelector("[data-armed]")) return;                 // don't redraw under a half-confirmed tap
+    var others = r.people.filter(function (p) { return !p.owner; });
+    var list = r.people.map(function (p) {
+      var on = p.last_seen_s < 60;
+      var main = "<div class='pmain'><b>" + esc(p.owner ? "You (owner)" : (p.label || "(no e-mail on the payment)")) + "</b>" + (p.owner ? "" : "<span>Receipt " + esc(p.key) + "</span>") + "</div>";
+      var meta = "<div class='pmeta'><span class='dotsm" + (on ? " on" : "") + "'></span><span>" + (on ? "online now" : "last seen " + ago(p.last_seen_s) + " ago") + "</span>" +
+        (p.coin ? "<span>on " + esc(p.coin) + "</span>" : "") + "<span>" + p.devices + (p.devices === 1 ? " device" : " devices") + "</span><span>signed in " + ago(p.signed_in_s) + " ago</span></div>";
+      var btns = p.owner ? "<div></div>" : "<div class='pbtns'><button type='button' data-act='kick' data-key='" + esc(p.key) + "'>Sign out</button><button type='button' class='danger' data-act='block' data-key='" + esc(p.key) + "'>Block</button></div>";
+      return "<div class='prow'>" + main + meta + btns + "</div>";
+    }).join("");
+    $("ownerList").innerHTML = others.length ? list : "<p class='empty'>Nobody else is signed in right now.</p>" + list;
+    $("ownerBlocked").innerHTML = (r.blocked && r.blocked.length) ? r.blocked.map(function (b) {
+      return "<div class='prow'><div class='pmain'><b>" + esc(b.label || "(no e-mail on the payment)") + "</b><span>Receipt " + esc(b.key) + "</span></div><div class='pmeta'>blocked</div><div class='pbtns'><button type='button' data-act='unblock' data-key='" + esc(b.key) + "'>Unblock</button></div></div>";
+    }).join("") : "<p class='empty'>Nobody is blocked.</p>";
+  }
+  function armOrRun(b, run) {
+    if (b.dataset.armed) { clearTimeout(Number(b.dataset.t)); delete b.dataset.armed; b.classList.remove("armed"); run(); return; }
+    var old = b.textContent; b.dataset.armed = "1"; b.textContent = "Tap again to confirm"; b.classList.add("armed");
+    b.dataset.t = String(setTimeout(function () { delete b.dataset.armed; b.textContent = old; b.classList.remove("armed"); }, 4000));
+  }
+  function ownerAct(kind, key) {
+    var call = kind === "unblock" ? rpc("live_admin_unblock", { p_token: S.token, p_receipt_key: key })
+      : rpc("live_admin_kick", { p_token: S.token, p_receipt_key: key, p_block: kind === "block" });
+    call.then(function (n) {
+      if (kind === "unblock") ownerSay("Unblocked receipt " + key + ". They can sign in again.", true);
+      else if (kind === "block") ownerSay("Blocked receipt " + key + " and signed out " + n + (n === 1 ? " device" : " devices") + ". They can't sign in again until you unblock.", true);
+      else ownerSay("Signed out " + n + (n === 1 ? " device" : " devices") + " on receipt " + key + ". They can sign in again.", true);
+      ownerLoad(true);
+    }, ownerFail);
+  }
+  $("owner").addEventListener("click", function (ev) {
+    var b = ev.target.closest && ev.target.closest("button[data-act]");
+    if (b) armOrRun(b, function () { ownerAct(b.dataset.act, b.dataset.key); });
+  });
+  $("owner").addEventListener("toggle", function () { O.open = $("owner").open; if (O.open) ownerLoad(true); else ownerStop(); });
+  $("ownerRefresh").addEventListener("click", function () { ownerSay("", true); ownerLoad(true); });
+  $("ownerKickAll").addEventListener("click", function () {
+    var b = this;
+    armOrRun(b, function () {
+      rpc("live_admin_kick_all", { p_token: S.token }).then(function (n) { ownerSay("Signed out everyone else (" + n + (n === 1 ? " device" : " devices") + "). They can sign in again with their receipts.", true); ownerLoad(true); }, ownerFail);
+    });
+  });
+
+  /* ---------- start ---------- */
+  function takeOwnerLink() {                                              // the private owner link carries the sign-in after a #; take it and clean the address bar
+    var m = /[#&]owner=([0-9a-f]{64})(?![0-9a-f])/i.exec(location.hash || "");
+    if (!m) return false;
+    store("kh_live_tok", m[1].toLowerCase()); store("kh_live_owner", "1"); store("kh_live_rcpt", null);
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { location.hash = ""; }
+    return true;
+  }
+  takeOwnerLink();
+  window.addEventListener("hashchange", function () { if (takeOwnerLink()) location.reload(); });   // a new link tapped while the page is already open
+  var tok = store("kh_live_tok");
+  if (tok) { S.token = tok; if (store("kh_live_owner")) ownerOn(true); showBoard(); }
+  else {
+    var saved = store("kh_live_rcpt");
+    if (saved) { showGate("", ""); $("gate").hidden = true; $("sampleWrap").hidden = true; $("board").hidden = false; buildCoinButtons(); setStatus("slow", "Signing you in..."); S.signing = false; signIn(saved, { silent: true }); }
+    else showGate("", "");
+  }
+})();
+</script>
+</body>
+</html>

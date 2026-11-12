@@ -418,6 +418,31 @@ footer a { text-underline-offset: 3px; }
   .coin:last-child { grid-column: 1 / -1; }
   .top .wrap { gap: 10px; }
 }
+
+.livechip { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255, 150, 60, .08); color: var(--ink); font: 600 .92rem/1 var(--body); text-decoration: none; transition: border-color .3s var(--ease), background .3s var(--ease); white-space: nowrap; }
+.livechip:hover { border-color: var(--peri); background: rgba(255, 150, 60, .16); }
+.livechip i { width: 8px; height: 8px; border-radius: 50%; background: var(--up); box-shadow: 0 0 0 0 rgba(74, 222, 128, .6); animation: livepulse 2s infinite; }
+@keyframes livepulse { 70% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); } 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } }
+.livegrid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+.livelist { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 14px; }
+.livelist li { display: flex; gap: 12px; color: var(--muted); }
+.livelist li > span:first-child { flex: none; width: 1.6em; text-align: center; }
+.livelist b { color: var(--ink); font-weight: 600; }
+.livemock { border: 1px solid var(--line-strong); border-radius: 22px; padding: 18px; background: linear-gradient(180deg, #2A170D, #1A0F08); box-shadow: 0 30px 70px -40px rgba(0, 0, 0, .9); }
+.lm-top { display: flex; justify-content: space-between; align-items: center; font: 600 .95rem/1 var(--body); }
+.lm-live { display: inline-flex; align-items: center; gap: 7px; font: 500 .78rem/1 var(--mono); color: var(--muted); }
+.lm-live i { width: 8px; height: 8px; border-radius: 50%; background: var(--up); }
+.lm-call { display: flex; align-items: baseline; gap: 12px; margin: 16px 0 12px; flex-wrap: wrap; }
+.lm-call b { font: 700 2.4rem/1 var(--display); color: var(--up); letter-spacing: -.03em; }
+.lm-call span { font: 600 1.3rem/1 var(--mono); }
+.lm-call em { margin-left: auto; font: 600 1.5rem/1 var(--mono); font-style: normal; color: var(--amber); }
+.lm-chart { display: block; width: 100%; height: 130px; border-radius: 12px; background: #150C07; }
+.lm-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+.lm-row div { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; font: 600 .95rem/1.2 var(--mono); }
+.lm-row small { display: block; font: 500 .66rem/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.lm-cap { margin-top: 12px; text-align: center; color: var(--muted); font-size: .82rem; }
+@media (max-width: 860px) { .livegrid { grid-template-columns: 1fr; gap: 30px; } }
+@media (max-width: 440px) { .livechip { padding: 0 12px; } .top .btn.small { padding: 11px 14px; } .actions { gap: 8px; } }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -441,6 +466,7 @@ footer a { text-underline-offset: 3px; }
   <div class="wrap">
     <a class="brand" href="#top">Kiros helper</a>
     <div class="actions">
+      <a class="livechip" href="live.html" aria-label="Open the live board"><i aria-hidden="true"></i>Live</a>
       <button type="button" class="leafbtn" id="leafBtn" aria-pressed="true" aria-label="Falling leaves" title="Falling leaves on or off"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.4l1.9 4.5 2.7-1.7-.6 4.4 3.8-1.4-1.6 3.4 2.4.9-4 3.4.8 2.2-4.4-.6V21.6h-2v-3.5l-4.4.6.8-2.2-4-3.4 2.4-.9-1.6-3.4 3.8 1.4-.6-4.4 2.7 1.7z"/></svg></button>
       <a class="btn small" href="#get" data-buy>Get access</a>
     </div>
@@ -453,7 +479,7 @@ footer a { text-underline-offset: 3px; }
   <div class="wrap hero-grid">
     <div>
       <div class="proof rv" style="--d:0">
-        <a class="news" href="#updates"><b>🍁 New</b><span>XRP, Dogecoin, BNB and Hyperliquid are live</span><span class="more">See what&rsquo;s new &rarr;</span></a>
+        <a class="news" href="#live"><b>📡 New</b><span>The Live board: calls and charts right on the website</span><span class="more">See it &rarr;</span></a>
         <a class="rating" href="#reviews" id="heroRating" aria-label="See customer reviews"><span class="stars" id="heroStars"></span><span class="rtxt" id="heroRatingTxt">Be the first to review</span></a>
         <p class="trusted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 20v-1.6a3.4 3.4 0 0 0-3.4-3.4H7.4A3.4 3.4 0 0 0 4 18.4V20"/><circle cx="10.2" cy="8" r="3.3"/><path d="M20 20v-1.6a3.4 3.4 0 0 0-2.5-3.3M15.2 4.9a3.3 3.3 0 0 1 0 6.2"/></svg><span>Trusted by <b>30+</b> people!</span></p>
       </div>
@@ -599,6 +625,36 @@ footer a { text-underline-offset: 3px; }
   </div>
 </section>
 
+<section class="band" id="live">
+  <div class="wrap livegrid">
+    <div>
+      <div class="head" style="margin-bottom:0">
+        <p class="label rv">📡 Live board</p>
+        <h2 class="split">Watch the calls <em class="grad">right here.</em></h2>
+        <p class="sub rv">The same reads the bot posts in Discord, live in your browser. Type your receipt number once, then every market is one tap away.</p>
+      </div>
+      <ul class="livelist rv">
+        <li><span>⚡</span><span><b>Refreshes every few seconds.</b> No waiting for the next post. The call, the countdown and the odds update on their own.</span></li>
+        <li><span>📈</span><span><b>A live chart.</b> The last hour of candles with the target line and the price drawn right on it.</span></li>
+        <li><span>🔘</span><span><b>A button for every market.</b> Bitcoin, Ethereum, Solana, XRP, Dogecoin, BNB and Hyperliquid.</span></li>
+        <li><span>🧠</span><span><b>All the info on one screen.</b> Flip chance, trend, chart votes, Kalshi prices, scalp ideas and the price feeds.</span></li>
+      </ul>
+      <p class="fine rv" style="margin-top:16px">Members only. Your receipt number opens it on up to 2 devices.</p>
+      <div class="cta-row rv">
+        <a class="btn" href="live.html">📡 Open the live board</a>
+        <a class="btn ghost" href="#get" data-buy>Get access</a>
+      </div>
+    </div>
+    <div class="livemock rv" role="img" aria-label="Example of the live board: a call, a countdown and a candle chart">
+      <div class="lm-top"><span>🟠 Bitcoin</span><span class="lm-live"><i></i>LIVE</span></div>
+      <div class="lm-call"><b>&#9650; UP</b><span>71%</span><em>7:40</em></div>
+      <svg viewBox="0 0 340 100" preserveAspectRatio="none" aria-hidden="true" class="lm-chart"><rect x="238" y="0" width="86" height="100" fill="rgba(255,159,84,.10)"/><line x1="0" x2="340" y1="52.9" y2="52.9" stroke="#F1C40F" stroke-width="1.4" stroke-dasharray="5 4"/><line x1="6.0" x2="6.0" y1="29.0" y2="47.5" stroke="#FF6B5E" stroke-width="1.2"/><rect x="3.5" y="35.9" width="5" height="1.2" fill="#FF6B5E"/><line x1="15.6" x2="15.6" y1="29.7" y2="43.4" stroke="#4ADE80" stroke-width="1.2"/><rect x="13.1" y="35.9" width="5" height="1.2" fill="#4ADE80"/><line x1="25.2" x2="25.2" y1="29.7" y2="53.8" stroke="#FF6B5E" stroke-width="1.2"/><rect x="22.7" y="35.9" width="5" height="10.1" fill="#FF6B5E"/><line x1="34.8" x2="34.8" y1="32.7" y2="49.8" stroke="#4ADE80" stroke-width="1.2"/><rect x="32.3" y="33.9" width="5" height="12.2" fill="#4ADE80"/><line x1="44.4" x2="44.4" y1="23.9" y2="55.9" stroke="#FF6B5E" stroke-width="1.2"/><rect x="41.9" y="33.9" width="5" height="13.6" fill="#FF6B5E"/><line x1="54.0" x2="54.0" y1="35.5" y2="74.5" stroke="#FF6B5E" stroke-width="1.2"/><rect x="51.5" y="47.5" width="5" height="15.3" fill="#FF6B5E"/><line x1="63.6" x2="63.6" y1="48.2" y2="64.7" stroke="#4ADE80" stroke-width="1.2"/><rect x="61.1" y="55.7" width="5" height="7.1" fill="#4ADE80"/><line x1="73.2" x2="73.2" y1="49.3" y2="72.7" stroke="#FF6B5E" stroke-width="1.2"/><rect x="70.7" y="55.7" width="5" height="16.3" fill="#FF6B5E"/><line x1="82.8" x2="82.8" y1="69.1" y2="82.2" stroke="#FF6B5E" stroke-width="1.2"/><rect x="80.3" y="72.0" width="5" height="9.8" fill="#FF6B5E"/><line x1="92.4" x2="92.4" y1="76.3" y2="92.0" stroke="#4ADE80" stroke-width="1.2"/><rect x="89.9" y="81.7" width="5" height="1.2" fill="#4ADE80"/><line x1="102.0" x2="102.0" y1="71.8" y2="87.7" stroke="#4ADE80" stroke-width="1.2"/><rect x="99.5" y="79.5" width="5" height="2.1" fill="#4ADE80"/><line x1="111.6" x2="111.6" y1="66.6" y2="82.9" stroke="#4ADE80" stroke-width="1.2"/><rect x="109.1" y="72.2" width="5" height="7.3" fill="#4ADE80"/><line x1="121.2" x2="121.2" y1="40.5" y2="82.4" stroke="#4ADE80" stroke-width="1.2"/><rect x="118.7" y="52.6" width="5" height="19.6" fill="#4ADE80"/><line x1="130.8" x2="130.8" y1="39.7" y2="55.4" stroke="#4ADE80" stroke-width="1.2"/><rect x="128.3" y="43.5" width="5" height="9.1" fill="#4ADE80"/><line x1="140.4" x2="140.4" y1="42.7" y2="59.2" stroke="#FF6B5E" stroke-width="1.2"/><rect x="137.9" y="43.5" width="5" height="6.3" fill="#FF6B5E"/><line x1="150.0" x2="150.0" y1="39.5" y2="56.7" stroke="#FF6B5E" stroke-width="1.2"/><rect x="147.5" y="49.8" width="5" height="2.2" fill="#FF6B5E"/><line x1="159.6" x2="159.6" y1="23.4" y2="52.0" stroke="#4ADE80" stroke-width="1.2"/><rect x="157.1" y="33.8" width="5" height="18.2" fill="#4ADE80"/><line x1="169.2" x2="169.2" y1="22.6" y2="48.7" stroke="#FF6B5E" stroke-width="1.2"/><rect x="166.7" y="33.8" width="5" height="9.2" fill="#FF6B5E"/><line x1="178.8" x2="178.8" y1="19.0" y2="43.9" stroke="#4ADE80" stroke-width="1.2"/><rect x="176.3" y="23.9" width="5" height="19.1" fill="#4ADE80"/><line x1="188.4" x2="188.4" y1="8.0" y2="27.2" stroke="#4ADE80" stroke-width="1.2"/><rect x="185.9" y="17.6" width="5" height="6.3" fill="#4ADE80"/><line x1="198.0" x2="198.0" y1="13.5" y2="43.3" stroke="#FF6B5E" stroke-width="1.2"/><rect x="195.5" y="17.6" width="5" height="13.8" fill="#FF6B5E"/><line x1="207.6" x2="207.6" y1="19.0" y2="34.4" stroke="#4ADE80" stroke-width="1.2"/><rect x="205.1" y="20.4" width="5" height="11.0" fill="#4ADE80"/><line x1="217.2" x2="217.2" y1="19.7" y2="43.5" stroke="#FF6B5E" stroke-width="1.2"/><rect x="214.7" y="20.4" width="5" height="13.3" fill="#FF6B5E"/><line x1="226.8" x2="226.8" y1="26.8" y2="49.6" stroke="#FF6B5E" stroke-width="1.2"/><rect x="224.3" y="33.7" width="5" height="10.4" fill="#FF6B5E"/><line x1="236.4" x2="236.4" y1="35.2" y2="55.6" stroke="#FF6B5E" stroke-width="1.2"/><rect x="233.9" y="44.1" width="5" height="9.9" fill="#FF6B5E"/><line x1="246.0" x2="246.0" y1="45.9" y2="59.1" stroke="#4ADE80" stroke-width="1.2"/><rect x="243.5" y="47.3" width="5" height="6.7" fill="#4ADE80"/><line x1="255.6" x2="255.6" y1="44.0" y2="68.2" stroke="#FF6B5E" stroke-width="1.2"/><rect x="253.1" y="47.3" width="5" height="9.1" fill="#FF6B5E"/><line x1="265.2" x2="265.2" y1="40.1" y2="67.1" stroke="#4ADE80" stroke-width="1.2"/><rect x="262.7" y="43.8" width="5" height="12.6" fill="#4ADE80"/><line x1="274.8" x2="274.8" y1="39.0" y2="63.4" stroke="#FF6B5E" stroke-width="1.2"/><rect x="272.3" y="43.8" width="5" height="9.2" fill="#FF6B5E"/><line x1="284.4" x2="284.4" y1="45.1" y2="65.0" stroke="#4ADE80" stroke-width="1.2"/><rect x="281.9" y="46.3" width="5" height="6.7" fill="#4ADE80"/><line x1="294.0" x2="294.0" y1="43.1" y2="64.8" stroke="#FF6B5E" stroke-width="1.2"/><rect x="291.5" y="46.3" width="5" height="9.1" fill="#FF6B5E"/><line x1="303.6" x2="303.6" y1="51.7" y2="61.0" stroke="#FF6B5E" stroke-width="1.2"/><rect x="301.1" y="55.3" width="5" height="4.8" fill="#FF6B5E"/><line x1="313.2" x2="313.2" y1="53.0" y2="76.6" stroke="#FF6B5E" stroke-width="1.2"/><rect x="310.7" y="60.1" width="5" height="13.5" fill="#FF6B5E"/><line x1="322.8" x2="322.8" y1="64.0" y2="79.1" stroke="#4ADE80" stroke-width="1.2"/><rect x="320.3" y="68.5" width="5" height="5.1" fill="#4ADE80"/><line x1="0" x2="340" y1="68.5" y2="68.5" stroke="#fff" stroke-opacity=".8" stroke-width="1"/></svg>
+      <div class="lm-row"><div><small>Price now</small>$100,625</div><div><small>Target</small>$100,585</div><div><small>Flip chance</small>14%</div></div>
+      <p class="lm-cap">Example, not live data</p>
+    </div>
+  </div>
+</section>
+
 <section class="band" id="trial">
   <div class="wrap">
     <div class="head">
@@ -704,7 +760,19 @@ footer a { text-underline-offset: 3px; }
     </div>
     <ol class="log">
       <li class="rel rv">
-        <div class="meta"><span class="ver">v4.0</span><time datetime="2026-11-10">Nov 10, 2026</time><span class="tag">Latest</span></div>
+        <div class="meta"><span class="ver">v4.1</span><time datetime="2026-11-12">Nov 12, 2026</time><span class="tag">Latest</span></div>
+        <h3>📡 The Live Board</h3>
+        <ul>
+          <li>🌐 <b>Live calls on the website:</b> open it with your receipt number, no Discord needed</li>
+          <li>🔘 <b>A button for every market,</b> all seven coins</li>
+          <li>⚡ <b>Refreshes every few seconds</b> with a countdown that ticks on its own</li>
+          <li>📈 <b>A live chart</b> with the target line and the price on it</li>
+          <li>🧠 <b>All the info:</b> flip chance, trend, chart votes, Kalshi prices, scalp ideas, price feeds</li>
+          <li>🔒 One receipt works on 2 devices, and a refunded receipt stops working</li>
+        </ul>
+      </li>
+      <li class="rel rv">
+        <div class="meta"><span class="ver">v4.0</span><time datetime="2026-11-10">Nov 10, 2026</time></div>
         <h3>🍁 The Fall Update</h3>
         <ul>
           <li>🆕 <b>4 new markets:</b> XRP 💧, Dogecoin 🐶, BNB 🟡 and Hyperliquid 🌊</li>
@@ -748,6 +816,10 @@ footer a { text-underline-offset: 3px; }
       <details><summary>What markets does it cover?</summary><p>Kalshi's 15-minute markets for Bitcoin, Ethereum, Solana, XRP, Dogecoin, BNB and Hyperliquid. One price covers all seven. UP means YES and DOWN means NO.</p></details>
       <details><summary>How does the free trial work?</summary><p>Join the Discord and tap the 🎁 Free 2 hours trial button on the redeem panel. Your two hours start right then and the bot ends your access automatically when they are up. It is one trial per person, and brand-new Discord accounts may have to wait a few days. If you buy during the trial, your access just keeps going.</p></details>
       <details><summary>What are scalp pings?</summary><p>Quick-trade heads-ups. When a fast trade looks worth a look, the bot posts a BUY ping with an entry idea, then a SELL ping when it is time to think about getting out. They work on all seven coins. They are suggestions, and the decision is always yours.</p></details>
+      <details><summary>What is the Live board?</summary><p>A page on this site that shows the bot's calls live. Open it with the receipt number from your payment email, pick a market, and the call, countdown, odds and chart update every few seconds. It is the same bot, just on the website instead of in Discord.</p></details>
+      <details><summary>Is the Live board more accurate than Discord?</summary><p>It uses the same reads, so the two agree. What changes is speed and convenience: it refreshes every few seconds instead of waiting for the next post, and the chart and every number sit on one screen. No tool can promise a right call, so treat it as an estimate either way.</p></details>
+      <details><summary>Does the free trial include the Live board?</summary><p>No. The trial runs in Discord for two hours. The Live board opens with the receipt number from a purchase.</p></details>
+      <details><summary>Can I share my receipt number for the Live board?</summary><p>One receipt works on up to 2 devices at once. If a third device signs in, the oldest one is signed out. A refunded receipt stops working.</p></details>
       <details><summary>How much does it cost?</summary><p>$45, paid once. Use code THANKSGIVING at checkout for 15% off. Every payment is covered by the 7-day refund.</p></details>
       <details><summary>Do I need a Kalshi account?</summary><p>Only to place trades. Reading the verdicts takes nothing beyond Discord. Kalshi is an independent company with its own rules.</p></details>
       <details><summary>How do I get my role?</summary><p>Join the Discord, open the start channel and tap the unlock button. Type the receipt number from your payment email and the Buyer role is yours at once. Nobody else sees what you type.</p></details>
