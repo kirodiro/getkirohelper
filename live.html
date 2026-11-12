@@ -158,6 +158,14 @@ a{color:inherit}
 .pbtns button.danger,.ownertools button.danger{border-color:rgba(255,107,94,.55);color:#FFB4A8}
 .pbtns button.armed,.ownertools button.armed{background:rgba(255,107,94,.22);border-color:var(--down);color:#fff}
 .empty{color:var(--muted);font-size:.92rem;padding:8px 0}
+.hint{color:var(--muted);font-size:.9rem;margin:0 0 10px}
+.grant{display:flex;gap:8px;flex-wrap:wrap}
+.grant input{flex:1 1 220px;min-width:0;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid var(--line-strong);background:#120A06;color:var(--ink);font:500 1rem/1 var(--body)}
+.grant button{appearance:none;cursor:pointer;min-height:48px;padding:0 18px;border-radius:12px;border:1px solid var(--peri);background:rgba(255,255,255,.06);color:var(--ink);font:600 .95rem/1 var(--body)}
+.grant button[disabled]{opacity:.6;cursor:progress}
+.grantbox{margin-top:12px;padding:14px;border-radius:14px;border:1px solid var(--line-strong);background:rgba(255,255,255,.03);display:grid;gap:8px}
+.grantbox b{overflow-wrap:anywhere}
+.gcode{display:block;font:600 1.15rem/1.3 var(--mono);letter-spacing:.06em;overflow-wrap:anywhere;user-select:all}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
 </head>
@@ -175,15 +183,15 @@ a{color:inherit}
   <section class="gate" id="gate" aria-labelledby="gateTitle" hidden>
     <div class="label">Members only</div>
     <h1 id="gateTitle">Live board</h1>
-    <p class="sub">Every market, live in your browser: instant calls, the live chart and all the info, refreshed every few seconds. Type the receipt number from your Stripe email to open it.</p>
+    <p class="sub">Every market, live in your browser: the calls, the live chart and all the info, refreshed every few seconds. Type the receipt number from your Stripe email to open it.</p>
     <form id="gateForm" autocomplete="off" novalidate>
-      <label class="l" for="rcpt">Receipt number</label>
+      <label class="l" for="rcpt">Receipt number or access code</label>
       <input type="text" id="rcpt" name="receipt-number" inputmode="text" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="60" placeholder="1234-5678" aria-describedby="gateMsg">
       <label class="keep"><input type="checkbox" id="keep" checked> Keep me signed in on this device</label>
       <button class="btn" id="go" type="submit">Open the live board</button>
       <p class="msg" id="gateMsg" role="status" aria-live="polite"></p>
     </form>
-    <p class="fine">It&rsquo;s in the Stripe receipt email, written like 1234-5678. One receipt works on up to 2 devices. The free Discord trial doesn&rsquo;t include the live board. <a href="./#get">Get access</a></p>
+    <p class="fine">It&rsquo;s in the Stripe receipt email, written like 1234-5678. One receipt works on up to 2 devices. Bought before the website and got an access code from the owner? Type that code in the same box. The free Discord trial doesn&rsquo;t include the live board. <a href="./#get">Get access</a></p>
   </section>
 
   <!-- 2) the live board (blurred sample behind the gate, real data after sign-in) -->
@@ -201,6 +209,15 @@ a{color:inherit}
       <div class="ownerbody">
         <div class="ownertools"><button type="button" id="ownerRefresh">Refresh</button><button type="button" class="danger" id="ownerKickAll">Sign out everyone</button></div>
         <p class="msg" id="ownerMsg" role="status" aria-live="polite"></p>
+        <h4>Give access</h4>
+        <p class="hint">For people who bought before the website. Type their email, get a personal code, and send it to them. They type it in the box where the receipt number goes.</p>
+        <form id="grantForm" class="grant" autocomplete="off" novalidate>
+          <input type="text" id="grantEmail" maxlength="120" placeholder="Their email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Their email">
+          <button type="submit" id="grantGo">Create code</button>
+        </form>
+        <div id="grantResult" aria-live="polite"></div>
+        <h4>People you gave access</h4>
+        <div id="ownerGuests"><p class="empty">Nobody yet.</p></div>
         <h4>On the board</h4>
         <div id="ownerList"><p class="empty">Loading...</p></div>
         <h4>Blocked receipts</h4>
@@ -287,7 +304,7 @@ a{color:inherit}
     if (e && e.net) return "Couldn't reach the server. Check your connection and try again.";
     if (/slow down/i.test(m)) return "Too many tries from this device. Wait a few minutes and try again.";
     if (/busy/i.test(m)) return "Lots of people are signing in right now. Try again in a minute.";
-    if (/bad receipt/i.test(m)) return "That doesn't look like a receipt number. It's in your Stripe receipt email, written like 1234-5678.";
+    if (/bad receipt/i.test(m)) return "That doesn't look like a receipt number or access code. A receipt number is in your Stripe receipt email, written like 1234-5678.";
     return "Something went wrong on our side. Try again in a minute.";
   }
   function signIn(receipt, opts) {
@@ -322,9 +339,9 @@ a{color:inherit}
   $("gateForm").addEventListener("submit", function (ev) {
     ev.preventDefault();
     var v = $("rcpt").value.trim();
-    if (v.replace(/[^A-Za-z0-9]/g, "").length < 6) { setMsg("Type the receipt number from your Stripe email first. It looks like 1234-5678.", "err"); $("rcpt").focus(); return; }
-    $("go").disabled = true; $("go").textContent = "Checking your receipt...";
-    setMsg("Checking with Stripe. This takes a few seconds.", "");
+    if (v.replace(/[^A-Za-z0-9]/g, "").length < 6) { setMsg("Type your receipt number or access code first. A receipt number looks like 1234-5678.", "err"); $("rcpt").focus(); return; }
+    $("go").disabled = true; $("go").textContent = "Checking...";
+    setMsg("Checking. This takes a few seconds.", "");
     signIn(v);
   });
   $("signout").addEventListener("click", function () {
@@ -368,7 +385,7 @@ a{color:inherit}
     var saved = store("kh_live_rcpt"), wasOwner = S.owner || store("kh_live_owner");
     stopPolling(); S.token = null; store("kh_live_tok", null);
     if (wasOwner) return showGate("Your owner link ended. Run /livepanel in Discord to get a new one.", "err");
-    if (!saved) return showGate("Your sign-in ended. Enter your receipt number again.", "err");
+    if (!saved) return showGate("Your sign-in ended. Enter your receipt number or access code again.", "err");
     $("status").hidden = false; setStatus("slow", "Refreshing your sign-in...");
     S.signing = false;
     signIn(saved, { silent: true });
@@ -600,15 +617,61 @@ a{color:inherit}
     ownerSchedule(10000);
   }
   function ownerSay(t, ok) { $("ownerMsg").className = "msg " + (ok ? "ok" : "err"); $("ownerMsg").textContent = t; }
+  function isGuest(key) { return String(key).indexOf("GUEST-") === 0; }
+  function kname(key, cap) { return isGuest(key) ? (cap ? "Guest access" : "that guest") : (cap ? "Receipt " : "receipt ") + key; }
+  function fmtCode(c) { return String(c || "").replace(/[^A-Za-z0-9]/g, "").toUpperCase().replace(/(.{4})(?=.)/g, "$1-"); }
+  function inviteText(code) {
+    return "Here is your access code for the Kiros helper live board: " + fmtCode(code) + "\nGo to " + location.origin + location.pathname + " and type the code in the box. It works on up to 2 devices, so please keep it to yourself.";
+  }
+  function copyText(t, btn) {
+    function ok() {
+      if (!btn) return;
+      if (!btn.dataset.old) btn.dataset.old = btn.textContent;
+      btn.textContent = "Copied"; clearTimeout(Number(btn.dataset.t || 0));
+      btn.dataset.t = String(setTimeout(function () { btn.textContent = btn.dataset.old || btn.textContent; delete btn.dataset.old; }, 1500));
+    }
+    function sorry() { ownerSay("Couldn't copy on this device. Press and hold the code to copy it yourself.", false); }
+    function fallback() {
+      try {
+        var ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", "");
+        ta.style.cssText = "position:fixed;top:0;left:0;opacity:0"; document.body.appendChild(ta);
+        ta.select(); ta.setSelectionRange(0, t.length);
+        var good = document.execCommand("copy"); document.body.removeChild(ta);
+        if (good) ok(); else sorry();
+      } catch (e) { sorry(); }
+    }
+    try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t).then(ok, fallback); return; } } catch (e) {}
+    fallback();
+  }
+  function showGrant(r) {
+    $("grantResult").innerHTML = "<div class='grantbox'><b>" + esc(r.email) + "</b><code class='gcode'>" + esc(fmtCode(r.code)) + "</code>" +
+      "<div class='pbtns'><button type='button' data-act='gmsg' data-code='" + esc(r.code) + "'>Copy message</button><button type='button' data-act='gcopy' data-code='" + esc(r.code) + "'>Copy code</button></div>" +
+      "<p class='hint'>\u201CCopy message\u201D gives you a ready note to paste into Discord, a text or an email.</p></div>";
+  }
+  function renderGuests(list) {
+    var el = $("ownerGuests");
+    if (!list || !list.length) { el.innerHTML = "<p class='empty'>Nobody yet. Add an email above.</p>"; return; }
+    el.innerHTML = list.map(function (g) {
+      var meta;
+      if (g.blocked) meta = "<span class='dotsm'></span><span>blocked</span>";
+      else if (g.devices > 0) meta = "<span class='dotsm" + (g.last_seen_s != null && g.last_seen_s < 60 ? " on" : "") + "'></span><span>" + (g.last_seen_s != null && g.last_seen_s < 60 ? "online now" : "last seen " + ago(g.last_seen_s || 0) + " ago") + "</span><span>" + g.devices + (g.devices === 1 ? " device" : " devices") + "</span>";
+      else if (g.login_s == null) meta = "<span class='dotsm'></span><span>hasn't signed in yet</span>";
+      else meta = "<span class='dotsm'></span><span>last signed in " + ago(g.login_s) + " ago</span>";
+      return "<div class='prow'><div class='pmain'><b>" + esc(g.email) + "</b><span>" + esc(fmtCode(g.code)) + "</span></div><div class='pmeta'>" + meta + "</div>" +
+        "<div class='pbtns'><button type='button' data-act='gmsg' data-code='" + esc(g.code) + "'>Copy message</button><button type='button' data-act='gcopy' data-code='" + esc(g.code) + "'>Copy code</button>" +
+        "<button type='button' class='danger' data-act='gremove' data-id='" + esc(g.id) + "'>Remove</button></div></div>";
+    }).join("");
+  }
   function renderOwner(r) {
     if (!r || !r.people) return;
     var online = r.people.filter(function (p) { return !p.owner && p.last_seen_s < 90; }).length;
     $("ownerSum").textContent = "\uD83D\uDEE0\uFE0F Owner panel \u00B7 " + online + " on now";
     if ($("owner").querySelector("[data-armed]")) return;                 // don't redraw under a half-confirmed tap
+    renderGuests(r.guests || []);
     var others = r.people.filter(function (p) { return !p.owner; });
     var list = r.people.map(function (p) {
       var on = p.last_seen_s < 60;
-      var main = "<div class='pmain'><b>" + esc(p.owner ? "You (owner)" : (p.label || "(no e-mail on the payment)")) + "</b>" + (p.owner ? "" : "<span>Receipt " + esc(p.key) + "</span>") + "</div>";
+      var main = "<div class='pmain'><b>" + esc(p.owner ? "You (owner)" : (p.label || "(no e-mail on the payment)")) + "</b>" + (p.owner ? "" : "<span>" + esc(kname(p.key, true)) + "</span>") + "</div>";
       var meta = "<div class='pmeta'><span class='dotsm" + (on ? " on" : "") + "'></span><span>" + (on ? "online now" : "last seen " + ago(p.last_seen_s) + " ago") + "</span>" +
         (p.coin ? "<span>on " + esc(p.coin) + "</span>" : "") + "<span>" + p.devices + (p.devices === 1 ? " device" : " devices") + "</span><span>signed in " + ago(p.signed_in_s) + " ago</span></div>";
       var btns = p.owner ? "<div></div>" : "<div class='pbtns'><button type='button' data-act='kick' data-key='" + esc(p.key) + "'>Sign out</button><button type='button' class='danger' data-act='block' data-key='" + esc(p.key) + "'>Block</button></div>";
@@ -616,7 +679,7 @@ a{color:inherit}
     }).join("");
     $("ownerList").innerHTML = others.length ? list : "<p class='empty'>Nobody else is signed in right now.</p>" + list;
     $("ownerBlocked").innerHTML = (r.blocked && r.blocked.length) ? r.blocked.map(function (b) {
-      return "<div class='prow'><div class='pmain'><b>" + esc(b.label || "(no e-mail on the payment)") + "</b><span>Receipt " + esc(b.key) + "</span></div><div class='pmeta'>blocked</div><div class='pbtns'><button type='button' data-act='unblock' data-key='" + esc(b.key) + "'>Unblock</button></div></div>";
+      return "<div class='prow'><div class='pmain'><b>" + esc(b.label || "(no e-mail on the payment)") + "</b><span>" + esc(kname(b.key, true)) + "</span></div><div class='pmeta'>blocked</div><div class='pbtns'><button type='button' data-act='unblock' data-key='" + esc(b.key) + "'>Unblock</button></div></div>";
     }).join("") : "<p class='empty'>Nobody is blocked.</p>";
   }
   function armOrRun(b, run) {
@@ -628,22 +691,53 @@ a{color:inherit}
     var call = kind === "unblock" ? rpc("live_admin_unblock", { p_token: S.token, p_receipt_key: key })
       : rpc("live_admin_kick", { p_token: S.token, p_receipt_key: key, p_block: kind === "block" });
     call.then(function (n) {
-      if (kind === "unblock") ownerSay("Unblocked receipt " + key + ". They can sign in again.", true);
-      else if (kind === "block") ownerSay("Blocked receipt " + key + " and signed out " + n + (n === 1 ? " device" : " devices") + ". They can't sign in again until you unblock.", true);
-      else ownerSay("Signed out " + n + (n === 1 ? " device" : " devices") + " on receipt " + key + ". They can sign in again.", true);
+      if (kind === "unblock") ownerSay("Unblocked " + kname(key) + ". They can sign in again.", true);
+      else if (kind === "block") ownerSay("Blocked " + kname(key) + " and signed out " + n + (n === 1 ? " device" : " devices") + ". They can't sign in again until you unblock.", true);
+      else ownerSay("Signed out " + n + (n === 1 ? " device" : " devices") + " on " + kname(key) + ". They can sign in again.", true);
+      ownerLoad(true);
+    }, ownerFail);
+  }
+  function ownerRemoveGuest(id) {
+    rpc("live_admin_guest_remove", { p_token: S.token, p_id: Number(id) }).then(function (n) {
+      ownerSay(n ? "Removed. Their code no longer works and they were signed out." : "That person was already removed.", true);
+      $("grantResult").innerHTML = "";
       ownerLoad(true);
     }, ownerFail);
   }
   $("owner").addEventListener("click", function (ev) {
     var b = ev.target.closest && ev.target.closest("button[data-act]");
-    if (b) armOrRun(b, function () { ownerAct(b.dataset.act, b.dataset.key); });
+    if (!b) return;
+    var act = b.dataset.act;
+    if (act === "gcopy") return copyText(fmtCode(b.dataset.code), b);
+    if (act === "gmsg") return copyText(inviteText(b.dataset.code), b);
+    if (act === "gremove") return armOrRun(b, function () { ownerRemoveGuest(b.dataset.id); });
+    armOrRun(b, function () { ownerAct(act, b.dataset.key); });
+  });
+  $("grantForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var v = $("grantEmail").value.trim();
+    if (v.length < 3) { ownerSay("Type their email first.", false); $("grantEmail").focus(); return; }
+    $("grantGo").disabled = true;
+    rpc("live_admin_grant", { p_token: S.token, p_email: v }).then(function (r) {
+      $("grantGo").disabled = false;
+      if (!r || !r.ok) return ownerSay("That didn't work. Try again.", false);
+      $("grantEmail").value = "";
+      showGrant(r);
+      ownerSay(r.existing ? "They already had access, so this is the same code again." : "Done. Send them the code below.", true);
+      ownerLoad(true);
+    }, function (e) {
+      $("grantGo").disabled = false;
+      if (/bad email/i.test(String((e && e.message) || ""))) return ownerSay("Type their email first.", false);
+      if (/too many guests/i.test(String((e && e.message) || ""))) return ownerSay("That's the limit of 500 people. Remove some first.", false);
+      ownerFail(e);
+    });
   });
   $("owner").addEventListener("toggle", function () { O.open = $("owner").open; if (O.open) ownerLoad(true); else ownerStop(); });
   $("ownerRefresh").addEventListener("click", function () { ownerSay("", true); ownerLoad(true); });
   $("ownerKickAll").addEventListener("click", function () {
     var b = this;
     armOrRun(b, function () {
-      rpc("live_admin_kick_all", { p_token: S.token }).then(function (n) { ownerSay("Signed out everyone else (" + n + (n === 1 ? " device" : " devices") + "). They can sign in again with their receipts.", true); ownerLoad(true); }, ownerFail);
+      rpc("live_admin_kick_all", { p_token: S.token }).then(function (n) { ownerSay("Signed out everyone else (" + n + (n === 1 ? " device" : " devices") + "). They can sign in again with their receipts or codes.", true); ownerLoad(true); }, ownerFail);
     });
   });
 
