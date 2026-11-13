@@ -87,6 +87,8 @@ button{font-family:inherit}
 .dot.slow{background:var(--warn)}
 .dot.dead{background:var(--down)}
 .pill{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;background:var(--warnbg);color:var(--warn);font:600 .75rem/1.2 var(--font)}
+.trialbar{display:flex;align-items:center;justify-content:space-between;gap:6px 14px;flex-wrap:wrap;margin:0 0 10px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);font-size:.9rem;color:var(--muted)}
+.trialbar b{color:var(--ink);font-variant-numeric:tabular-nums}.trialbar a{color:var(--ink);font-weight:600}.trialbar.soon{border-color:rgba(227,169,59,.5);background:var(--warnbg)}
 .banner{margin:0 0 10px;padding:10px 12px;border-radius:8px;border:1px solid rgba(227,169,59,.45);background:var(--warnbg);font-size:.92rem}
 .banner.bad{border-color:rgba(240,96,93,.5);background:var(--downbg)}
 
@@ -192,6 +194,7 @@ button{font-family:inherit}
 .tf td{text-align:center;padding:4px 2px;border-top:1px solid var(--line)}
 .tf tbody th{border-top:1px solid var(--line)}
 .fine2{margin-top:10px;font-size:.78rem;color:var(--faint)}
+.sig-h .rsince{color:var(--muted);font-weight:400;font-size:.85rem}
 .plain{padding:14px 16px}
 .kt{width:100%;border-collapse:collapse;margin-top:8px;font-size:.92rem}
 .kt th{font:500 .8rem/1.2 var(--font);color:var(--muted);text-align:left;padding:4px 0}
@@ -272,6 +275,24 @@ button{font-family:inherit}
 .rd.x{background:var(--raise);color:var(--flat)}
 .reclegend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:.8rem;margin:6px 0 0}
 .recnote{color:var(--muted);font-size:.85rem;margin:10px 0 0}
+.tlh{margin:20px 0 6px;font:600 .98rem/1.3 var(--font)}
+.tlbig{margin:0 0 4px;font-size:1rem}
+.tlbig b{font:700 1.4rem/1 var(--font)}
+.tlkey i.kw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-2px}
+.kw.w,.tlbar .w{background:var(--up)}
+.kw.l,.tlbar .l{background:var(--down)}
+.kw.s,.tlbar .s{background:repeating-linear-gradient(135deg,var(--flat) 0 3px,var(--raise) 3px 6px)}
+.kw.n,.tlbar .n{background:var(--line)}
+.tlscale{position:relative;display:flex;justify-content:space-between;height:16px;margin:12px 0 2px;color:var(--faint);font-size:.72rem}
+.tlscale .m{position:absolute;top:0;transform:translateX(-50%)}
+.tllist{list-style:none;margin:0;padding:0}
+.tlrow{padding:11px 0;border-bottom:1px solid var(--line)}
+.tlhead{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.84rem;color:var(--muted);margin-bottom:6px}
+.tlhead b{color:var(--ink);font-weight:600}
+.tlbar{display:flex;height:16px;border-radius:4px;overflow:hidden;background:var(--line)}
+.tlbar i{display:block;height:100%;min-width:2px;flex:0 1 auto;box-shadow:inset -1px 0 0 var(--panel)}
+.tlmain{margin:7px 0 0;font-size:.95rem;overflow-wrap:anywhere}
+.tlsub{margin:2px 0 0;color:var(--muted);font-size:.8rem}
 .recsmall{color:var(--warn)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -290,7 +311,7 @@ button{font-family:inherit}
   <!-- 1) the receipt gate -->
   <section class="gate" id="gate" aria-labelledby="gateTitle" hidden>
     <h1 id="gateTitle">Live board</h1>
-    <p class="sub">Every market, live in your browser: the bot&rsquo;s call, the chance it flips, candles with EMA and RSI, and the Kalshi prices, refreshed every second. Type the receipt number from your Stripe email to open it.</p>
+    <p class="sub">Every market, live in your browser: the bot&rsquo;s call, the chance it flips, candles with EMA and RSI, and the Kalshi prices, refreshed every second. Type the receipt number from your Stripe email, or the code from your free trial, to open it.</p>
     <form id="gateForm" autocomplete="off" novalidate>
       <label class="l" for="rcpt">Receipt number or access code</label>
       <input type="text" id="rcpt" name="receipt-number" inputmode="text" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="60" placeholder="1234-5678" aria-describedby="gateMsg">
@@ -298,7 +319,7 @@ button{font-family:inherit}
       <button class="btn" id="go" type="submit">Open the live board</button>
       <p class="msg" id="gateMsg" role="status" aria-live="polite"></p>
     </form>
-    <p class="fine">It&rsquo;s in the Stripe receipt email, written like 1234-5678. One receipt works on up to 2 devices. Bought before the website and got an access code from the owner? Type that code in the same box. The free Discord trial doesn&rsquo;t include the live board. <a href="./#get">Get access</a></p>
+    <p class="fine">It&rsquo;s in the Stripe receipt email, written like 1234-5678. One receipt works on up to 2 devices. Bought before the website and got an access code from the owner? Type that code in the same box. On the free Discord trial? Tap the trial button in the server and the bot sends you a code to type here. It works until your trial ends. <a href="./#get">Get access</a></p>
   </section>
 
   <!-- 2) the live board (blurred sample behind the gate, real data after sign-in) -->
@@ -311,6 +332,7 @@ button{font-family:inherit}
       <a class="link" id="recLink" href="#recWrap" hidden>Bot record</a>
       <button type="button" class="link" id="signout">Sign out</button>
     </div>
+    <div class="trialbar" id="trialBar" hidden role="status"><span id="trialTxt"></span><a href="./#get">Get full access</a></div>
     <div id="banner" class="banner" hidden role="status"></div>
     <details class="card owner" id="owner" hidden>
       <summary><span id="ownerSum">Owner panel</span></summary>
@@ -352,8 +374,8 @@ button{font-family:inherit}
   var $ = function (id) { return document.getElementById(id); };
   var S = { token: null, coin: "BTC", dev: null, view: {}, chart: {}, chartTs: {}, seen: {}, noSeen: false, fails: 0, idle: false, busy: false, signing: false,
             nextAt: 0, worker: null, wurl: null, iv: null, hiddenSince: 0, lastTitle: 0, lastChart: 0, lastClock: 0, favKey: "", hover: null, geo: null,
-            tab: "bot", tf: "1", tvCoin: null, tvTf: null, tvTimer: null,
-            rec: null, recTimer: null, recFail: 0, recView: "coin", recCp: "mid" };
+            trialAt: 0, lastTrial: 0, tab: "bot", tf: "1", tvCoin: null, tvTf: null, tvTimer: null,
+            rec: null, recTimer: null, recFail: 0, recView: "coin", recCp: "mid", recMore: false };
   var REC_POLL_MS = 30000;
   var R = null;                                                   // handles to the live board's pieces (see bind)
 
@@ -396,7 +418,7 @@ button{font-family:inherit}
   /* ---------- view switching ---------- */
   function showGate(msg, kind) {
     stopPolling();
-    S.token = null; store("kh_live_tok", null);
+    S.token = null; store("kh_live_tok", null); S.trialAt = 0; updateTrial();
     $("board").hidden = true;
     $("gate").hidden = false;
     $("sampleWrap").hidden = false;
@@ -506,7 +528,16 @@ button{font-family:inherit}
       if (!document.hidden && now - S.lastChart >= 1000) { S.lastChart = now; drawChartNow(); }
       if (now - S.lastTitle >= 1000) { S.lastTitle = now; updateTitle(v); }
     }
+    if (S.trialAt && now - S.lastTrial >= 1000) { S.lastTrial = now; updateTrial(); }
     if (!S.busy && !S.idle && now >= S.nextAt) poll();
+  }
+  function trialText(s) { var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60; return h ? h + "h " + m + "m" : m ? m + "m " + (x < 10 ? "0" : "") + x + "s" : x + "s"; }
+  function updateTrial() {
+    var bar = $("trialBar"); if (!bar) return;
+    if (!S.trialAt || !S.token) { bar.hidden = true; return; }
+    var left = Math.max(0, Math.round((S.trialAt - performance.now()) / 1000));
+    bar.hidden = false; bar.classList.toggle("soon", left < 900);
+    setHTML($("trialTxt"), left > 0 ? "Free trial: <b>" + trialText(left) + "</b> left." : "Your free trial is ending.");
   }
   function goIdle() {
     S.idle = true;
@@ -528,6 +559,7 @@ button{font-family:inherit}
       }
       if (r.owner) { if (!S.owner) ownerOn(true); if (!O.loaded) { O.loaded = true; ownerLoad(true); } }
       else if (S.owner) { ownerOn(false); store("kh_live_owner", null); }
+      S.trialAt = r.trial != null ? performance.now() + Number(r.trial) * 1000 : 0; updateTrial();         // a free-trial sign-in is told how long it has left
       if (r.wait) { S.waiting = coin; if (coin === S.coin) renderView(); return schedule(WAIT_MS); }
       S.waiting = null;
       hideBannerIf("net");
@@ -615,6 +647,98 @@ button{font-family:inherit}
     return "<div class='rwin'><span class='rbar' aria-hidden='true'><i style='width:" + (p == null ? 0 : p) + "%'></i></span><span class='rpct'>" + (p == null ? "-" : p + "%") + "</span></div>";
   }
   function recTime(ts) { return clockTime(ts); }
+  /* ---- when in each market the call was right: r[3] = [seconds watched, [[seconds since open, "U"|"D"|"T"], ...]] ---- */
+  function tlMin(sec) { sec = Math.round(sec); return sec < 90 ? sec + " sec" : Math.round(sec / 60) + " min"; }
+  function tlParse(r) {
+    var t = r && r[3]; if (!t || !t[1] || !t[1].length) return null;
+    var end = Math.min(900, Math.max(0, Number(t[0]) || 0)), pts = [], res = r[1] === "U" ? "U" : "D";
+    for (var i = 0; i < t[1].length && i < 200; i++) {
+      var p = t[1][i], o = p ? Number(p[0]) : NaN, c = p ? p[1] : "";
+      if (!(o >= 0 && o <= 900) || (c !== "U" && c !== "D" && c !== "T")) continue;
+      if (pts.length && o < pts[pts.length - 1][0]) continue;
+      pts.push([o, c]);
+    }
+    if (!pts.length) return null;
+    if (end < pts[pts.length - 1][0]) end = pts[pts.length - 1][0];
+    var segs = [], tot = { w: 0, l: 0, s: 0, n: 0 };
+    function add(a, b, st, code) {
+      if (!(b - a > 0)) return;
+      var k = segs.length ? segs[segs.length - 1] : null;
+      if (k && k[2] === st) k[1] = b; else segs.push([a, b, st, code]);
+      tot[st] += b - a;
+    }
+    add(0, pts[0][0], "n", "");
+    pts.forEach(function (p, i) { add(p[0], i + 1 < pts.length ? pts[i + 1][0] : end, p[1] === "T" ? "s" : (p[1] === res ? "w" : "l"), p[1]); });
+    add(end, 900, "n", "");
+    if (!(tot.w + tot.l + tot.s > 0)) return null;
+    return { segs: segs, tot: tot, first: pts[0][0], end: end };
+  }
+  function tlText(m, close) {
+    var open = close - 900, T = m.tot, segs = m.segs;
+    function at(sec) { return recTime(open + sec); }
+    function span(s) { return at(s[0]) + " to " + at(s[1]); }
+    var full = m.first <= 30 && m.end >= 870, toClose = m.end >= 870, lastSeg = null;
+    for (var i = segs.length - 1; i >= 0; i--) if (segs[i][2] !== "n") { lastSeg = segs[i]; break; }
+    if (T.w === 0) {
+      if (T.l === 0) return "Too close to call the whole time (skipped)";
+      return T.s === 0 ? (full ? "Wrong the whole market" : "Wrong the whole time it was watching") : "Never right (wrong or too close to call the whole time)";
+    }
+    var right = segs.filter(function (s) { return s[2] === "w" && s[1] - s[0] >= 30; });
+    if (!right.length) return "Right only for a moment (" + tlMin(T.w) + ")";
+    if (T.l === 0 && T.s === 0) return full ? "Right the whole market" : "Right the whole time it was watching (from " + at(m.first) + ")";
+    var lastRight = right[right.length - 1], earlier = right.slice(0, -1).slice(-2).map(span);
+    if (lastRight === lastSeg) {
+      var t = toClose ? "Right from " + at(lastRight[0]) + " (the last " + tlMin(lastRight[1] - lastRight[0]) + ")"
+                      : "Right from " + at(lastRight[0]) + " to " + at(lastRight[1]) + " (where it stopped watching)";
+      return t + (earlier.length ? "; also right " + earlier.join(" and ") : "");
+    }
+    var shown = right.slice(0, 3).map(span).join(" and ");
+    var more = right.length > 3 ? " and " + (right.length - 3) + " more times" : "";
+    var tail = lastSeg && lastSeg[2] === "l" ? ", wrong " : lastSeg && lastSeg[2] === "s" ? ", skipped " : ", not right ";
+    return "Right " + shown + more + (right.length === 1 ? " (" + tlMin(right[0][1] - right[0][0]) + ")" : "") + tail + (toClose ? "at the close" : "when it stopped watching");
+  }
+  function tlRow(r) {
+    var m = tlParse(r); if (!m) return "";
+    var close = Number(r[0]) || 0, open = close - 900, ended = r[1] === "U" ? "UP" : "DOWN", text = tlText(m, close);
+    var names = { w: "right", l: "wrong", s: "skipped (too close to call)", n: "not watched" };
+    var bar = m.segs.map(function (s) {
+      var tip = recTime(open + s[0]) + " to " + recTime(open + s[1]) + ": " + (s[2] === "n" ? "the bot wasn't watching" : "called " + (s[3] === "T" ? "too close to call" : (s[3] === "U" ? "UP" : "DOWN")) + (s[2] === "s" ? "" : ", " + names[s[2]]));
+      return "<i class='" + s[2] + "' style='width:" + ((s[1] - s[0]) / 9).toFixed(3) + "%' title='" + esc(tip) + "'></i>";
+    }).join("");
+    var parts = []; [["w", "right "], ["l", "wrong "], ["s", "skipped "], ["n", "not watched "]].forEach(function (x) { if (m.tot[x[0]] >= 1) parts.push(x[1] + tlMin(m.tot[x[0]])); });
+    var subText = parts.join(", "); subText = subText.charAt(0).toUpperCase() + subText.slice(1);
+    return "<li class='tlrow'><div class='tlhead'><b>" + esc(recTime(open) + " to " + recTime(close)) + "</b><span class='" + (r[1] === "U" ? "up" : "down") + "'>Ended " + ended + "</span></div>" +
+      "<div class='tlbar' role='img' aria-label='" + esc(text) + "'>" + bar + "</div><p class='tlmain'>" + esc(text) + "</p><p class='tlsub'>" + esc(subText) + "</p></li>";
+  }
+  function tlAgg(rows) {
+    var o = { n: 0, w: 0, l: 0 };
+    rows.forEach(function (r) { var m = tlParse(r); if (!m) return; o.n++; o.w += m.tot.w; o.l += m.tot.l; });
+    return o;
+  }
+  function tlHtml(rows) {
+    var withTl = rows.filter(function (r) { return !!tlParse(r); }).reverse();
+    if (!withTl.length) return "<div class='tlh'>When the call was right</div><p class='recnote'>This fills in for markets that finish after the bot is updated. Each one will show a bar from open to close, and when in that market the call matched the result.</p>";
+    var ag = tlAgg(withTl), pct = (ag.w + ag.l) >= 60 ? Math.round(100 * ag.w / (ag.w + ag.l)) : null;
+    var more = S.recMore && withTl.length > 8, list = withTl.slice(0, more ? 24 : 8);
+    var out = "<div class='tlh'>When the call was right</div>";
+    if (pct != null) out += "<p class='tlbig'>Right for <b>" + pct + "%</b> of the time it made a call, over the last " + ag.n + (ag.n === 1 ? " market" : " markets") + ".</p>";
+    if (ag.n < 10) out += "<p class='recnote recsmall'>That is only " + ag.n + (ag.n === 1 ? " market" : " markets") + " so far, so it can swing a lot.</p>";
+    out += "<p class='recsub'>One bar per 15-minute market, from open to close, newest first. Green means that at that moment the bot&rsquo;s call matched how the market ended.</p>" +
+      "<div class='reclegend tlkey'><span><i class='kw w'></i>right</span><span><i class='kw l'></i>wrong</span><span><i class='kw s'></i>too close to call</span><span><i class='kw n'></i>not watched</span></div>" +
+      "<div class='tlscale' aria-hidden='true'><span>Open</span><span class='m' style='left:33.33%'>5 min</span><span class='m' style='left:66.67%'>10 min</span><span>Close</span></div><ol class='tllist'>" + list.map(tlRow).join("") + "</ol>";
+    if (withTl.length > 8) out += "<button type='button' class='link' data-rm='1'>" + (more ? "Show fewer" : "Show older markets") + "</button>";
+    return out;
+  }
+  function tlAllHtml(data) {
+    var rowsHtml = "";
+    COINS.forEach(function (c) {
+      var ag = tlAgg((((data && data.coins) || {})[c[0]] || {}).r || []); if (!ag.n) return;
+      rowsHtml += "<tr><td>" + esc(c[0]) + "</td><td class='n'>" + ag.n + (ag.n === 1 ? " market" : " markets") + "</td><td>" + ((ag.w + ag.l) >= 60 ? recWin(ag.w, ag.l) : "<span class='sm'>-</span>") + "</td></tr>";
+    });
+    if (!rowsHtml) return "";
+    return "<div class='tlh'>How much of the time the call was right</div><p class='recsub'>Counts the time the bot had a call out (not the &ldquo;too close to call&rdquo; time), across its recent markets. Tap a coin and open its own record to see each market.</p>" +
+      "<table class='rectable'><thead><tr><th>Coin</th><th>Looked at</th><th>Right for</th></tr></thead><tbody>" + rowsHtml + "</tbody></table>";
+  }
   function recHtml() {
     var data = S.rec && S.rec.data, view = S.recView === "all" ? "all" : "coin", coin = S.coin;
     var cps = (data && data.cps && data.cps.length) ? data.cps : [["open", "At open", 900], ["mid", "8 min left", 480], ["late", "3 min left", 180], ["last", "1 min left", 60]];
@@ -645,7 +769,7 @@ button{font-family:inherit}
         var t = recSum(data, c[0], S.recCp); if (!(t[0] + t[1] + t[2])) return;
         h += "<tr><td>" + esc(c[0]) + (t[2] ? "<small>" + t[2] + " skipped</small>" : "") + "</td><td class='n'>" + t[0] + " - " + t[1] + "</td><td>" + recWin(t[0], t[1]) + "</td></tr>";
       });
-      h += "</tbody></table>";
+      h += "</tbody></table>" + tlAllHtml(data);
     } else {
       var rows = (((data && data.coins) || {})[coin] || {}).r || [];
       h += "<div class='recstrip' role='list' aria-label='Newest results on the right'>" + rows.slice(-24).map(function (r) {
@@ -658,6 +782,7 @@ button{font-family:inherit}
         return "<span class='rd " + cls + "' role='listitem' title='" + esc(txt) + "' aria-label='" + esc(txt) + "'>" + glyph + "</span>";
       }).join("") + "</div>";
       h += "<div class='reclegend'><span>&#10003; right</span><span>&#10007; wrong</span><span>&ndash; skipped (too close to call)</span><span>&middot; no call made</span></div>";
+      h += tlHtml(rows);
     }
     if (graded < 20) h += "<p class='recnote recsmall'>Only " + graded + " graded " + (graded === 1 ? "call" : "calls") + " so far at &ldquo;" + esc(cpLabel) + "&rdquo;, so these numbers can swing a lot. They get more meaningful as more markets settle.</p>";
     h += "<p class='recnote'>&ldquo;Skipped&rdquo; means the bot said it was too close to call, so it isn&rsquo;t counted as a win or a loss. Calls made later in a market are easier, because less time is left, so look at the early ones too. Past results don&rsquo;t promise the next market.</p></article>";
@@ -670,10 +795,11 @@ button{font-family:inherit}
     wrap.innerHTML = recHtml();
   }
   $("recWrap").addEventListener("click", function (ev) {
-    var b = ev.target.closest && ev.target.closest("button[data-rv], button[data-rc]");
+    var b = ev.target.closest && ev.target.closest("button[data-rv], button[data-rc], button[data-rm]");
     if (!b) return;
     if (b.dataset.rv) { S.recView = b.dataset.rv === "all" ? "all" : "coin"; store("kh_live_recv", S.recView); }
     if (b.dataset.rc) { S.recCp = b.dataset.rc; store("kh_live_reccp", S.recCp); }
+    if (b.dataset.rm) S.recMore = !S.recMore;
     renderRecord();
   });
 
@@ -746,6 +872,7 @@ button{font-family:inherit}
             "<p class='sm' data-k='rsiTxt'></p></div>" +
           "<table class='tf'><thead><tr><th></th><th>1 min</th><th>5 min</th><th>15 min</th></tr></thead><tbody><tr><th>RSI</th><td data-k='tf_rsi_1m'></td><td data-k='tf_rsi_5m'></td><td data-k='tf_rsi_15m'></td></tr>" +
             "<tr><th>EMA 9/21</th><td data-k='tf_ema_1m'></td><td data-k='tf_ema_5m'></td><td data-k='tf_ema_15m'></td></tr></tbody></table>" +
+          "<div class='sig' data-k='rnd' hidden><div class='sig-h'><span>This round</span><span class='rsince' data-k='rndSince'></span></div><p class='sm' data-k='rndRsi'></p><p class='sm' data-k='rndEma'></p></div>" +
           "<p class='fine2'>Shown for reference. The call comes from the bot&rsquo;s own model, which also reads these.</p></aside>" +
         "<section class='panel plain kal' aria-label='Kalshi price'><h3>Kalshi price</h3><div data-k='kalshi'></div></section>" +
         "<section class='panel plain scalpp' aria-label='Scalp'><h3>Scalp</h3><div data-k='scalp'></div></section>" +
@@ -868,12 +995,29 @@ button{font-family:inherit}
     for (var i = n - 2; i >= Math.max(n - 62, 0); i--) { if ((e9[i] >= e21[i]) !== up) { ago = n - 2 - i; break; } }
     return { rsi: ser.rs[n - 1], e9: e9[n - 1], e21: e21[n - 1], side: up ? "UP" : "DOWN", x_min: ago, gap: Math.abs(e9[n - 1] - e21[n - 1]) };
   }
+  function gapDollars(g, ref) { var a = Math.abs(g); return (a < 1 && ref >= 10) ? a.toFixed(2) : dollars(g, ref); }   // a gap of 20 cents shows as 0.20, not 0
+  /* the same RSI and EMA lines, but compared with where they stood when THIS market opened (starts over with every new round) */
+  function paintRound(r, d, ser) {
+    var n = ser.cs.length, openTs = d.close_ts - 900, k = -1, i;
+    for (i = 0; i < n; i++) { if (ser.cs[i][0] < openTs) k = i; else break; }          // the last finished candle before the market opened
+    if (!(k >= 21 && k < n - 1 && ser.rs[k] != null && ser.rs[n - 1] != null)) { r.rnd.hidden = true; return; }
+    r.rnd.hidden = false;
+    setText(r.rndSince, "since " + clockTime(openTs));
+    if (ser.nowS - openTs < 45) { setText(r.rndRsi, "This market just opened. How RSI and EMA move through it will show here."); setText(r.rndEma, ""); return; }
+    var e9 = ser.e9, e21 = ser.e21, a = Math.round(ser.rs[k]), z = Math.round(ser.rs[n - 1]);
+    var sideA = e9[k] >= e21[k], sideZ = e9[n - 1] >= e21[n - 1], cross = 0, prev = sideA;
+    for (i = k + 1; i < n; i++) { var s = e9[i] >= e21[i]; if (s !== prev) { cross++; prev = s; } }
+    setText(r.rndRsi, "RSI: " + a + " at the open, " + z + " now" + (z > a ? " (up " + (z - a) + ")." : z < a ? " (down " + (a - z) + ")." : " (no change)."));
+    var w = function (up) { return up ? "bullish" : "bearish"; };
+    setText(r.rndEma, "EMA 9/21: " + (sideA === sideZ && !cross ? w(sideZ) + " the whole round so far. No crossing." : w(sideA) + " at the open, " + w(sideZ) + " now. Crossed " + cross + (cross === 1 ? " time" : " times") + " this round."));
+  }
   function paintSignals(r, v, ser) {
     var d = v.data, ind = d.ind || {}, one = ind["1m"] || deriveOne(ser), spot = d.spot, c = d.call;
+    paintRound(r, d, ser);
     if (!one) { setText(r.verdict, "Not enough candles yet"); r.verdict.className = "verdict v-mix"; setText(r.verdict2, ""); return; }
     var side = one.side, st = emaState(one, spot), word = side === "UP" ? "up" : "down";
     setText(r.emaChip, st === "flat" ? "Flat" : side === "UP" ? "▲ Bullish" : "▼ Bearish"); r.emaChip.className = "chip " + chipCls(st);
-    var t = "EMA 9 is " + (side === "UP" ? "above" : "below") + " EMA 21 by $" + dollars(one.gap || 0, spot) + ".";
+    var t = "EMA 9 is " + (side === "UP" ? "above" : "below") + " EMA 21 by $" + gapDollars(one.gap || 0, spot) + ".";
     if (one.x_min != null) t += one.x_min === 0 ? " They just crossed " + word + "." : " They crossed " + word + " " + one.x_min + " min ago.";
     setText(r.emaTxt, t);
     var hi = Math.max(one.e9, one.e21), lo = Math.min(one.e9, one.e21);
@@ -895,7 +1039,7 @@ button{font-family:inherit}
     });
     var vt, vc, v2 = "";
     if (ups > downs) { vt = ups + " of " + total + " signals lean UP"; vc = "v-up"; } else if (downs > ups) { vt = downs + " of " + total + " signals lean DOWN"; vc = "v-down"; } else { vt = "Signals are mixed"; vc = "v-mix"; }
-    if (c.conf !== "TOSS-UP" && ups !== downs) v2 = ((ups > downs ? "UP" : "DOWN") === c.side) ? "This agrees with the bot's call." : "This points the other way from the bot's call.";
+    if (c.conf !== "TOSS-UP" && ups !== downs) v2 = ((ups > downs ? "UP" : "DOWN") === c.side) ? "This agrees with the bot's call." : "This trend points the other way from the bot's call. The call is about where the price ends against the target; this is only the recent trend.";
     setText(r.verdict, vt); r.verdict.className = "verdict " + vc; setText(r.verdict2, v2);
   }
 
@@ -1172,7 +1316,7 @@ button{font-family:inherit}
   }
   function ownerSay(t, ok) { $("ownerMsg").className = "msg " + (ok ? "ok" : "err"); $("ownerMsg").textContent = t; }
   function isGuest(key) { return String(key).indexOf("GUEST-") === 0; }
-  function kname(key, cap) { return isGuest(key) ? (cap ? "Guest access" : "that guest") : (cap ? "Receipt " : "receipt ") + key; }
+  function kname(key, cap) { if (String(key).indexOf("TRIAL-") === 0) return cap ? "Free trial" : "that free trial"; return isGuest(key) ? (cap ? "Guest access" : "that guest") : (cap ? "Receipt " : "receipt ") + key; }
   function fmtCode(c) { return String(c || "").replace(/[^A-Za-z0-9]/g, "").toUpperCase().replace(/(.{4})(?=.)/g, "$1-"); }
   function inviteText(code) {
     return "Here is your access code for the Kiros helper live board: " + fmtCode(code) + "\nGo to " + location.origin + location.pathname + " and type the code in the box. It works on up to 2 devices, so please keep it to yourself.";
