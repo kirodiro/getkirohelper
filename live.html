@@ -94,7 +94,7 @@ button{font-family:inherit}
 
 /* the board */
 .board{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;position:relative}
-@media(min-width:940px){.board{grid-template-columns:minmax(0,1fr) 340px;align-items:start}.strip,.details{grid-column:1/-1}.chartp,.kal{grid-column:1}.signals,.scalpp{grid-column:2}.chartp,.signals{grid-row:2}.kal,.scalpp{grid-row:3}}
+@media(min-width:940px){.board{grid-template-columns:minmax(0,1fr) 340px;align-items:start}.strip,.details,.walert{grid-column:1/-1}.chartp,.kal{grid-column:1}.signals,.scalpp{grid-column:2}.chartp,.signals{grid-row:2}.kal,.scalpp{grid-row:3}}
 .board.is-loading .strip>*,.board.is-loading .chartp,.board.is-loading .signals,.board.is-loading .plain{opacity:.22}
 .loading{position:absolute;inset:0;z-index:2;display:flex;align-items:flex-start;justify-content:center;padding-top:72px;color:var(--muted);text-align:center;pointer-events:none}
 .panel,.card{border:1px solid var(--line);border-radius:8px;background:var(--panel)}
@@ -175,6 +175,37 @@ button{font-family:inherit}
 .tvhost{height:440px;border-radius:6px;overflow:hidden;background:var(--bg)}
 @media(max-width:600px){.tvhost{height:400px}}
 .tvmsg{padding:14px;color:var(--muted);font-size:.9rem}
+.tvtools{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 8px}
+.tvtg{appearance:none;cursor:pointer;min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);background:var(--raise);color:var(--muted);font:600 .84rem/1 var(--font);display:inline-flex;align-items:center;gap:8px}
+.tvtg::before{content:"";width:14px;height:3px;border-radius:2px;background:var(--line2)}
+.tvtg[aria-pressed=true]{color:var(--ink);border-color:var(--target)}
+.tvtg[aria-pressed=true]::before{background:var(--target)}
+.tvtg:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.tvtgtx{margin:0;font-variant-numeric:tabular-nums}
+.wban{grid-column:1/-1;display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;padding:9px 12px;border-radius:8px;background:var(--flatbg)}
+.wban[hidden]{display:none}
+.wban.up{background:var(--upbg)}.wban.down{background:var(--downbg)}
+.wbt{min-width:0}.wbt b{font:700 .95rem/1.3 var(--font)}
+.wban.up b{color:var(--up)}.wban.down b{color:var(--down)}
+.wage{color:var(--muted);font-size:.84rem;font-variant-numeric:tabular-nums}
+.wgo{margin-left:auto;appearance:none;cursor:pointer;min-height:34px;padding:0 13px;border-radius:999px;border:1px solid var(--line2);background:var(--bg);color:var(--ink);font:600 .82rem/1 var(--font)}
+.wgo:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.walert{padding:14px 16px}
+.wlist{list-style:none;margin:8px 0 0;padding:0}
+.wi{padding:11px 0;border-top:1px solid var(--line)}.wi:first-child{border-top:0;padding-top:4px}
+.wh{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px}
+.wt{margin-left:auto;color:var(--muted);font-size:.8rem;font-variant-numeric:tabular-nums}
+.wtitle{margin:7px 0 2px;font-weight:650}
+.wv{color:var(--muted)}
+.wnone{margin-top:8px}
+.wsec{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;margin:16px 0 0}
+.wsec h4{margin:0;font:650 .95rem/1.3 var(--font)}
+.wlate{appearance:none;cursor:pointer;min-height:34px;padding:0 13px;border-radius:999px;border:1px solid var(--line2);background:var(--raise);color:var(--muted);font:600 .8rem/1 var(--font)}
+.wlate[aria-pressed=true]{color:var(--ink);border-color:var(--warn)}
+.wlate:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.wnote{margin-top:10px;color:var(--muted)}
+.wbadge{margin-left:3px;font-size:.9em}
+.wbadge[hidden]{display:none}
 .tvnote{margin:8px 2px 0}
 
 /* indicators and the side column */
@@ -202,7 +233,14 @@ button{font-family:inherit}
 .tf{width:100%;border-collapse:collapse;margin-top:6px}
 .tf th{font:500 .8rem/1.2 var(--font);color:var(--muted);text-align:left;padding:6px 0;font-weight:500}
 .tf thead th{text-align:center}
-.tf td{text-align:center;padding:4px 2px;border-top:1px solid var(--line)}
+.tf td{text-align:center;padding:4px 1px;border-top:1px solid var(--line)}
+.tf thead th{font-size:.74rem;padding-bottom:4px}
+.tf .chip{padding:2px 5px;font-size:.74rem;gap:2px;white-space:nowrap}
+.tf tbody th{white-space:nowrap;padding-right:6px}
+.tfhelp{margin-top:8px;font-size:.84rem;color:var(--muted)}
+.tfhelp summary{cursor:pointer;min-height:32px;display:flex;align-items:center;color:var(--ink);font-weight:600}
+.tfhelp summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.tfhelp ul{margin:4px 0 0;padding-left:18px}.tfhelp li{margin:4px 0;line-height:1.4}
 .tf tbody th{border-top:1px solid var(--line)}
 .fine2{margin-top:10px;font-size:.78rem;color:var(--faint)}
 .sig-h .rsince{color:var(--muted);font-weight:400;font-size:.85rem}
@@ -837,6 +875,7 @@ button{font-family:inherit}
     COINS.forEach(function (c) {
       var b = document.createElement("button");
       b.type = "button"; b.className = "coinbtn"; b.dataset.coin = c[0]; b.textContent = c[0]; b.title = c[1];
+      var wb = document.createElement("span"); wb.className = "wbadge"; wb.hidden = true; wb.setAttribute("aria-hidden", "true"); wb.textContent = "\uD83D\uDC0B"; b.appendChild(wb);
       b.addEventListener("click", function () {
         if (S.coin === c[0]) return;
         S.coin = c[0]; store("kh_live_coin", c[0]); S.waiting = null; S.hover = null;
@@ -874,6 +913,7 @@ button{font-family:inherit}
           "<div class='pxrow'><span class='lab' data-k='targetLab'>Target</span><b data-k='target'></b></div>" +
           "<div class='pxrow'><span class='lab'>Gap</span><b data-k='gap'></b></div>" +
           "<div class='pxrow'><span class='lab'>Likely finish</span><b data-k='finish'></b></div></div>" +
+        "<div class='wban' data-k='wban' hidden><div class='wbt' role='status'><b data-k='wbanT'></b></div><span class='wage' data-k='wbanS' aria-hidden='true'></span><button type='button' class='wgo' data-k='wbanGo'>See it</button></div>" +
         "<div class='tline' aria-hidden='true'><i data-k='tline'></i></div>" +
       "</section>" +
       "<section class='panel chartp' aria-label='Chart'>" +
@@ -883,8 +923,8 @@ button{font-family:inherit}
         "<div class='inds' data-k='inds' role='group' aria-label='Chart indicators'>" + indChips() + "</div>" +
         "<div class='readout' data-k='readout' aria-live='off'></div>" +
         "<div class='cwrap' data-k='botChart'><div id='chart' class='lwbox' data-k='lwbox' role='img' aria-label='Live candles'></div><button type='button' class='lwreset' data-k='lwReset' hidden>Back to now</button><p class='sm fine2 indnote' data-k='indNote'>Drag to look back. Scroll the mouse wheel or pinch to zoom. Drawn from the same candles the bot uses. These help you read the trend and don&rsquo;t change the call. Chart by <a href='https://www.tradingview.com/' target='_blank' rel='noopener'>TradingView Lightweight Charts&trade;</a>.</p></div>" +
-        "<div data-k='tvChart' hidden><p class='tvmsg' data-k='tvMsg' hidden></p><div class='tvhost' data-k='tvHost'></div>" +
-          "<p class='sm tvnote'>TradingView draws exchange prices, so they can sit a little away from Kalshi&rsquo;s own price. The target line is on the Candles tab. Add more indicators with the Indicators button at the top of the chart.</p></div>" +
+        "<div data-k='tvChart' hidden><div class='tvtools'><button type='button' class='tvtg' data-k='tvTgBtn' aria-pressed='false'>Target line</button><span class='sm tvtgtx' data-k='tvTgTxt'></span></div><p class='tvmsg' data-k='tvMsg' hidden></p><div class='tvhost' data-k='tvHost'></div>" +
+          "<p class='sm tvnote'>TradingView draws exchange prices, so they can sit a little away from Kalshi&rsquo;s own price. Switch Target line on to ask TradingView to draw Kalshi&rsquo;s target on its own chart. The chart reloads when a new round starts. If no line appears, switch it off; the target is always shown next to the switch and on the Candles tab. Add more indicators with the Indicators button at the top of the chart.</p></div>" +
       "</section>" +
         "<aside class='panel signals' aria-label='Indicators'><h3>Indicators</h3><p class='verdict v-mix' data-k='verdict'></p><p class='sm' data-k='verdict2'></p>" +
           "<div class='sig'><div class='sig-h'><span>EMA 9 and 21 (1 min)</span><b class='chip' data-k='emaChip'></b></div><p class='sm' data-k='emaTxt'></p><p class='sm' data-k='emaPx'></p></div>" +
@@ -892,12 +932,17 @@ button{font-family:inherit}
             "<div class='gwrap'><div class='gauge' aria-hidden='true'><i></i><i></i><i></i><i></i><i></i></div><span class='gmark' data-k='gmark'></span>" +
             "<div class='gnums' aria-hidden='true'><span style='left:30%'>30</span><span style='left:50%'>50</span><span style='left:70%'>70</span></div></div>" +
             "<p class='sm' data-k='rsiTxt'></p></div>" +
-          "<table class='tf'><thead><tr><th></th><th>1 min</th><th>5 min</th><th>15 min</th></tr></thead><tbody><tr><th>RSI</th><td data-k='tf_rsi_1m'></td><td data-k='tf_rsi_5m'></td><td data-k='tf_rsi_15m'></td></tr>" +
-            "<tr><th>EMA 9/21</th><td data-k='tf_ema_1m'></td><td data-k='tf_ema_5m'></td><td data-k='tf_ema_15m'></td></tr></tbody></table>" +
+          tfTable() +
           "<div class='sig' data-k='rnd' hidden><div class='sig-h'><span>This round</span><span class='rsince' data-k='rndSince'></span></div><p class='sm' data-k='rndRsi'></p><p class='sm' data-k='rndEma'></p></div>" +
-          "<p class='fine2'>Shown for reference. The call comes from the bot&rsquo;s own model, which also reads these.</p></aside>" +
+          "<p class='fine2'>The lean count above uses EMA, RSI and MACD. The bot&rsquo;s own model reads all of these when it makes its call, along with the other charts.</p></aside>" +
         "<section class='panel plain kal' aria-label='Kalshi price'><h3>Kalshi price</h3><div data-k='kalshi'></div></section>" +
         "<section class='panel plain scalpp' aria-label='Scalp'><h3>Scalp</h3><div data-k='scalp'></div></section>" +
+        "<section class='panel plain walert' data-k='walerts' aria-label='Whale watch'><h3>Whale watch</h3>" +
+          "<p class='sm'>Big buys on Kalshi&rsquo;s 15-minute markets, and big moves on the exchanges. Someone else&rsquo;s bet is not a call from the bot.</p>" +
+          "<div class='wsec'><h4>Big buys on Kalshi</h4><button type='button' class='wlate' data-k='wlate' aria-pressed='false'>97c and up: hidden</button></div>" +
+          "<div data-k='wbuys'></div>" +
+          "<p class='sm wnote'>Most big buys are at 97c and up, late in a round: someone locking in a side that has all but won. They say little about where the round ends, so they stay hidden unless you switch them on. Big buyers lose too.</p>" +
+          "<div class='wsec'><h4>Big moves on the exchanges</h4></div><div data-k='alerts'></div></section>" +
             "<section class='details' data-k='details' aria-label='More detail' hidden></section>" +
     "</div>";
   }
@@ -911,7 +956,7 @@ button{font-family:inherit}
     if (R) lwDestroy(R);
     viewEl.innerHTML = boardHTML();
     R = bind(viewEl);
-    S.geo = null; S.hover = null; S.tvCoin = null; S.tvTf = null; clearTimeout(S.tvTimer);
+    S.geo = null; S.hover = null; S.tvCoin = null; S.tvTf = null; S.tvLine = ""; S.tvAt = 0; S.late = store("kh_live_late") === "1"; S.tvTg = store("kh_live_tvtg") === "1"; clearTimeout(S.tvTimer);
     var t = store("kh_live_tab"); S.tab = t === "tv" ? "tv" : "bot";
     var q = store("kh_live_tf"); S.tf = TFS[q] ? q : "1";
     S.ind = loadInd();
@@ -919,7 +964,10 @@ button{font-family:inherit}
       var b = ev.target.closest && ev.target.closest("button[data-tab]"); if (b) return setTab(b.dataset.tab);
       b = ev.target.closest && ev.target.closest("button[data-tf]"); if (b) return setTf(b.dataset.tf);
       b = ev.target.closest && ev.target.closest("button[data-ind]"); if (b) return toggleInd(b.dataset.ind);
-      b = ev.target.closest && ev.target.closest("button.lwreset"); if (b && R && R.lw) lwHome(R.lw);
+      b = ev.target.closest && ev.target.closest("button.lwreset"); if (b && R && R.lw) return lwHome(R.lw);
+      b = ev.target.closest && ev.target.closest("button.tvtg"); if (b) return setTvTarget(!S.tvTg);
+      b = ev.target.closest && ev.target.closest("button.wlate"); if (b) { S.late = !S.late; store("kh_live_late", S.late ? "1" : null); if (S.view[S.coin]) paintAlerts(R, S.view[S.coin], false); return; }
+      b = ev.target.closest && ev.target.closest("button.wgo"); if (b && R && R.walerts) { goAlerts(b.dataset.coin); return; }
     });
     markTf(); markInds();
     setTab(S.tab, true);
@@ -1002,6 +1050,28 @@ button{font-family:inherit}
     return { cls: "warn", txt: "Oversold. After a drop like this a bounce is more likely." };
   }
   function chipCls(c) { return c === "flat" ? "" : c; }
+  /* the Indicators table: a column per chart size, a row per indicator. To add an indicator, add one entry to TFROWS.
+     cell(i, spot) gets that chart's readings from the bot and returns the chip (colour class and text) and which way it leans (1 up, -1 down, 0 neither);
+     "count" says whether it joins the lean count in the heading. It returns null when that chart is too short for the indicator. */
+  var TFCOLS = [["1m", "1 min"], ["5m", "5 min"], ["15m", "15 min"], ["30m", "30 min"], ["1h", "1 hr"]];
+  var TFROWS = [
+    { id: "rsi", label: "RSI", count: true, cell: function (i) { if (i.rsi == null) return null; var z = rsiZone(i.rsi); return { cls: z.cls, text: String(Math.round(i.rsi)), lean: i.rsi > 55 && i.rsi < 70 ? 1 : (i.rsi < 45 && i.rsi > 30 ? -1 : 0) }; } },
+    { id: "ema", label: "EMA 9/21", count: true, cell: function (i, spot) { var s = emaState(i, spot); return { cls: s, text: s === "flat" ? "Flat" : i.side === "UP" ? "\u25B2 Bull" : "\u25BC Bear", lean: s === "up" ? 1 : s === "down" ? -1 : 0 }; } },
+    { id: "macd", label: "MACD", count: true, cell: function (i) { if (!i.macd) return null; var up = i.macd.side === "UP"; return { cls: up ? "up" : "down", text: up ? "\u25B2 Bull" : "\u25BC Bear", lean: up ? 1 : -1 }; } },
+    { id: "bb", label: "Bollinger", count: false, cell: function (i) { if (!i.bb) return null; var p = i.bb.pb; return { cls: (p >= 1 || p <= 0) ? "warn" : p > 0.8 ? "up" : p < 0.2 ? "down" : "flat", text: Math.round(p * 100) + "%", lean: 0 }; } },
+    { id: "st", label: "Stoch RSI", count: false, cell: function (i) { if (i.st == null) return null; return { cls: (i.st >= 80 || i.st <= 20) ? "warn" : "flat", text: String(Math.round(i.st)), lean: 0 }; } }
+  ];
+  function tfTable() {
+    var h = "<table class='tf'><thead><tr><th></th>" + TFCOLS.map(function (c) { return "<th>" + c[1] + "</th>"; }).join("") + "</tr></thead><tbody>";
+    TFROWS.forEach(function (row) { h += "<tr><th>" + row.label + "</th>" + TFCOLS.map(function (c) { return "<td data-k='tf_" + row.id + "_" + c[0] + "'></td>"; }).join("") + "</tr>"; });
+    return h + "</tbody></table><details class='tfhelp'><summary>What these mean</summary><ul>" +
+      "<li><b>RSI</b>: over 70 is stretched up, under 30 is stretched down.</li>" +
+      "<li><b>EMA 9/21</b>: Bull when the fast line is above the slow line, Bear when it is below.</li>" +
+      "<li><b>MACD</b>: Bull when momentum is rising, Bear when it is fading.</li>" +
+      "<li><b>Bollinger</b>: where the price sits between the bottom (0%) and the top (100%) of its normal range. Past either end is stretched.</li>" +
+      "<li><b>Stoch RSI</b>: where the RSI sits in its own recent range. Over 80 is high, under 20 is low.</li>" +
+      "<li>A dash means that chart is still loading or is too short for that indicator.</li></ul></details>";
+  }
   function emaState(i, spot) { return (spot && Math.abs(i.gap || 0) / spot < 0.00003) ? "flat" : (i.side === "UP" ? "up" : "down"); }
   function deriveOne(ser) {
     var n = ser.cs.length; if (n < 24) return null;
@@ -1041,15 +1111,15 @@ button{font-family:inherit}
     r.gmark.style.left = Math.max(0, Math.min(100, rv == null ? 50 : rv)).toFixed(1) + "%";
     setText(r.rsiTxt, z.txt);
     var ups = 0, downs = 0, total = 0;
-    ["1m", "5m", "15m"].forEach(function (tf) {
-      var i = tf === "1m" ? one : ind[tf], rc = r["tf_rsi_" + tf], ec = r["tf_ema_" + tf];
-      if (!i) { setText(rc, "-"); setText(ec, "-"); return; }
-      var rz = rsiZone(i.rsi == null ? 50 : i.rsi), es = emaState(i, spot);
-      setHTML(rc, "<b class='chip " + chipCls(rz.cls) + "'>" + (i.rsi == null ? "-" : Math.round(i.rsi)) + "</b>");
-      setHTML(ec, "<b class='chip " + chipCls(es) + "'>" + (es === "flat" ? "Flat" : i.side === "UP" ? "▲ Bull" : "▼ Bear") + "</b>");
-      total += 2;
-      if (es === "up") ups++; else if (es === "down") downs++;
-      if (i.rsi != null) { if (i.rsi > 55 && i.rsi < 70) ups++; else if (i.rsi < 45 && i.rsi > 30) downs++; else if (i.rsi >= 70) downs += 0; }
+    TFCOLS.forEach(function (col) {
+      var tf = col[0], i = tf === "1m" ? one : ind[tf];
+      TFROWS.forEach(function (row) {
+        var el = r["tf_" + row.id + "_" + tf]; if (!el) return;
+        var c = i ? row.cell(i, spot) : null;
+        if (!c) { setText(el, "-"); return; }
+        setHTML(el, "<b class='chip " + chipCls(c.cls) + "'>" + c.text + "</b>");
+        if (row.count) { total++; if (c.lean > 0) ups++; else if (c.lean < 0) downs++; }
+      });
     });
     var vt, vc, v2 = "";
     if (ups > downs) { vt = ups + " of " + total + " signals lean UP"; vc = "v-up"; } else if (downs > ups) { vt = downs + " of " + total + " signals lean DOWN"; vc = "v-down"; } else { vt = "Signals are mixed"; vc = "v-mix"; }
@@ -1100,8 +1170,87 @@ button{font-family:inherit}
     paintFlip(r, v, left);
     paintSignals(r, v, buildSeries(v, ch, "1", sample));      // the indicator panel is always the 1-minute view
     var ser = (sample || S.tab !== "tv") ? buildSeries(v, ch, sample ? "1" : S.tf, sample) : null;
-    paintKalshi(r, d); paintScalp(r, d); paintDetails(r, d);
+    paintKalshi(r, d); paintScalp(r, d); paintDetails(r, d); paintAlerts(r, v, sample);
     if (ser) drawChart(r, v, ser, sample);
+    if (sample) paintTvTarget(); else tvSync();
+  }
+  /* ---------- whale watch: big buys on Kalshi's 15-minute markets, and the long candles / sudden moves the bot also sends Discord ----------
+     A whale buy ($1,000+ under 97c) flags that coin's button and the banner for 90 seconds, whichever coin you are looking at. */
+  var WHALE_SECS = 90, MOVE_SECS = 180;
+  var ALERT_VERDICT = { holding: "Checked back: the move is still holding.", partly: "Checked back: part of the move has been given back.", faded: "Checked back: most of the move is gone." };
+  function alertAge(v, t) { return Math.max(0, (v.data.built || t) + ageNow(v) - t); }          // the bot's clock, never this device's
+  function agoText(s) { return s < 10 ? "just now" : s < 60 ? Math.round(s) + "s ago" : s < 3600 ? Math.floor(s / 60) + "m ago" : "over an hour ago"; }
+  function bigMoney(x) { return "$" + Math.round(x).toLocaleString("en-US"); }
+  function alertTitle(d, e) {
+    var down = e.dir === "DOWN";
+    if (e.k === "candle") return d.coin + " long " + (down ? "red" : "green") + " candle";
+    return d.coin + (down ? " dropped" : " jumped") + (e.usd != null ? " $" + dollars(e.usd, d.spot) : "") + (typeof e.pct === "number" ? " (" + (e.pct > 0 ? "+" : "") + e.pct.toFixed(2) + "%)" : "");
+  }
+  function alertBody(d, e) {
+    var down = e.dir === "DOWN", t = "", ch = Array.isArray(e.ch) ? e.ch : [];
+    if (e.k === "candle") {
+      t = (e.usd != null ? "$" + dollars(e.usd, d.spot) + (down ? " down" : " up") : "A big candle") + (ch.length ? " on the " + ch.join(" + ") + (ch.length > 1 ? " charts" : " chart") : "") + ".";
+      if (e.x) t += " About " + Math.round(e.x) + "x bigger than the recent candles.";
+    } else if (e.secs) t = "In " + (e.secs < 60 ? e.secs + " seconds" : Math.round(e.secs / 60) + " min") + ".";
+    if (e.whale) t += " " + (down ? "Someone big may be selling." : "Someone big may be buying.");
+    return t;
+  }
+  function moveRow(v, e) {
+    var d = v.data, down = e.dir === "DOWN", tr = e.whale && e.tr ? "Biggest recent trade: " + Number(e.tr.c).toLocaleString("en-US", { maximumFractionDigits: 2 }) + " " + d.coin + " (about " + bigMoney(e.tr.usd) + ")." : "";
+    return "<li class='wi'><div class='wh'><span class='chip " + (down ? "down" : "up") + "'>" + (down ? "Down" : "Up") + "</span>" + (e.whale ? "<span class='chip warn'>Whale-size trade</span>" : "") +
+      "<span class='wt'>" + esc(agoText(alertAge(v, e.t))) + " &middot; " + esc(clockTime(e.t)) + "</span></div>" +
+      "<p class='wtitle'>" + esc(alertTitle(d, e)) + "</p><p class='sm'>" + esc(alertBody(d, e)) + "</p>" + (tr ? "<p class='sm'>" + esc(tr) + "</p>" : "") +
+      (ALERT_VERDICT[e.v] ? "<p class='sm wv'>" + esc(ALERT_VERDICT[e.v]) + "</p>" : "") + "</li>";
+  }
+  function leftTxt(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + "m " + ("0" + (s % 60)).slice(-2) + "s"; }
+  function buyRow(v, b) {
+    var d = v.data, up = b.side === "UP", left = Math.max(0, (b.close || 0) - b.t), late = !!b.late;
+    return "<li class='wi'><div class='wh'><span class='chip " + (up ? "up" : "down") + "'>" + (up ? "UP (Yes)" : "DOWN (No)") + "</span>" + (late ? "<span class='chip'>Late buy</span>" : "") +
+      "<span class='wt'>" + esc(agoText(alertAge(v, b.t))) + " &middot; " + esc(clockTime(b.t)) + "</span></div>" +
+      "<p class='wtitle'>" + esc(bigMoney(b.usd) + " bought on " + (up ? "UP" : "DOWN")) + "</p>" +
+      "<p class='sm'>" + esc("Paid " + Math.round(b.px) + "c each for " + Number(b.n).toLocaleString("en-US", { maximumFractionDigits: 0 }) + " contracts." + (b.close ? " " + leftTxt(left) + " left in that round." : "")) + "</p></li>";
+  }
+  function goAlerts(coin) {
+    var calm = false; try { calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
+    var go = function () { if (R && R.walerts) R.walerts.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" }); };
+    if (coin && coin !== S.coin) { var btn = $("coins").querySelector('[data-coin="' + coin + '"]'); if (btn) { btn.click(); setTimeout(go, 450); return; } }
+    go();
+  }
+  function paintAlerts(r, v, sample) {
+    var d = v.data, w = d.whale, buys, i;
+    // 1. big buys on Kalshi
+    if (!w || !Array.isArray(w.buys)) setHTML(r.wbuys, "<p class='sm wnone'>Big buys aren&rsquo;t available right now.</p>");
+    else {
+      buys = w.buys.filter(function (b) { return b && typeof b.t === "number" && (b.side === "UP" || b.side === "DOWN") && typeof b.usd === "number" && (S.late || !b.late); });
+      buys.sort(function (x, y) { return y.t - x.t; }); buys = buys.slice(0, 10);
+      var hidden = w.buys.filter(function (b) { return b && b.late; }).length, minTxt = bigMoney(w.show || 500);
+      setHTML(r.wbuys, (buys.length ? "<ul class='wlist'>" + buys.map(function (b) { return buyRow(v, b); }).join("") + "</ul>" :
+        "<p class='sm wnone'>" + (w.ok === false ? "Couldn&rsquo;t read Kalshi&rsquo;s trades just now. This fills in when it can." : "No buys of " + esc(minTxt) + " or more yet this hour.") + (!S.late && hidden ? " " + hidden + " late " + (hidden === 1 ? "buy is" : "buys are") + " hidden." : "") + "</p>") +
+        (buys.length && w.ok === false ? "<p class='sm wnone'>Not updating right now.</p>" : ""));
+    }
+    r.wlate.setAttribute("aria-pressed", S.late ? "true" : "false"); setText(r.wlate, S.late ? "97c and up: shown" : "97c and up: hidden");
+    // 2. big moves on the exchanges (the same alerts Discord gets)
+    var list = (Array.isArray(d.alerts) ? d.alerts : []).filter(function (e) { return e && typeof e.t === "number" && (e.dir === "UP" || e.dir === "DOWN"); }).slice(0, 6);
+    setHTML(r.alerts, list.length ? "<ul class='wlist'>" + list.map(function (e) { return moveRow(v, e); }).join("") + "</ul>" : "<p class='sm wnone'>None in the last hour.</p>");
+    // 3. a whale on any coin: the banner and a whale on that coin's button
+    var best = null, wall = d.wall && typeof d.wall === "object" ? d.wall : {}, hot = {};
+    Object.keys(wall).forEach(function (c) {
+      var x = wall[c], age = x && typeof x.t === "number" && typeof x.usd === "number" && typeof x.px === "number" ? alertAge(v, x.t) : 1e9;
+      if (age < WHALE_SECS && (x.side === "UP" || x.side === "DOWN")) { hot[c] = age; if (!best || age < best.age) best = { age: age, coin: c, kind: "buy", dir: x.side, text: "Whale buy on " + c + ": " + bigMoney(x.usd) + " on " + x.side + " at " + Math.round(x.px) + "c" }; }
+    });
+    var top = list[0], mage = top ? alertAge(v, top.t) : 1e9;
+    if (top && mage < MOVE_SECS && (!best || mage < best.age)) best = { age: mage, coin: d.coin, kind: "move", dir: top.dir, text: (top.whale ? "Whale alert: " : "Big move: ") + alertTitle(d, top) };
+    r.wban.hidden = !best;
+    if (best) {
+      r.wban.className = "wban " + (best.dir === "DOWN" ? "down" : "up");
+      setText(r.wbanT, best.text); setText(r.wbanS, agoText(best.age)); r.wbanGo.dataset.coin = best.coin;
+      setText(r.wbanGo, best.coin !== S.coin && !sample ? "Go to " + best.coin : "See it");
+    }
+    if (!sample) Array.prototype.forEach.call($("coins").children, function (btn) {
+      var c = btn.dataset.coin, on = hot[c] != null, badge = btn.querySelector(".wbadge");
+      if (badge) badge.hidden = !on;
+      if (on) btn.setAttribute("aria-label", c + ", whale buy " + agoText(hot[c])); else btn.removeAttribute("aria-label");
+    });
   }
   function paintKalshi(r, d) {
     var k = d.kalshi || {}, c = d.call;
@@ -1148,19 +1297,48 @@ button{font-family:inherit}
     R.tvMsg.hidden = false;
     setText(R.tvMsg, "TradingView didn't load. An ad blocker or a network setting may be blocking it. The Candles tab still works.");
   }
+  /* The target line: TradingView draws it itself, as a second series that is the chart's own symbol times 0 plus the target, so it is always a flat line
+     at the target on the chart's own price scale (a line drawn over the chart from out here could not follow its scale). */
+  function tvTargetNow() {
+    var v = R && S.view[S.coin], t = v && v.data ? Number(v.data.target) : NaN;
+    return isFinite(t) && t > 0 ? String(Number(t.toPrecision(8))) : "";
+  }
+  function setTvTarget(on) {
+    S.tvTg = !!on; store("kh_live_tvtg", S.tvTg ? "1" : null); paintTvTarget();
+    if (S.tab === "tv") mountTV();
+  }
+  function paintTvTarget() {
+    if (!R) return;
+    var v = S.view[S.coin], d = v && v.data;
+    R.tvTgBtn.setAttribute("aria-pressed", S.tvTg ? "true" : "false");
+    setText(R.tvTgBtn, S.tvTg ? "Target line: on" : "Target line: off");
+    setText(R.tvTgTxt, d && isFinite(Number(d.target)) ? (d.target_src || "Kalshi") + " target " + money(Number(d.target)) : "");
+  }
+  function tvSync() {
+    paintTvTarget();
+    if (!R || S.tab !== "tv" || !S.tvTg) return;
+    var now = tvTargetNow();
+    if (!S.tvCoin || (now !== S.tvLine && (S.tvLine === "" || Date.now() - S.tvAt > 15000))) mountTV();       // the target arrived after the chart loaded, or a new round has a new target: reload the chart once
+  }
   function mountTV() {
     if (!R) return;
-    if (S.tvCoin === S.coin && S.tvTf === S.tf && R.tvHost.firstChild) return;
-    var coin = S.coin; S.tvCoin = coin; S.tvTf = S.tf; clearInterval(S.tvTimer);
+    var tg = S.tvTg ? tvTargetNow() : "";
+    if (S.tvTg && !S.view[S.coin]) {                    // with the line on, wait for this coin's numbers so TradingView loads once, with the line
+      S.tvCoin = null; clearInterval(S.tvTimer); R.tvHost.innerHTML = ""; R.tvMsg.hidden = false; setText(R.tvMsg, "Loading TradingView..."); return;
+    }
+    if (S.tvCoin === S.coin && S.tvTf === S.tf && S.tvLine === tg && R.tvHost.firstChild) return;
+    var coin = S.coin; S.tvCoin = coin; S.tvTf = S.tf; S.tvLine = tg; S.tvAt = Date.now(); clearInterval(S.tvTimer);
     R.tvHost.innerHTML = ""; R.tvMsg.hidden = false; setText(R.tvMsg, "Loading TradingView...");
     var box = document.createElement("div"); box.className = "tradingview-widget-container"; box.style.cssText = "height:100%;width:100%";
     var w = document.createElement("div"); w.className = "tradingview-widget-container__widget"; w.style.cssText = "height:100%;width:100%"; box.appendChild(w);
     var sc = document.createElement("script"), tz = "";
     try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
     sc.type = "text/javascript"; sc.src = TV_SRC; sc.async = true;
-    sc.text = JSON.stringify({ autosize: true, symbol: TV_SYM[coin] || "COINBASE:BTCUSD", interval: S.tf, timezone: tz || "Etc/UTC", theme: "dark", style: "1", locale: "en",
+    var sym = TV_SYM[coin] || "COINBASE:BTCUSD", cfg = { autosize: true, symbol: sym, interval: S.tf, timezone: tz || "Etc/UTC", theme: "dark", style: "1", locale: "en",
       backgroundColor: "#0F1113", gridColor: "rgba(255,255,255,0.05)", allow_symbol_change: false, hide_side_toolbar: true, save_image: false, calendar: false,
-      support_host: "https://www.tradingview.com", studies: ["RSI@tv-basicstudies", "MAExp@tv-basicstudies"] });
+      support_host: "https://www.tradingview.com", studies: ["RSI@tv-basicstudies", "MAExp@tv-basicstudies"] };
+    if (tg) cfg.compareSymbols = [{ symbol: sym + "*0+" + tg, position: "SameScale" }];
+    sc.text = JSON.stringify(cfg);
     sc.onerror = function () { tvFail(coin); };
     box.appendChild(sc); R.tvHost.appendChild(box);
     var t0 = Date.now();
@@ -1493,10 +1671,13 @@ button{font-family:inherit}
     var now = Math.floor(Date.now() / 1000 / 60) * 60, px = 100000, rows = [];
     for (var i = 99; i >= 0; i--) { var o = px; px = px * (1 + (rnd() - 0.47) * 0.0008); var hi = Math.max(o, px) * (1 + rnd() * 0.0002), lo = Math.min(o, px) * (1 - rnd() * 0.0002); rows.push([now - i * 60, o, hi, lo, px]); }
     var spot = px, target = spot - 38;
-    var data = { coin: "BTC", name: "Bitcoin", ticker: "SAMPLE", details: true, close_ts: now + 460, left_s: 460, spot: spot, target: target, target_src: "Kalshi", diff: spot - target,
+    var data = { coin: "BTC", name: "Bitcoin", ticker: "SAMPLE", details: true, built: now, alerts: [{ t: now - 540, k: "candle", dir: "DOWN", whale: true, ch: ["1m", "5m"], usd: 62, tr: { c: 14.2, usd: 1380000 }, v: "holding" }],
+      whale: { ok: true, show: 500, alert: 1000, buys: [{ t: now - 200, side: "UP", usd: 1250, n: 2500, px: 50, close: now + 460 }, { t: now - 420, side: "DOWN", usd: 640, n: 1060, px: 60, close: now + 240 }, { t: now - 700, side: "UP", usd: 910, n: 940, px: 97, close: now + 60, late: true }] }, close_ts: now + 460, left_s: 460, spot: spot, target: target, target_src: "Kalshi", diff: spot - target,
       call: { side: "UP", prob: 0.71, conf: "STRONG", text: "Sample call, not live data", price: 66, edge: 5 }, p_up: 0.71,
       flip: { pct: 14, level: "MEDIUM", leader: "UP", gap: 38, cross: 22, crossings: 1 }, trend: "UP", chg5: 0.042, chg15: 0.11, rsi: 58, charts: "Most charts back UP.",
-      ind: { "1m": { rsi: 58, e9: spot - 6, e21: spot - 21, side: "UP", x_min: 4, gap: 15 }, "5m": { rsi: 61, e9: spot - 9, e21: spot - 30, side: "UP", x_min: 15, gap: 21 }, "15m": { rsi: 49, e9: spot - 40, e21: spot - 36, side: "DOWN", x_min: 30, gap: 4 } },
+      ind: { "1m": { rsi: 58, e9: spot - 6, e21: spot - 21, side: "UP", x_min: 4, gap: 15, macd: { side: "UP" }, bb: { pb: 0.72 }, st: 66 }, "5m": { rsi: 61, e9: spot - 9, e21: spot - 30, side: "UP", x_min: 15, gap: 21, macd: { side: "UP" }, bb: { pb: 0.81 }, st: 74 },
+             "15m": { rsi: 49, e9: spot - 40, e21: spot - 36, side: "DOWN", x_min: 30, gap: 4, macd: { side: "DOWN" }, bb: { pb: 0.44 }, st: 38 }, "30m": { rsi: 54, e9: spot - 30, e21: spot - 48, side: "UP", x_min: 60, gap: 18, macd: { side: "UP" }, bb: { pb: 0.58 }, st: 52 },
+             "1h": { rsi: 57, e9: spot - 70, e21: spot - 95, side: "UP", x_min: 240, gap: 25, macd: { side: "UP" }, bb: { pb: 0.64 }, st: 61 } },
       finish: { exp: spot + 12, band: 85 }, kalshi: { yes_ask: 66, yes_bid: 64, no_ask: 36, no_bid: 34, buy: "Buy Yes (Up) at 66c." }, scalp: { on: false, why: "too early" },
       why: ["Price is a fair way above the target.", "The charts agree.", "The overall trend is up."], feeds: { Coinbase: spot, Kraken: spot - 3 }, votes: [], cur: null };
     el.innerHTML = boardHTML();
