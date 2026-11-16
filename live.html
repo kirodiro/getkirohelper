@@ -345,9 +345,158 @@ button{font-family:inherit}
 .recsmall{color:var(--warn)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===================== Auto-trader ===================== */
+.modebar{display:flex;gap:6px;margin-top:12px}
+.modebtn{appearance:none;cursor:pointer;min-height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--line2);background:var(--raise);color:var(--muted);font:700 .95rem/1 var(--font);display:inline-flex;align-items:center;gap:8px}
+.modebtn:hover{color:var(--ink)}
+.modebtn[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#121416}
+.modedot{width:8px;height:8px;border-radius:50%;background:var(--up);box-shadow:0 0 0 2px rgba(52,199,123,.25)}
+.stage{display:block}
+.autowrap{display:grid;gap:12px;margin:0 0 14px;align-content:start;min-width:0}
+@media(min-width:1100px){
+  .stage[data-mode=auto]{display:grid;grid-template-columns:minmax(390px,440px) minmax(0,1fr);gap:16px;align-items:start}
+  .stage[data-mode=auto] .autowrap{margin:0}
+  .stage[data-mode=auto] .board{grid-template-columns:minmax(0,1fr)}
+  .stage[data-mode=auto] .board>.strip,.stage[data-mode=auto] .board>.details,.stage[data-mode=auto] .board>.walert,.stage[data-mode=auto] .board>.chartp,.stage[data-mode=auto] .board>.kal,
+  .stage[data-mode=auto] .board>.signals,.stage[data-mode=auto] .board>.scalpp{grid-column:auto;grid-row:auto}
+  .stage[data-mode=auto] .strip{grid-template-columns:1fr 1fr;grid-template-areas:"call flip" "time px";align-items:start;padding:18px 18px 20px 24px}
+  .stage[data-mode=auto] .s-id{display:none}
+  .stage[data-mode=auto] .s-time{text-align:left}
+  .stage[data-mode=auto] .whoami{display:block;margin-bottom:4px}
+}
+.at-card{padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--panel);min-width:0}
+.at-card h3{font:700 1.05rem/1.2 var(--font);margin:0 0 6px}
+.at-card h4{font:600 .9rem/1.3 var(--font);margin:16px 0 6px}
+.at-card p.sm+p.sm{margin-top:6px}
+.at-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.at-top h2{font:700 1.25rem/1.1 var(--font);letter-spacing:-.01em}
+.at-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--flatbg);color:var(--muted);font:700 .78rem/1.2 var(--font)}
+.at-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.at-pill.on{background:var(--upbg);color:var(--up)}
+.at-pill.warn{background:var(--warnbg);color:var(--warn)}
+.at-pill.bad{background:var(--downbg);color:var(--down)}
+.at-money{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 4px}
+.at-stat{padding:10px 12px;border-radius:8px;background:var(--raise);border:1px solid var(--line);min-width:0}
+.at-stat span{display:block;font:500 .78rem/1.2 var(--font);color:var(--muted)}
+.at-stat b{display:block;margin-top:3px;font:700 1.3rem/1.1 var(--font);overflow-wrap:anywhere}
+.at-stat.big b{font-size:1.7rem}
+.at-stat small{display:block;margin-top:3px;color:var(--muted);font-size:.78rem}
+.at-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.at-btn{appearance:none;cursor:pointer;min-height:48px;padding:0 18px;border-radius:8px;border:1px solid var(--line2);background:var(--raise);color:var(--ink);font:700 .98rem/1 var(--font);flex:1 1 auto}
+.at-btn:hover{border-color:var(--muted)}
+.at-btn.go{background:var(--up);border-color:var(--up);color:#07140D}
+.at-btn.go:hover{background:#4BD58E}
+.at-btn.stop{background:var(--ink);border-color:var(--ink);color:#121416}
+.at-btn.danger{border-color:rgba(240,96,93,.55);color:#FFAAA3;background:transparent}
+.at-btn.armed{background:var(--downbg);border-color:var(--down);color:#fff}
+.at-btn.sm{min-height:40px;font-size:.88rem;padding:0 12px;flex:0 0 auto}
+.at-btn[disabled]{opacity:.5;cursor:not-allowed}
+.at-msg{min-height:1.3em;margin-top:8px;font-size:.92rem}
+.at-msg.err{color:#FFAAA3}.at-msg.ok{color:var(--up)}
+.at-warn{margin-top:10px;padding:10px 12px;border-radius:8px;border:1px solid rgba(227,169,59,.45);background:var(--warnbg);font-size:.9rem}
+.at-warn.bad{border-color:rgba(240,96,93,.5);background:var(--downbg)}
+.at-tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);margin:0 -4px}
+.at-tabs::-webkit-scrollbar{display:none}
+.at-tab{appearance:none;cursor:pointer;flex:1 0 auto;min-height:44px;padding:0 12px;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;color:var(--muted);font:600 .95rem/1 var(--font)}
+.at-tab:hover{color:var(--ink)}
+.at-tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--brand)}
+.at-pane{display:grid;gap:12px;min-width:0}
+.at-pane[hidden]{display:none}
+.at-empty{color:var(--muted);font-size:.92rem;padding:6px 0}
+.at-pos{position:relative;padding:12px 12px 12px 16px;border-radius:8px;border:1px solid var(--line);background:var(--raise);display:grid;gap:4px;overflow:hidden}
+.at-pos::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--flat)}
+.at-pos.up::before{background:var(--up)}.at-pos.down::before{background:var(--down)}
+.at-pos .l1{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.at-pos .l1 b{font:700 1.05rem/1.2 var(--font)}
+.at-pos .pnl{font:700 1.1rem/1.2 var(--font)}
+.at-tag{display:inline-block;padding:2px 7px;border-radius:4px;background:var(--flatbg);color:var(--muted);font:600 .72rem/1.3 var(--font);margin-left:6px;vertical-align:1px}
+.at-tag.real{background:var(--warnbg);color:var(--warn)}
+.at-side{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:6px;font:800 .86rem/1.2 var(--font);white-space:nowrap}
+.at-side.up{background:var(--upbg);color:var(--up)}.at-side.down{background:var(--downbg);color:var(--down)}.at-side.none{background:var(--flatbg);color:var(--muted);font-weight:600}
+.at-why .at-side{display:flex;width:max-content;margin:0 0 3px}
+.at-bets{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0;font-size:.92rem;color:var(--muted)}
+.at-bets .lab{margin-right:2px}.at-bets .at-side b{font-weight:800;color:var(--text)}
+.at-why{display:grid;gap:0;margin:0;padding:0;list-style:none}
+.at-why li{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;padding:9px 0;border-top:1px solid var(--line);font-size:.92rem}
+.at-why li:first-child{border-top:0}
+.at-why b{font-weight:700;min-width:3.4ch}
+.at-why span{color:var(--muted);overflow-wrap:anywhere}
+.at-log{list-style:none;margin:0;padding:0;max-height:300px;overflow:auto}
+.at-log li{padding:8px 0 8px 10px;border-left:3px solid var(--line2);margin:0 0 6px;font-size:.9rem;overflow-wrap:anywhere}
+.at-log li i{display:block;font-style:normal;color:var(--muted);font-size:.76rem;margin-bottom:1px}
+.at-log li.buy{border-left-color:var(--e9)}.at-log li.sell{border-left-color:var(--up)}.at-log li.warn{border-left-color:var(--warn)}.at-log li.info{border-left-color:var(--line2)}
+.at-field{display:grid;gap:6px;margin:0 0 14px}
+.at-field>label,.at-field>.lbl{font:600 .92rem/1.2 var(--font)}
+.at-field .hint{margin:0;font-size:.84rem}
+.at-chips{display:flex;gap:6px;flex-wrap:wrap}
+.at-chip{appearance:none;cursor:pointer;min-height:44px;min-width:52px;padding:0 12px;border-radius:8px;border:1px solid var(--line2);background:var(--raise);color:var(--muted);font:700 .92rem/1 var(--font)}
+.at-chip:hover{color:var(--ink)}
+.at-chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#121416}
+.at-in{width:100%;min-height:48px;padding:0 12px;border-radius:8px;border:1px solid var(--line2);background:var(--bg);color:var(--ink);font:500 1rem/1 var(--font)}
+textarea.at-in{min-height:120px;padding:10px 12px;font:500 .8rem/1.35 var(--code);resize:vertical}
+.at-in.code{font-family:var(--code);font-size:.9rem}
+.at-bet{display:flex;gap:8px;align-items:center}
+.at-bet .at-in{max-width:130px}
+.at-opts{display:grid;gap:8px}
+.at-opt{appearance:none;cursor:pointer;text-align:left;display:grid;gap:3px;padding:11px 12px;border-radius:8px;border:1px solid var(--line2);background:var(--raise);color:var(--ink);font:inherit}
+.at-opt b{font:700 .98rem/1.2 var(--font)}
+.at-opt span{color:var(--muted);font-size:.86rem}
+.at-opt[aria-pressed=true]{border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand)}
+.at-switch{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.at-switch input{width:22px;height:22px;margin-top:1px;accent-color:var(--brand);flex:none}
+.at-switch span{display:grid;gap:2px}.at-switch b{font:600 .95rem/1.25 var(--font)}.at-switch small{color:var(--muted);font-size:.84rem}
+.at-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.at-saved{color:var(--muted);font-size:.84rem;min-height:1.2em}
+.at-table{width:100%;border-collapse:collapse;font-size:.92rem}
+.at-table th{text-align:left;font:500 .78rem/1.2 var(--font);color:var(--muted);padding:6px 6px 6px 0;border-bottom:1px solid var(--line)}
+.at-table td{padding:9px 6px 9px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+.at-table th:last-child,.at-table td:last-child{text-align:right;padding-right:0}
+.at-trades{list-style:none;margin:0;padding:0}
+.at-trades li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 0;border-top:1px solid var(--line);font-size:.92rem}
+.at-trades li:first-child{border-top:0}
+.at-trades li .sub{grid-column:1/-1;color:var(--muted);font-size:.8rem}
+.at-key{display:grid;gap:8px;padding:12px;border-radius:8px;background:var(--raise);border:1px solid var(--line)}
+.at-key code{font:600 .92rem/1.3 var(--code);overflow-wrap:anywhere}
+.at-vault{font:500 .8rem/1.4 var(--code);color:var(--muted);overflow-wrap:anywhere}
+.at-lock h2{font:700 1.45rem/1.1 var(--font);letter-spacing:-.01em;margin-bottom:8px}
+.at-lock ul{margin:10px 0;padding-left:20px;color:var(--ink)}
+.at-lock li{margin:4px 0}
+.at-buy{display:grid;gap:8px;margin-top:14px}
+.at-or{color:var(--muted);font-size:.88rem;margin:10px 0 0}
+.at-thumb{width:100%;height:90px;border-radius:8px;border:1px solid var(--line2);background:var(--raise) center/cover no-repeat}
+.at-range{width:100%;accent-color:var(--brand);min-height:32px}
+.at-modal{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:max(14px,env(safe-area-inset-top,0px)) 14px 14px;background:rgba(5,6,7,.78);overflow:auto}
+.at-modal[hidden]{display:none}
+.at-sheet{width:min(100%,520px);margin:auto;padding:16px;border-radius:12px;border:1px solid var(--line2);background:var(--panel);display:grid;gap:12px}
+.at-sheet img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
+.at-sheet .at-row{margin-top:0}
+.at-chk{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.at-chk button{appearance:none;width:100%;cursor:pointer;display:flex;gap:10px;align-items:center;text-align:left;min-height:48px;padding:8px 12px;border-radius:8px;border:1px solid var(--line2);background:var(--raise);color:var(--ink);font:600 .92rem/1.25 var(--font)}
+.at-chk .mk{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--line2);display:grid;place-items:center;font-size:.8rem;color:transparent}
+.at-chk .done .mk{background:var(--up);border-color:var(--up);color:#07140D}
+.at-chk .done button{color:var(--muted)}
+.at-chk small{display:block;color:var(--muted);font-weight:500;font-size:.8rem}
+.at-chk .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.at-steps{margin:6px 0;padding-left:20px;display:grid;gap:6px;font-size:.92rem}
+.at-steps code{font:600 .9rem/1.3 var(--code);overflow-wrap:anywhere;background:var(--raise);padding:1px 6px;border-radius:4px}
+.at-whyd{grid-column:1/-1;font-size:.84rem;color:var(--muted)}
+.at-whyd summary{cursor:pointer;min-height:32px;display:flex;align-items:center}
+.at-whyd ul{margin:2px 0 4px;padding-left:18px;display:grid;gap:3px}
+.at-how{border:1px solid var(--line);border-radius:8px;padding:0 12px;margin:10px 0;background:var(--raise)}
+.at-how summary{cursor:pointer;font:600 .95rem/1.3 var(--font);min-height:44px;display:flex;align-items:center}
+.at-how ol{margin:0 0 10px;padding-left:20px;display:grid;gap:6px;font-size:.92rem}
+.bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.bgfx .bgimg{position:absolute;inset:0;background:center/cover no-repeat}
+.bgfx .bgdim{position:absolute;inset:0;background:rgba(15,17,19,.55)}
+body.autobg{--panel:rgba(21,24,27,.74);--raise:rgba(27,31,35,.8)}
+body.autobg .panel,body.autobg .card,body.autobg .strip,body.autobg .at-card,body.autobg .status,body.autobg .trialbar{backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
+@media(max-width:420px){.at-money{grid-template-columns:1fr 1fr}.at-stat b{font-size:1.15rem}.at-stat.big b{font-size:1.45rem}}
 </style>
 </head>
 <body>
+<div class="bgfx" id="bgFx" hidden aria-hidden="true"><div class="bgimg" id="bgImg"></div><div class="bgdim" id="bgDim"></div></div>
 <header class="top">
   <div class="wrap">
     <a class="brand" href="./">Kiros <span>helper</span></a>
@@ -375,6 +524,10 @@ button{font-family:inherit}
   <div class="samplewrap" id="sampleWrap" hidden><span class="tag">Preview, not live data</span><div class="sample" id="sample" aria-hidden="true" inert></div></div>
 
   <section id="board" hidden aria-label="Live board">
+    <div class="modebar" id="modebar" role="group" aria-label="Live board or Auto-trader">
+      <button type="button" class="modebtn" data-mode="board" aria-pressed="true">Live board</button>
+      <button type="button" class="modebtn" data-mode="auto" aria-pressed="false">Auto-trader<span class="modedot" id="modeDot" hidden title="The Auto-trader is running"></span></button>
+    </div>
     <div class="coins" id="coins" role="group" aria-label="Pick a market"></div>
     <div class="status" id="status">
       <span class="dot" id="dot"></span><span id="statusTxt" aria-live="polite">Connecting...</span><span class="pill" id="ownerPill" hidden>Owner</span><span class="sp"></span>
@@ -401,9 +554,22 @@ button{font-family:inherit}
         <div id="ownerList"><p class="empty">Loading...</p></div>
         <h4>Blocked receipts</h4>
         <div id="ownerBlocked"><p class="empty">Nobody is blocked.</p></div>
+        <h4>Auto-trader</h4>
+        <p class="hint" id="ownerAutoNote">Trades real money for people who paid the $15. The switch below pauses real-money trading for everyone at once (practice trading keeps going).</p>
+        <div class="ownertools"><button type="button" id="autoKill" aria-pressed="false">Pause real-money trading</button></div>
+        <p class="hint">Payment link for the $15 (the Stripe link people tap to pay). The built-in link already works. Only paste a different one here if you change it; leave it empty to use the built-in link.</p>
+        <form id="payForm" class="grant" autocomplete="off" novalidate>
+          <input type="text" id="payUrl" maxlength="300" placeholder="https://buy.stripe.com/..." inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Payment link for the Auto-trader">
+          <button type="submit" id="payGo">Save link</button>
+        </form>
+        <h4>People with the Auto-trader</h4>
+        <div id="ownerAutos"><p class="empty">Nobody yet.</p></div>
       </div>
     </details>
-    <div id="view"></div>
+    <div class="stage" id="stage" data-mode="board">
+      <section class="autowrap" id="autoWrap" hidden aria-label="Auto-trader"></section>
+      <div id="view"></div>
+    </div>
     <div id="recWrap" hidden></div>
     <p class="foot">Not financial advice. These are estimates from the bot&rsquo;s own model and can be wrong. Prices move fast, so check Kalshi before you act. UP = Yes, DOWN = No.</p>
   </section>
@@ -499,6 +665,7 @@ button{font-family:inherit}
     buildCoinButtons();
     buildBoard();
     startPolling();
+    autoStart();
   }
   function setMsg(t, kind) { var m = $("gateMsg"); m.textContent = t; m.className = "msg" + (kind ? " " + kind : ""); }
 
@@ -573,7 +740,7 @@ button{font-family:inherit}
     if (S.iv) { clearInterval(S.iv); S.iv = null; }
   }
   function startPolling() { stopPolling(); S.fails = 0; S.idle = false; S.hiddenSince = 0; S.nextAt = 0; startMetronome(); recSchedule(0); }
-  function stopPolling() { stopMetronome(); if (S.recTimer) clearTimeout(S.recTimer); S.recTimer = null; S.busy = false; }
+  function stopPolling() { stopMetronome(); if (S.recTimer) clearTimeout(S.recTimer); S.recTimer = null; S.busy = false; autoStop(); }
   function schedule(ms) { S.nextAt = Date.now() + (ms || 0); }
   function interval() { return document.hidden ? POLL_HID : POLL_VIS; }
   function tick() {
@@ -1751,6 +1918,7 @@ button{font-family:inherit}
   }
   function renderOwner(r) {
     if (!r || !r.people) return;
+    autoOwnerRender(r);
     var online = r.people.filter(function (p) { return !p.owner && p.last_seen_s < 90; }).length;
     $("ownerSum").textContent = "\uD83D\uDEE0\uFE0F Owner panel \u00B7 " + online + " on now";
     if ($("owner").querySelector("[data-armed]")) return;                 // don't redraw under a half-confirmed tap
@@ -1761,7 +1929,7 @@ button{font-family:inherit}
       var main = "<div class='pmain'><b>" + esc(p.owner ? "You (owner)" : (p.label || "(no e-mail on the payment)")) + "</b>" + (p.owner ? "" : "<span>" + esc(kname(p.key, true)) + "</span>") + "</div>";
       var meta = "<div class='pmeta'><span class='dotsm" + (on ? " on" : "") + "'></span><span>" + (on ? "online now" : "last seen " + ago(p.last_seen_s) + " ago") + "</span>" +
         (p.coin ? "<span>on " + esc(p.coin) + "</span>" : "") + "<span>" + p.devices + (p.devices === 1 ? " device" : " devices") + "</span><span>signed in " + ago(p.signed_in_s) + " ago</span></div>";
-      var btns = p.owner ? "<div></div>" : "<div class='pbtns'><button type='button' data-act='kick' data-key='" + esc(p.key) + "'>Sign out</button><button type='button' class='danger' data-act='block' data-key='" + esc(p.key) + "'>Block</button></div>";
+      var btns = p.owner ? "<div></div>" : "<div class='pbtns'>" + ((!p.auto && String(p.key).indexOf("TRIAL-") !== 0) ? "<button type='button' data-act='autogrant' data-key='" + esc(p.key) + "'>Give Auto-trader</button>" : "") + "<button type='button' data-act='kick' data-key='" + esc(p.key) + "'>Sign out</button><button type='button' class='danger' data-act='block' data-key='" + esc(p.key) + "'>Block</button></div>";
       return "<div class='prow'>" + main + meta + btns + "</div>";
     }).join("");
     $("ownerList").innerHTML = others.length ? list : "<p class='empty'>Nobody else is signed in right now.</p>" + list;
@@ -1798,6 +1966,7 @@ button{font-family:inherit}
     if (act === "gcopy") return copyText(fmtCode(b.dataset.code), b);
     if (act === "gmsg") return copyText(inviteText(b.dataset.code), b);
     if (act === "gremove") return armOrRun(b, function () { ownerRemoveGuest(b.dataset.id); });
+    if (act === "autogrant" || act === "autoremove") return autoOwnerAct(act, b);
     armOrRun(b, function () { ownerAct(act, b.dataset.key); });
   });
   $("grantForm").addEventListener("submit", function (ev) {
@@ -1828,6 +1997,1030 @@ button{font-family:inherit}
     });
   });
 
+
+  /* ====================================================================================================================
+     Auto-trader tab. The page only talks to the database's locked-down auto_* functions; the bot does the trading.
+     The Kalshi key is sealed in THIS browser (AES-GCM, with the key wrapped by the bot's vault public key) before it is sent,
+     so the database only ever holds something it cannot open.
+     ==================================================================================================================== */
+  var AUTO_TABS = [["trade", "Trade"], ["settings", "Settings"], ["record", "Record"], ["setup", "Key and look"]];
+  var AUTO_PAY = "https://buy.stripe.com/cNifZj3H0bVGdSY56RefC02";            /* the built-in $15 Stripe link; a link the owner saves in the Owner panel is used instead */
+  var AUTO_DEF = { coins: [], bet: 5, mode: "paper", style: "balanced", pick: "best", daily_loss: 25, max_open: 3, streak: 3, flips: true, stop_mode: "auto", stop_c: 15,
+                   tp_mode: "auto", tp_c: 20, max_money: 0, hours_on: false, hours_from: "09:00", hours_to: "17:00", tz: "", alert_ntfy: "", alert_discord: "", alert_open: true, alert_close: true, alert_warn: true };
+  var AUTO_STYLES = [
+    ["careful", "Careful", "Fewer trades. Only strong calls with a clear gap to the price."],
+    ["balanced", "Balanced", "The middle path. A good place to start."],
+    ["active", "Active", "More trades. Accepts smaller gaps, so expect more small losses too."]];
+  var AUTO_PICKS = [
+    ["best", "Best one at a time", "Looks at all your coins and trades only the strongest one."],
+    ["all", "All coins at once", "Trades every coin that qualifies, up to the most-open-trades limit."]];
+  var BET_CHIPS = [5, 10, 25, 50, 100];
+  var BG_MAX = 10 * 1024 * 1024;
+  var A = { mode: "board", tab: "trade", st: null, recv: 0, ver: 0, busy: false, timer: null, fails: 0, built: false, set: null, editAt: 0, saveT: null, saving: false,
+            rec: null, msgT: null, liveOk: false, buyT: null, buying: false, sealing: false, bg: null, bgObj: "", dim: 55, share: null, kill: false };
+  var AK = {};
+  A.sellArm = null; A.sellArmT = null; A.sold = {}; A.testWait = 0; A.disBad = false;
+
+  function usd(x, plus) {
+    if (x == null || !isFinite(x)) return "-";
+    if (Math.abs(x) < 0.005) x = 0;
+    var s = "$" + Math.abs(x).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return (x < 0 ? "-" : (plus && x > 0 ? "+" : "")) + s;
+  }
+  function pctOf(w, l) { return (w + l) > 0 ? Math.round(100 * w / (w + l)) : null; }
+  function cls(x) { return x > 0.004 ? "up" : x < -0.004 ? "down" : ""; }
+  function autoCoinName(c) { for (var i = 0; i < COINS.length; i++) if (COINS[i][0] === c) return COINS[i][1]; return c; }
+  function botNow() { var s = A.st && A.st.state; return s && A.st.age != null ? s.ts + A.st.age + (performance.now() - A.recv) / 1000 : Date.now() / 1000; }
+  function botAge() { return A.st && A.st.age != null ? A.st.age + (performance.now() - A.recv) / 1000 : null; }
+  function autoMoney() { return (A.set && A.set.mode === "live") ? "live" : "paper"; }
+  function autoFriendly(e) {
+    var m = String((e && e.message) || "");
+    if (e && e.net) return "Couldn't reach the server. Check your connection.";
+    if (/locked/i.test(m)) return "The Auto-trader isn't unlocked on this account.";
+    if (/slow down/i.test(m)) return "Too many tries. Wait a few minutes and try again.";
+    if (/busy/i.test(m)) return "Lots of people are buying right now. Try again in a minute.";
+    if (/trial/i.test(m)) return "The free trial doesn't include the Auto-trader.";
+    if (/bad receipt/i.test(m)) return "That doesn't look like a receipt number. It's in your Stripe receipt email, written like 1234-5678.";
+    if (/bad key/i.test(m)) return "That key couldn't be saved. Check the key ID and the private key and try again.";
+    return "Something went wrong on our side. Try again in a minute.";
+  }
+  function autoSay(t, kind) {
+    if (!AK.msg) return;
+    AK.msg.className = "at-msg" + (kind ? " " + kind : ""); AK.msg.textContent = t || "";
+    clearTimeout(A.msgT); if (t && kind !== "err") A.msgT = setTimeout(function () { if (AK.msg) AK.msg.textContent = ""; }, 7000);
+  }
+
+  /* ---------- switching between the board and the Auto-trader ---------- */
+  function setMode(m, quiet) {
+    A.mode = m === "auto" ? "auto" : "board";
+    store("kh_live_mode", A.mode === "auto" ? "auto" : null);
+    $("stage").setAttribute("data-mode", A.mode);
+    $("autoWrap").hidden = A.mode !== "auto";
+    Array.prototype.forEach.call($("modebar").querySelectorAll("button"), function (b) { b.setAttribute("aria-pressed", b.dataset.mode === A.mode ? "true" : "false"); });
+    if (A.mode === "auto") {
+      if (!A.built) autoBuild();
+      if (A.st) autoRender(); else autoPaintLoading();
+      autoSchedule(quiet ? 400 : 0);
+    }
+    autoBgApply();
+  }
+  $("modebar").addEventListener("click", function (ev) { var b = ev.target.closest && ev.target.closest("button[data-mode]"); if (b) setMode(b.dataset.mode); });
+  function autoStart() {
+    A.st = null; A.ver = 0; A.fails = 0; A.set = null; A.rec = null; A.liveOk = false;
+    autoBgLoad();
+    setMode(store("kh_live_mode") === "auto" ? "auto" : "board", true);
+    autoSchedule(A.mode === "auto" ? 0 : 1200);
+  }
+  function autoStop() {
+    clearTimeout(A.timer); A.timer = null; clearTimeout(A.saveT); A.saveT = null; clearTimeout(A.buyT); A.buyT = null; A.busy = false; A.buying = false;
+    A.st = null; A.ver = 0; A.set = null;
+    var d = $("modeDot"); if (d) d.hidden = true;
+    var s = $("stage"); if (s) s.setAttribute("data-mode", "board");
+    var w = $("autoWrap"); if (w) { w.hidden = true; w.innerHTML = ""; }
+    A.built = false; AK = {};
+    autoModalClose();
+    document.body.classList.remove("autobg"); var f = $("bgFx"); if (f) f.hidden = true;
+  }
+
+  /* ---------- asking the database ---------- */
+  function autoEvery() {
+    if (document.hidden) return A.mode === "auto" ? 6000 : 20000;
+    if (A.mode === "auto") return (A.st && !A.st.access) ? 5000 : 2000;
+    return (A.st && A.st.access) ? 15000 : 0;                      // locked, and not looking at it: nothing to watch
+  }
+  function autoSchedule(ms) { clearTimeout(A.timer); A.timer = null; if (ms == null || !S.token) return; A.timer = setTimeout(autoPoll, ms); }
+  function autoPoll() {
+    A.timer = null;
+    if (!S.token || A.busy) return;
+    var tok = S.token, args = { p_token: tok };
+    if (A.ver && A.st && A.st.access) args.p_seen = A.ver;
+    A.busy = true;
+    rpc("auto_status", args).then(function (r) {
+      A.busy = false;
+      if (!S.token || S.token !== tok) return;
+      A.fails = 0;
+      autoApply(r);
+      var n = autoEvery(); if (n) autoSchedule(n);
+    }, function (e) {
+      A.busy = false;
+      if (!S.token || S.token !== tok) return;
+      if (/expired/i.test(String((e && e.message) || ""))) return expired();
+      if (e && e.status === 404) { A.st = { access: false, missing: true }; autoRender(); return; }        // auto_setup.sql hasn't been run yet
+      A.fails++;
+      if (A.mode === "auto") autoSay(autoFriendly(e), "err");
+      autoSchedule(Math.min(autoEvery() * Math.pow(2, A.fails), 20000));
+    });
+  }
+  function autoApply(r) {
+    if (!r || r.ok === false) return;
+    A.kill = !!r.kill;
+    if (r.same && A.st && A.st.access) {
+      A.st.age = r.age; A.st.kill = r.kill; A.recv = performance.now();
+      autoPaintLive();
+      return;
+    }
+    A.st = r; A.recv = performance.now(); A.ver = r.ver || 0;
+    if (r.owner && r.pay_url && $("payUrl") !== document.activeElement && !$("payUrl").value) $("payUrl").value = r.pay_url;
+    var d = $("modeDot"); if (d) d.hidden = !(r.access && r.running);
+    if (A.mode === "auto") autoRender();
+  }
+  function autoNow(ms) { A.ver = 0; autoSchedule(ms || 0); }
+
+  /* ---------- the panel's skeleton: built once, then updated in place ---------- */
+  var STOP_CHIPS = [10, 15, 20, 30], TP_CHIPS = [10, 20, 30, 40];
+  function autoBuild() {
+    var tabs = AUTO_TABS.map(function (t) { return "<button type='button' class='at-tab' role='tab' data-a='tab' data-tab='" + t[0] + "' aria-selected='" + (A.tab === t[0]) + "'>" + t[1] + "</button>"; }).join("");
+    var coinChips = COINS.map(function (c) { return "<button type='button' class='at-chip' data-a='coin' data-coin='" + c[0] + "' aria-pressed='false' title='" + esc(c[1]) + "'>" + c[0] + "</button>"; }).join("");
+    var betChips = BET_CHIPS.map(function (n) { return "<button type='button' class='at-chip' data-a='betchip' data-bet='" + n + "' aria-pressed='false'>$" + n + "</button>"; }).join("");
+    var styles = AUTO_STYLES.map(function (s) { return "<button type='button' class='at-opt' data-a='style' data-v='" + s[0] + "' aria-pressed='false'><b>" + s[1] + "</b><span>" + s[2] + "</span></button>"; }).join("");
+    var picks = AUTO_PICKS.map(function (s) { return "<button type='button' class='at-opt' data-a='pick' data-v='" + s[0] + "' aria-pressed='false'><b>" + s[1] + "</b><span>" + s[2] + "</span></button>"; }).join("");
+    $("autoWrap").innerHTML =
+      "<div class='at-card at-lock' data-k='lock' hidden></div>" +
+      "<div class='autowrap' data-k='main' hidden>" +
+        "<section class='at-card' data-k='head' aria-label='Auto-trader controls'>" +
+          "<div class='at-top'><h2>Auto-trader</h2><span class='at-pill' data-k='pill'>Stopped</span></div>" +
+          "<div class='at-row'><div class='seg' role='group' aria-label='Which money'><button type='button' data-a='money' data-m='paper' aria-pressed='true'>Practice money</button><button type='button' data-a='money' data-m='live' aria-pressed='false'>Real money</button></div></div>" +
+          "<div class='at-money'><div class='at-stat big'><span data-k='profLab'>Profit today</span><b data-k='profToday'>-</b><small data-k='profTotal'></small></div>" +
+            "<div class='at-stat'><span data-k='balLab'>Practice money</span><b data-k='bal'>-</b><small data-k='balSub'></small></div></div>" +
+          "<p class='at-bets' data-k='bets' aria-live='polite'></p>" +
+          "<div class='at-row'><button type='button' class='at-btn go' data-a='go' data-k='go'>Start</button><button type='button' class='at-btn danger' data-a='flat' data-k='flat'>Stop and sell everything</button></div>" +
+          "<div class='at-row' data-k='restRow' hidden><button type='button' class='at-btn sm' data-a='rest' data-k='rest'>Rest until tomorrow</button><button type='button' class='at-btn sm go' data-a='wake' data-k='wake' hidden>Resume trading now</button></div>" +
+          "<p class='at-msg' data-k='msg' role='status' aria-live='polite'></p>" +
+          "<div class='at-warn' data-k='warn' hidden role='status'></div>" +
+        "</section>" +
+        "<div class='at-tabs' role='tablist' aria-label='Auto-trader sections'>" + tabs + "</div>" +
+        "<div class='at-pane' data-pane='trade'>" +
+          "<section class='at-card' data-k='chk' hidden></section>" +
+          "<section class='at-card'><h3>Open trades</h3><div data-k='pos'></div></section>" +
+          "<section class='at-card'><h3>What the bot is doing</h3><ul class='at-why' data-k='why'></ul><p class='sm' data-k='whyNote'></p></section>" +
+          "<section class='at-card'><h3>Activity</h3><ul class='at-log' data-k='log'></ul></section>" +
+        "</div>" +
+        "<div class='at-pane' data-pane='settings' hidden>" +
+          "<section class='at-card'>" +
+            "<div class='at-field'><span class='lbl'>Coins to trade</span><div class='at-chips' data-k='coins' role='group' aria-label='Coins to trade'>" + coinChips + "</div><p class='hint sm'>Only these coins are traded. Tap the coin above the chart to look at its chart.</p></div>" +
+            "<div class='at-field'><label for='atBet'>Bet per trade</label><div class='at-bet'><span>$</span><input class='at-in' id='atBet' data-k='bet' type='number' inputmode='decimal' min='1' max='1000' step='1'></div><div class='at-chips' data-k='betchips'>" + betChips + "</div><p class='hint sm' data-k='betHint'>The most one trade will spend. The bot works out how many contracts that buys.</p></div>" +
+            "<div class='at-field'><span class='lbl'>Style</span><div class='at-opts' data-k='styles'>" + styles + "</div></div>" +
+            "<div class='at-field'><span class='lbl'>How many at a time</span><div class='at-opts' data-k='picks'>" + picks + "</div></div>" +
+            "<div class='at-field'><label class='at-switch'><input type='checkbox' data-k='flips' data-a='flips'><span><b>Catch flips</b><small>The bot always sells when a call flips. Turn this on and it also buys the other side if that still looks good.</small></span></label></div>" +
+            "<h4>Safety limits</h4>" +
+            "<div class='at-field'><span class='lbl'>Stop loss</span><div class='at-opts' data-k='stops'>" +
+              "<button type='button' class='at-opt' data-a='stopmode' data-v='auto' aria-pressed='true'><b>Automatic</b><span>The bot decides when a falling trade should be sold. Roughly 12 to 20 cents under what it paid, depending on your style, and only when its own odds agree the trade is going wrong.</span></button>" +
+              "<button type='button' class='at-opt' data-a='stopmode' data-v='manual' aria-pressed='false'><b>Manual</b><span>You pick how far the price may fall. The bot sells every time it gets there, whatever it thinks.</span></button></div>" +
+              "<div data-k='stopF' hidden style='margin-top:10px'><label for='atStop'>Sell when the price falls this many cents under what the bot paid</label><div class='at-bet'><input class='at-in' id='atStop' data-k='stopc' type='number' inputmode='numeric' min='5' max='90' step='1' style='max-width:110px'><span>cents</span></div>" +
+              "<div class='at-chips' data-k='stopchips' style='margin-top:10px'>" + STOP_CHIPS.map(function (n) { return "<button type='button' class='at-chip' data-a='stopchip' data-c='" + n + "' aria-pressed='false'>" + n + "c</button>"; }).join("") + "</div>" +
+              "<p class='hint sm' data-k='stopEx' style='margin-top:10px'></p><p class='at-warn' data-k='stopWarn' hidden></p></div></div>" +
+            "<div class='at-field'><span class='lbl'>Take profit</span><div class='at-opts' data-k='tps'>" +
+              "<button type='button' class='at-opt' data-a='tpmode' data-v='auto' aria-pressed='true'><b>Automatic</b><span>The bot sells a winning trade once the price has caught up with what it thinks the trade is worth. There is no fixed number.</span></button>" +
+              "<button type='button' class='at-opt' data-a='tpmode' data-v='manual' aria-pressed='false'><b>Manual</b><span>You pick how far the price has to rise. The bot sells every time it gets there. A flip or your stop loss can still sell earlier.</span></button></div>" +
+              "<div data-k='tpF' hidden style='margin-top:10px'><label for='atTp'>Sell when the price rises this many cents over what the bot paid</label><div class='at-bet'><input class='at-in' id='atTp' data-k='tpc' type='number' inputmode='numeric' min='5' max='90' step='1' style='max-width:110px'><span>cents</span></div>" +
+              "<div class='at-chips' data-k='tpchips' style='margin-top:10px'>" + TP_CHIPS.map(function (n) { return "<button type='button' class='at-chip' data-a='tpchip' data-c='" + n + "' aria-pressed='false'>" + n + "c</button>"; }).join("") + "</div>" +
+              "<p class='hint sm' data-k='tpEx' style='margin-top:10px'></p></div></div>" +
+            "<div class='at-two'><div class='at-field'><label for='atLoss'>Stop for the day after losing</label><div class='at-bet'><span>$</span><input class='at-in' id='atLoss' data-k='loss' type='number' inputmode='decimal' min='1' max='10000' step='1'></div></div>" +
+              "<div class='at-field' data-k='maxopenF'><label for='atOpen'>Most open at once</label><input class='at-in' id='atOpen' data-k='maxopen' type='number' inputmode='numeric' min='1' max='7' step='1'></div></div>" +
+            "<div class='at-field'><label for='atCap'>Most money open at once</label><div class='at-bet'><span>$</span><input class='at-in' id='atCap' data-k='cap' type='number' inputmode='decimal' min='0' max='100000' step='1'></div><p class='hint sm'>Adds up what all your open trades cost. When it is full, the bot waits, or buys a smaller amount with what is left. 0 means no limit.</p></div>" +
+            "<div class='at-field'><label for='atStreak'>Take a 30 minute break after this many losses in a row</label><input class='at-in' id='atStreak' data-k='streak' type='number' inputmode='numeric' min='0' max='20' step='1' style='max-width:130px'><p class='hint sm'>0 turns the break off. The day resets at midnight Pacific time.</p></div>" +
+
+            "<div class='at-field'><label class='at-switch'><input type='checkbox' data-k='hoursOn' data-a='hoursOn'><span><b>Only start new trades during set hours</b><small>Outside those hours the bot starts nothing new. It still watches and sells the trades it already has.</small></span></label>" +
+              "<div data-k='hoursF' hidden><div class='at-two' style='margin-top:10px'><div class='at-field' style='margin:0'><label for='atFrom'>From</label><input class='at-in' id='atFrom' data-k='hFrom' type='time'></div><div class='at-field' style='margin:0'><label for='atTo'>Until</label><input class='at-in' id='atTo' data-k='hTo' type='time'></div></div><p class='hint sm' data-k='hoursNote' style='margin-top:8px'></p></div></div>" +
+            "<p class='at-saved' data-k='saved' role='status' aria-live='polite'></p>" +
+          "</section>" +
+          "<section class='at-card'><h3>Alerts</h3><p class='sm'>Get a message when the bot buys, sells, takes a break or has a problem.</p>" +
+            "<div class='at-field' data-k='ntfyBox'></div>" +
+            "<div class='at-field'><label for='atDis'>Discord link (optional)</label><input class='at-in code' id='atDis' data-k='dis' type='url' inputmode='url' autocomplete='off' autocapitalize='off' autocorrect='off' spellcheck='false' maxlength='200' placeholder='https://discord.com/api/webhooks/...'><p class='hint sm' data-k='disHint'>In Discord: Server Settings, Integrations, Webhooks, New Webhook, then Copy Webhook URL. Paste it here.</p></div>" +
+            "<div class='at-field'><span class='lbl'>Tell me when</span>" +
+              "<label class='at-switch'><input type='checkbox' data-k='aOpen' data-a='alertopt' data-o='alert_open'><span><b>A trade opens</b></span></label>" +
+              "<label class='at-switch'><input type='checkbox' data-k='aClose' data-a='alertopt' data-o='alert_close'><span><b>A trade closes</b><small>With the profit or loss.</small></span></label>" +
+              "<label class='at-switch'><input type='checkbox' data-k='aWarn' data-a='alertopt' data-o='alert_warn'><span><b>Something needs me</b><small>A break after losses, the daily loss limit, or a Kalshi key problem.</small></span></label></div>" +
+            "<div class='at-row'><button type='button' class='at-btn sm' data-a='alerttest' data-k='alertTest'>Send a test alert</button></div>" +
+            "<p class='at-msg' data-k='alertMsg' role='status' aria-live='polite'></p>" +
+            "<p class='at-saved' data-k='saved2' role='status' aria-live='polite'></p>" +
+          "</section>" +
+        "</div>" +
+        "<div class='at-pane' data-pane='record' hidden>" +
+          "<section class='at-card'><div class='at-top'><h3>Win and loss record</h3><div class='seg' role='group' aria-label='Which record'><button type='button' data-a='rec' data-m='paper' aria-pressed='true'>Practice</button><button type='button' data-a='rec' data-m='live' aria-pressed='false'>Real money</button></div></div>" +
+            "<div class='at-money' data-k='recTiles'></div><p class='sm' data-k='recNote'></p>" +
+            "<h4>By coin</h4><div data-k='recCoins'></div>" +
+            "<div class='at-row'><button type='button' class='at-btn' data-a='share'>Share my results</button></div>" +
+          "</section>" +
+          "<section class='at-card'><h3>Recent trades</h3><ul class='at-trades' data-k='recTrades'></ul>" +
+            "<div class='at-row' data-k='csvRow'><button type='button' class='at-btn sm' data-a='csv'>Download these trades (CSV)</button></div><p class='sm'>Your last 40 trades. The page only keeps the most recent ones.</p>" +
+            "<div class='at-row' data-k='resetRow'><button type='button' class='at-btn sm danger' data-a='resetpaper' data-k='resetBtn'>Reset practice account</button></div></section>" +
+        "</div>" +
+        "<div class='at-pane' data-pane='setup' hidden>" +
+          "<section class='at-card'><h3>Your Kalshi key</h3><p class='sm'>Only needed for real money. Practice trading needs no key.</p><div data-k='keyBox'></div>" +
+            "<details class='at-how'><summary>How to get a Kalshi key</summary><ol>" +
+              "<li>Log in at kalshi.com. Tap your profile picture, then Account settings. You can also open kalshi.com/account/profile.</li>" +
+              "<li>Find <b>API Keys</b> and tap <b>Create New API Key</b>. Give it a name. The key type that is already picked is fine.</li>" +
+              "<li>Kalshi shows a <b>Key ID</b> and a <b>Private key</b>. The private key is shown only once, so copy the Key ID and save the private key right away. Kalshi also downloads it as a text file. You can't see it again after you close that page.</li>" +
+              "<li>If Kalshi asks what the key may do, allow trading. Without that, real orders are refused.</li>" +
+              "<li>Come back here. Paste the Key ID, paste the private key or choose the file, then tap Seal and save the key.</li></ol>" +
+              "<p class='sm'>Kalshi can change these screens. If something looks different, their help pages have the newest steps.</p></details>" +
+            "<form data-k='keyForm' autocomplete='off' novalidate>" +
+              "<div class='at-field'><label for='atKid'>Key ID</label><input class='at-in code' id='atKid' data-k='kid' type='text' autocomplete='off' autocapitalize='off' autocorrect='off' spellcheck='false' maxlength='80' placeholder='From Kalshi: Account, then API keys'></div>" +
+              "<div class='at-field'><label for='atPem'>Private key</label><textarea class='at-in' id='atPem' data-k='pem' autocomplete='off' autocapitalize='off' autocorrect='off' spellcheck='false' placeholder='-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----'></textarea>" +
+                "<div class='at-row' style='margin-top:0'><label class='at-btn sm' style='display:inline-flex;align-items:center;cursor:pointer'>Choose the key file<input type='file' data-k='pemFile' accept='.pem,.key,.txt,text/plain' hidden></label></div></div>" +
+              "<div class='at-row'><button type='submit' class='at-btn go' data-k='keySave'>Seal and save the key</button></div>" +
+              "<p class='at-msg' data-k='keyMsg' role='status' aria-live='polite'></p>" +
+            "</form>" +
+            "<h4>How the key is protected</h4>" +
+            "<p class='sm'>The key is locked inside this browser before it is sent, using a public key that belongs to the bot. What we store is scrambled and cannot be read from the database or the website. Only the bot can open it, and only to place your trades.</p>" +
+            "<p class='sm'>Make the key on Kalshi with trading turned on. Put only money you can afford to lose into the account, and remove the key here any time.</p>" +
+            "<p class='at-vault' data-k='vaultId'></p>" +
+            "<div class='at-row'><button type='button' class='at-btn sm' data-a='chkshow' data-k='chkShow' hidden>Show the getting-started list again</button></div>" +
+          "</section>" +
+          "<section class='at-card'><h3>Your background</h3><p class='sm'>Put a picture or GIF behind the Auto-trader. It stays on this device only.</p>" +
+            "<div class='at-thumb' data-k='bgThumb' hidden></div>" +
+            "<div class='at-row'><label class='at-btn sm' style='display:inline-flex;align-items:center;cursor:pointer'>Choose a picture or GIF<input type='file' data-k='bgFile' accept='image/*' hidden></label><button type='button' class='at-btn sm' data-a='bgclear' data-k='bgClear' hidden>Remove</button></div>" +
+            "<div class='at-field' style='margin-top:12px'><label for='atBgUrl'>Or paste a picture link</label><div class='at-bet'><input class='at-in' id='atBgUrl' data-k='bgUrl' type='url' inputmode='url' autocomplete='off' autocapitalize='off' spellcheck='false' placeholder='https://...'><button type='button' class='at-btn sm' data-a='bgurl'>Use it</button></div></div>" +
+            "<div class='at-field'><label for='atDim'>Darken the picture: <span data-k='dimVal'>55</span>%</label><input class='at-range' id='atDim' data-k='dim' type='range' min='0' max='85' step='5'></div>" +
+            "<p class='at-msg' data-k='bgMsg' role='status' aria-live='polite'></p>" +
+          "</section>" +
+        "</div>" +
+      "</div>";
+    AK = bind($("autoWrap"));
+    A.built = true;
+    var w = $("autoWrap");
+    w.addEventListener("click", autoClick);
+    w.addEventListener("input", autoInput);
+    w.addEventListener("change", autoChange);
+    AK.keyForm.addEventListener("submit", function (ev) { ev.preventDefault(); autoSealAndSave(); });
+    autoTab(A.tab, true);
+  }
+  function autoPaintLoading() {
+    if (!A.built) return;
+    AK.lock.hidden = false; AK.main.hidden = true; delete AK.lock.dataset.sig;
+    AK.lock.innerHTML = "<h2>Auto-trader</h2><p class='sm'>Loading...</p>";
+  }
+  function autoTab(t, quiet) {
+    A.tab = t; store("kh_auto_tab", t);
+    Array.prototype.forEach.call($("autoWrap").querySelectorAll(".at-tab"), function (b) { b.setAttribute("aria-selected", b.dataset.tab === t ? "true" : "false"); });
+    Array.prototype.forEach.call($("autoWrap").querySelectorAll(".at-pane"), function (p) { p.hidden = p.dataset.pane !== t; });
+  }
+  (function () { var t = store("kh_auto_tab"); if (t && AUTO_TABS.some(function (x) { return x[0] === t; })) A.tab = t; })();
+
+  /* ---------- painting ---------- */
+  function autoRender() {
+    if (!A.built || !A.st) return;
+    var st = A.st;
+    if (!st.access) return autoPaintLock();
+    AK.lock.hidden = true; AK.main.hidden = false;
+    if (!A.set || (Date.now() - A.editAt > 3000 && !A.saveT && !A.saving)) A.set = Object.assign({}, AUTO_DEF, st.settings || {});
+    if (!A.rec) A.rec = autoMoney();
+    autoPaintHead(); autoPaintTrade(); autoPaintSettings(); autoPaintRecord(); autoPaintSetup(); autoPaintChecklist();
+  }
+  function autoPaintLive() {          // what moves between full updates: how old the bot's last report is
+    if (!A.built || !A.st || !A.st.access) return;
+    autoPaintHead(); autoPaintTrade();
+  }
+  function autoPill() {
+    var st = A.st, s = st.state || {}, age = botAge(), pos = s.pos ? Object.keys(s.pos).length : 0;
+    if (age != null && age > 30 && (st.running || pos)) return ["bad", "Bot offline"];
+    if (st.running) {
+      if (autoMoney() === "live" && st.kill) return ["warn", "Paused by the owner"];
+      if (s.pause && s.pause > botNow()) return ["warn", s.pause_why === "rest" ? "Resting" : "Taking a break"];
+      return ["on", "Running"];
+    }
+    if (pos) return ["warn", "Stopped, " + pos + " open"];
+    return ["", "Stopped"];
+  }
+  function sideChip(side, word) {
+    var up = side === "UP";
+    return "<span class='at-side " + (up ? "up" : "down") + "'>" + (up ? "&#9650; " : "&#9660; ") + esc(word || "") + esc(side) + "</span>";
+  }
+  function autoPaintBets() {
+    var st = A.st, s = st.state || {}, pos = s.pos ? Object.keys(s.pos).sort() : [];
+    if (pos.length) setHTML(AK.bets, "<span class='lab'>Betting on now:</span>" + pos.map(function (c) { var p = s.pos[c]; return "<span class='at-side " + (p.s === "UP" ? "up" : "down") + "'><b>" + esc(c) + "</b> " + (p.s === "UP" ? "&#9650; UP" : "&#9660; DOWN") + "</span>"; }).join(""));
+    else if (st.running) setHTML(AK.bets, "<span class='lab'>Not betting on anything right now. UP means the price ends above the target, DOWN means below.</span>");
+    else setHTML(AK.bets, "");
+    AK.bets.hidden = !AK.bets.innerHTML;
+  }
+  function autoPaintHead() {
+    var st = A.st, s = st.state || {}, mode = autoMoney(), live = mode === "live", S_ = (s.stats && s.stats[mode]) || { w: 0, l: 0, net: 0 };
+    var pill = autoPill(); AK.pill.className = "at-pill " + pill[0]; setText(AK.pill, pill[1]);
+    var today = (s.days && s.days[s.day] && s.days[s.day][mode]) || 0;
+    setText(AK.profLab, "Profit today");
+    AK.profToday.className = cls(today); setText(AK.profToday, usd(today, true));
+    setText(AK.profTotal, "All time " + usd(S_.net || 0, true) + " (" + (S_.w || 0) + " won, " + (S_.l || 0) + " lost)");
+    var bal = live ? (s.live && s.live.bal != null ? s.live.bal : (st.key && st.key.status && st.key.status.bal)) : (s.paper ? s.paper.bal : null);
+    setText(AK.balLab, live ? "Your Kalshi balance" : "Practice money");
+    setText(AK.bal, bal != null ? usd(bal) : (live ? "-" : "$200.00"));
+    setText(AK.balSub, live ? "Real money. Open trades are included once they close." : "Not real. Test the bot with this.");
+    Array.prototype.forEach.call(AK.head.querySelectorAll("[data-a=money]"), function (b) { b.setAttribute("aria-pressed", b.dataset.m === mode ? "true" : "false"); });
+    var pos = s.pos ? Object.keys(s.pos).length : 0;
+    setText(AK.go, st.running ? "Stop" : "Start");
+    AK.go.className = "at-btn " + (st.running ? "stop" : "go");
+    AK.flat.hidden = !(st.running || pos);
+    // one warning at a time, the most important first
+    var w = "", bad = false, age = botAge();
+    if (age != null && age > 30 && (st.running || pos)) { w = "The bot hasn't checked in for " + Math.round(age) + " seconds, so nothing is being bought or sold right now. It should come back on its own." + (pos ? " If you have real trades open, look at them on Kalshi." : ""); bad = true; }
+    else if (live && st.key && st.key.status && st.key.status.ok === false) { w = "Your Kalshi key isn't working: " + st.key.status.msg + " Fix it in Key and look."; bad = true; }
+    else if (live && st.kill) w = "The owner has paused real-money trading for now. Practice trading keeps going.";
+    else if (s.pause && s.pause > botNow()) w = s.pause_why === "rest" ? "Resting until tomorrow. No new trades until " + clockTime(s.pause) + ". Trades that are already open are still watched." : "Taking a break after losing trades in a row. Back at " + clockTime(s.pause) + ".";
+    else if (st.running && age == null) w = "Waiting for the bot to pick this up. This takes a few seconds.";
+    AK.warn.hidden = !w; AK.warn.className = "at-warn" + (bad ? " bad" : ""); setText(AK.warn, w);
+    $("modeDot").hidden = !st.running;
+    var paused = !!(s.pause && s.pause > botNow());
+    AK.restRow.hidden = !st.running; AK.rest.hidden = paused; AK.wake.hidden = !paused;
+    autoPaintBets();
+  }
+  function posStat(p) { var bid = p.bid; return { bid: bid, pnl: bid != null ? (bid - p.e) * p.n / 100 : null, left: p.cl - botNow() }; }
+  function posSig(p) {              // everything that changes the card's shape; the numbers that tick are filled in separately, so a tap never lands on a card that was just rebuilt
+    var x = posStat(p), st = A.set || {}, arm = A.sellArm && A.sellArm.c === p.c && A.sellArm.until > Date.now(), sent = (A.sold[p.c] || 0) > Date.now();
+    return [p.c, p.s, p.n, p.e, p.m, x.bid != null, x.left > 3, arm ? 1 : 0, sent ? 1 : 0, st.stop_mode, st.stop_c, st.tp_mode, st.tp_c].join("|");
+  }
+  function posHTML(p) {
+    var x = posStat(p), st = A.set || {}, sc = Math.round(Number(st.stop_c)) || 15, tc = Math.round(Number(st.tp_c)) || 20;
+    var arm = A.sellArm && A.sellArm.c === p.c && A.sellArm.until > Date.now(), sent = (A.sold[p.c] || 0) > Date.now(), tp = Math.ceil(p.e + tc - 1e-9);
+    return "<div class='at-pos " + (p.s === "UP" ? "up" : "down") + "' data-c='" + esc(p.c) + "'><div class='l1'><b>" + esc(p.c) + (p.m === "live" ? "<span class='at-tag real'>Real money</span>" : "<span class='at-tag'>Practice</span>") + "</b>" +
+      "<span class='pnl'></span></div>" +
+      "<div>" + sideChip(p.s, "Betting ") + "</div>" +
+      "<span class='sm'>Pays 100c if the market ends " + esc(p.s) + ".</span>" +
+      (st.stop_mode === "manual" ? "<span class='sm'>Your stop loss: sells at " + Math.max(Math.floor(p.e - sc + 1e-9), 1) + "c or lower.</span>" : "") +
+      (st.tp_mode === "manual" ? "<span class='sm'>" + (tp > 99 ? "Your profit target can't be reached on this trade. It would need " + tp + "c, and a contract tops out at 100c." : "Your profit target: sells at " + tp + "c or higher.") + "</span>" : "") +
+      "<span class='sm'>" + p.n + " contract" + (p.n === 1 ? "" : "s") + " bought at " + Math.round(p.e) + "c. Would sell at <span class='px-bid'></span> now.</span>" +
+      "<span class='sm px-left'></span>" +
+      (x.bid != null && x.left > 3 ? "<div class='at-row' style='margin-top:6px'><button type='button' class='at-btn sm danger" + (arm ? " armed" : "") + "' data-a='sellnow' data-c='" + esc(p.c) + "'" + (sent ? " disabled" : "") + ">" + (sent ? "Sell order sent..." : arm ? "Tap again to sell" : "Sell this trade now") + "</button></div>" : "") +
+      "</div>";
+  }
+  function paintPosLive(p) {
+    var c = AK.pos.querySelector(".at-pos[data-c='" + p.c + "']"); if (!c) return;
+    var x = posStat(p), a = c.querySelector(".pnl"), b = c.querySelector(".px-bid"), l = c.querySelector(".px-left");
+    a.className = "pnl " + cls(x.pnl); setText(a, x.pnl == null ? "-" : usd(x.pnl, true));
+    setText(b, x.bid != null ? Math.round(x.bid) + "c" : "-");
+    setText(l, x.left > 0 ? "Market closes at " + clockTime(p.cl) + ", in " + leftText(x.left) + "." : "Market closed. Waiting for Kalshi to settle it.");
+  }
+  function autoPaintTrade() {
+    var st = A.st, s = st.state || {}, pos = s.pos ? Object.keys(s.pos).sort() : [];
+    Object.keys(A.sold).forEach(function (c) { if (!(s.pos && s.pos[c])) delete A.sold[c]; });
+    var sig = pos.map(function (c) { return posSig(s.pos[c]); }).join("~") || "none";
+    if (AK.pos.__sig !== sig) { AK.pos.__sig = sig; AK.pos.innerHTML = pos.length ? "<div style='display:grid;gap:8px'>" + pos.map(function (c) { return posHTML(s.pos[c]); }).join("") + "</div>" : "<p class='at-empty'>No open trades. When a coin qualifies, the bot buys and the trade shows up here.</p>"; }
+    pos.forEach(function (c) { paintPosLive(s.pos[c]); });
+    var coins = (A.set && A.set.coins) || [], notes = s.notes || {};
+    var rows = COINS.filter(function (c) { return coins.indexOf(c[0]) >= 0 || (s.pos && s.pos[c[0]]); }).map(function (c) {
+      var n = notes[c[0]] || (st.running ? (st.state ? "" : "waiting for the bot") : "stopped");
+      var hp = s.pos && s.pos[c[0]], chip = hp ? sideChip(hp.s, "Betting ") : "<span class='at-side none'>No bet</span>";
+      return "<li><b>" + c[0] + "</b><span>" + chip + " " + esc(n || "checking") + "</span></li>";
+    });
+    setHTML(AK.why, rows.join("") || "<li><span>No coins picked yet. Pick some in Settings.</span></li>");
+    setText(AK.whyNote, rows.length ? "The chart and indicators are for the coin you tap above. This list shows every coin you picked." : "");
+    var log = (s.log || []).slice().reverse().slice(0, 25);
+    setHTML(AK.log, log.length ? log.map(function (l) { return "<li class='" + esc(l.k) + "'><i>" + esc(clockTime(l.t)) + "</i>" + esc(l.x) + "</li>"; }).join("") : "<li class='info'>Nothing yet. Press Start and the bot's decisions show up here.</li>");
+  }
+  function setActive(group, attr, val) { Array.prototype.forEach.call(group.querySelectorAll("button"), function (b) { b.setAttribute("aria-pressed", b.getAttribute(attr) === String(val) ? "true" : "false"); }); }
+  function setIfIdle(el, v) { if (el !== document.activeElement && String(el.value) !== String(v)) el.value = v; }
+  function autoPaintSettings() {
+    var s = A.set; if (!s) return;
+    Array.prototype.forEach.call(AK.coins.children, function (b) { b.setAttribute("aria-pressed", s.coins.indexOf(b.dataset.coin) >= 0 ? "true" : "false"); });
+    setIfIdle(AK.bet, s.bet); setActive(AK.betchips, "data-bet", s.bet);
+    var cap = A.st && A.st.state && A.st.state.max_bet; setText(AK.betHint, "The most one trade will spend. The bot works out how many contracts that buys." + (cap ? " The owner's cap is $" + cap + "." : ""));
+    setActive(AK.styles, "data-v", s.style); setActive(AK.picks, "data-v", s.pick);
+    AK.flips.checked = !!s.flips;
+    var man = s.stop_mode === "manual", sc = Math.round(Number(s.stop_c)) || 15;
+    setActive(AK.stops, "data-v", man ? "manual" : "auto"); AK.stopF.hidden = !man; setIfIdle(AK.stopc, sc); setActive(AK.stopchips, "data-c", sc);
+    setText(AK.stopEx, "Example: if the bot pays 60c for a contract, it sells when the price falls to " + Math.max(60 - sc, 1) + "c. A fast drop can sell a little lower than that, and it can't sell in the last few seconds of a market.");
+    AK.stopWarn.hidden = !(man && sc < 8); setText(AK.stopWarn, sc < 8 ? "That is tighter than the usual gap between the buy and sell price (3 to 5 cents), so normal wiggle could sell you out right away. 10 or more is safer." : "");
+    var tman = s.tp_mode === "manual", tc = Math.round(Number(s.tp_c)) || 20;
+    setActive(AK.tps, "data-v", tman ? "manual" : "auto"); AK.tpF.hidden = !tman; setIfIdle(AK.tpc, tc); setActive(AK.tpchips, "data-c", tc);
+    setText(AK.tpEx, "Example: if the bot pays 60c for a contract, it sells when the price reaches " + Math.min(60 + tc, 99) + "c. Trades bought at " + Math.max(100 - tc, 1) + "c or higher can't reach this, because a contract tops out at 100c. Those are held to the end unless a flip or your stop loss sells them.");
+    setIfIdle(AK.loss, s.daily_loss); setIfIdle(AK.maxopen, s.max_open); setIfIdle(AK.streak, s.streak); setIfIdle(AK.cap, s.max_money || 0);
+    AK.maxopenF.hidden = s.pick !== "all";
+    AK.hoursOn.checked = !!s.hours_on; AK.hoursF.hidden = !s.hours_on; setIfIdle(AK.hFrom, s.hours_from || "09:00"); setIfIdle(AK.hTo, s.hours_to || "17:00");
+    setText(AK.hoursNote, (myTz() ? "Uses this device's clock (" + myTz() + "). " : "Couldn't read this device's clock, so the bot's own clock is used. ") + "Example: 9:00 AM to 5:00 PM. A window can run past midnight, like 10:00 PM to 6:00 AM. The same time in both boxes means all day.");
+    autoPaintAlerts();
+  }
+  function recData() {
+    var s = (A.st && A.st.state) || {}, mode = A.rec || autoMoney();
+    var S_ = (s.stats && s.stats[mode]) || { w: 0, l: 0, e: 0, net: 0, coins: {} };
+    return { s: s, mode: mode, S: S_, trades: (s.trades || []).filter(function (t) { return t.m === mode; }) };
+  }
+  function autoPaintRecord() {
+    var d = recData(), S_ = d.S, acc = pctOf(S_.w || 0, S_.l || 0), n = (S_.w || 0) + (S_.l || 0) + (S_.e || 0);
+    Array.prototype.forEach.call($("autoWrap").querySelectorAll("[data-a=rec]"), function (b) { b.setAttribute("aria-pressed", b.dataset.m === d.mode ? "true" : "false"); });
+    var today = (d.s.days && d.s.days[d.s.day] && d.s.days[d.s.day][d.mode]) || 0;
+    setHTML(AK.recTiles,
+      "<div class='at-stat big'><span>Profit</span><b class='" + cls(S_.net) + "'>" + usd(S_.net || 0, true) + "</b><small>Today " + usd(today, true) + "</small></div>" +
+      "<div class='at-stat big'><span>Accuracy</span><b>" + (acc == null ? "-" : acc + "%") + "</b><small>" + (S_.w || 0) + " won, " + (S_.l || 0) + " lost" + (S_.e ? ", " + S_.e + " even" : "") + "</small></div>" +
+      "<div class='at-stat'><span>Trades</span><b>" + n + "</b></div>" +
+      "<div class='at-stat'><span>Fees paid</span><b>" + usd(S_.fees || 0) + "</b><small>Already taken out of profit</small></div>");
+    setText(AK.recNote, d.mode === "paper" ? "Practice money. These results are not real, and real trading can go differently." : "Real money on your Kalshi account, after fees.");
+    var coins = Object.keys(S_.coins || {}).sort(function (a, b) { return (S_.coins[b].net || 0) - (S_.coins[a].net || 0); });
+    setHTML(AK.recCoins, coins.length ? "<table class='at-table'><thead><tr><th>Coin</th><th>Won - lost</th><th>Accuracy</th><th>Profit</th></tr></thead><tbody>" + coins.map(function (c) {
+      var x = S_.coins[c], a = pctOf(x.w || 0, x.l || 0);
+      return "<tr><td><b>" + esc(c) + "</b></td><td>" + (x.w || 0) + " - " + (x.l || 0) + "</td><td>" + (a == null ? "-" : a + "%") + "</td><td class='" + cls(x.net) + "'>" + usd(x.net || 0, true) + "</td></tr>";
+    }).join("") + "</tbody></table>" : "<p class='at-empty'>No finished trades yet.</p>");
+    var tr = d.trades.slice().reverse().slice(0, 30);
+    setHTML(AK.recTrades, tr.length ? tr.map(function (t) {
+      return "<li><span><b>" + esc(t.c) + " " + esc(t.s) + "</b> " + t.n + " at " + Math.round(t.e) + "c, ended " + Math.round(t.x) + "c</span><b class='" + cls(t.net) + "'>" + usd(t.net, true) + "</b><span class='sub'>" + esc(autoReason(t.r)) + " &middot; " + esc(clockTime(t.t)) + "</span>" + whyHTML(t) + "</li>";
+    }).join("") : "<li><span class='at-empty'>Your finished trades show up here.</span></li>");
+    AK.resetRow.hidden = d.mode !== "paper";
+  }
+  function autoReason(r) { return { TP: "Took profit", FLIP: "Call flipped, got out", CUT: "Cut the loss", STOP: "Hit your stop loss", TARGET: "Hit your profit target", SELL: "You sold it", WON: "Held to the end: won", LOST: "Held to the end: lost", FLAT: "You sold everything", ERR: "Closed" }[r] || r; }
+  function keyBoxHTML(k, hasVault) {
+    if (!hasVault) return "<div class='at-warn'>The bot hasn't published its vault key yet, so a key can't be saved right now. This fixes itself once the bot is running.</div>";
+    if (!k) return "<div class='at-key'><b>No key saved</b><span class='sm'>Add one below to trade with real money.</span></div>";
+    var s = k.status || {}, line;
+    if (s.checking || (s.ok == null && !s.msg)) line = "<span class='sm'>Checking the key with Kalshi...</span>";
+    else if (s.ok) line = "<span class='up'><b>Working.</b></span> <span class='sm'>Kalshi balance " + usd(s.bal) + ". " + esc(s.msg || "") + "</span>";
+    else line = "<span class='down'><b>Not working.</b></span> <span class='sm'>" + esc(s.msg || "") + "</span>";
+    return "<div class='at-key'><div>Key saved: <code>..." + esc(k.hint || "") + "</code></div>" + line +
+      "<div class='at-row' style='margin-top:4px'><button type='button' class='at-btn sm' data-a='keycheck'>Check again</button><button type='button' class='at-btn sm danger' data-a='keydel'>Remove the key</button></div></div>";
+  }
+  function autoPaintSetup() {
+    var st = A.st, v = st.vault || {};
+    setHTML(AK.keyBox, keyBoxHTML(st.key, !!(v.pub && v.fp)));
+    setText(AK.vaultId, v.fp ? "Vault ID " + v.fp + ". The owner can match this with the ID the bot printed when it started." : "");
+    AK.keySave.disabled = !(v.pub && v.fp) || A.sealing;
+    setText(AK.dimVal, String(A.dim)); if (AK.dim !== document.activeElement) AK.dim.value = A.dim;
+    AK.bgThumb.hidden = !A.bg; AK.bgClear.hidden = !A.bg;
+    if (A.bg) AK.bgThumb.style.backgroundImage = "url(\"" + (A.bg.type === "file" ? A.bgObj : A.bg.url) + "\")";
+  }
+  function autoPaintLock() {
+    var st = A.st, pay = st.pay_url || AUTO_PAY;
+    AK.lock.hidden = false; AK.main.hidden = true;
+    var buy;
+    if (st.missing) buy = "<p class='at-msg err'>The Auto-trader isn't switched on in the database yet. The owner needs to run auto_setup.sql in Supabase once.</p>";
+    else if (st.trial) buy = "<p class='at-warn'>The free trial doesn't include the Auto-trader. <a href='./#get'>Get full access</a> first, then come back and unlock it.</p>";
+    else buy = "<div class='at-buy'>" +
+      (pay ? "<a class='at-btn go' style='display:inline-flex;align-items:center;justify-content:center;text-decoration:none' href='" + esc(pay) + "' target='_blank' rel='noopener noreferrer'>Pay $15 once</a><p class='sm'>After you pay, Stripe emails you a receipt. Type the receipt number below.</p>" : "<p class='at-warn'>The payment link isn't set up yet. Check back soon.</p>") +
+      "<form data-k='buyForm' autocomplete='off' novalidate><label class='sm' for='atRcpt'>Receipt number from your Stripe email</label><div class='at-bet' style='margin-top:6px'><input class='at-in code' id='atRcpt' data-k='rcpt' type='text' autocapitalize='characters' autocorrect='off' spellcheck='false' maxlength='60' placeholder='1234-5678' style='max-width:none'><button type='submit' class='at-btn go sm' data-k='buyGo'>Unlock</button></div></form>" +
+      "<p class='at-msg' data-k='buyMsg' role='status' aria-live='polite'></p></div>";
+    var sig = "lock|" + (st.trial ? 1 : 0) + "|" + (pay || "") + "|" + (st.missing ? 1 : 0);
+    if (AK.lock.dataset.sig === sig) return;
+    AK.lock.dataset.sig = sig;
+    AK.lock.innerHTML = "<div class='at-lock'><h2>Let the bot trade for you</h2>" +
+      "<p>Pick your coins and how much to spend on each trade. The bot places the trades by itself, sells right away when a call flips, and keeps your win and loss record. It reads the same live calls you see on the board, every second.</p>" +
+      "<ul><li>Practice money to try it first, then real money when you are ready</li><li>Your own Kalshi account, with your key sealed so nobody can read it</li><li>A results card you can share</li></ul>" +
+      "<p class='sm'>$15, paid once. Discount codes don't work on this one. Trading can lose money and no result is promised. Start with practice money.</p>" + buy + "</div>";
+    var lk = bind(AK.lock); AK.rcpt = lk.rcpt; AK.buyMsg = lk.buyMsg; AK.buyGo = lk.buyGo;
+    if (lk.buyForm) lk.buyForm.addEventListener("submit", function (ev) { ev.preventDefault(); autoBuyStart(); });
+  }
+
+  /* ---------- clicks and typing ---------- */
+  function autoClick(ev) {
+    var b = ev.target.closest && ev.target.closest("[data-a]"); if (!b || !$("autoWrap").contains(b)) return;
+    var a = b.dataset.a;
+    if (a === "tab") return autoTab(b.dataset.tab);
+    if (a === "money") return autoSetMoney(b.dataset.m);
+    if (a === "go") return autoGo();
+    if (a === "flat") return armOrRun(b, autoFlat);
+    if (a === "coin") { var c = b.dataset.coin, cs = A.set.coins.slice(), i = cs.indexOf(c); if (i >= 0) cs.splice(i, 1); else cs.push(c); cs.sort(function (x, y) { return coinIndex(x) - coinIndex(y); }); return autoEdit({ coins: cs }); }
+    if (a === "betchip") return autoEdit({ bet: Number(b.dataset.bet) });
+    if (a === "style") return autoEdit({ style: b.dataset.v });
+    if (a === "pick") return autoEdit({ pick: b.dataset.v });
+    if (a === "stopmode") return autoEdit({ stop_mode: b.dataset.v === "manual" ? "manual" : "auto" });
+    if (a === "stopchip") return autoEdit({ stop_mode: "manual", stop_c: Number(b.dataset.c) });
+    if (a === "tpmode") return autoEdit({ tp_mode: b.dataset.v === "manual" ? "manual" : "auto" });
+    if (a === "tpchip") return autoEdit({ tp_mode: "manual", tp_c: Number(b.dataset.c) });
+    if (a === "sellnow") return autoSell(b.dataset.c);
+    if (a === "rest") { useTz(); return autoCmd("rest", "Resting until tomorrow. Open trades are still watched."); }
+    if (a === "wake") return autoCmd("wake", "Back to trading.");
+    if (a === "alertson") return alertsOn();
+    if (a === "alertsoff") return autoEdit({ alert_ntfy: "" });
+    if (a === "copytopic") return copyTopic();
+    if (a === "alerttest") return alertTest();
+    if (a === "csv") return autoCsv();
+    if (a === "chk") { return autoTab(b.dataset.go || "settings"); }
+    if (a === "chkhide") { store("kh_auto_chk", "1"); return autoPaintChecklist(); }
+    if (a === "chkshow") { store("kh_auto_chk", null); autoTab("trade"); return autoPaintChecklist(); }
+    if (a === "rec") { A.rec = b.dataset.m; return autoPaintRecord(); }
+    if (a === "share") return shareOpen();
+    if (a === "resetpaper") return armOrRun(b, function () { autoCmd("reset_paper", "Practice account reset."); });
+    if (a === "keycheck") return autoCmd("check_key", "Checking the key...");
+    if (a === "keydel") return armOrRun(b, autoKeyDelete);
+    if (a === "bgclear") return autoBgClear();
+    if (a === "bgurl") return autoBgUrl(AK.bgUrl.value);
+  }
+  function coinIndex(c) { for (var i = 0; i < COINS.length; i++) if (COINS[i][0] === c) return i; return 99; }
+  function numIn(el, lo, hi, dflt) { var v = parseFloat(String(el.value).replace(",", ".")); return isFinite(v) ? Math.min(Math.max(v, lo), hi) : dflt; }
+  function autoInput(ev) {
+    var t = ev.target;
+    if (t === AK.bet) { var v = parseFloat(t.value); if (isFinite(v) && v >= 1) autoEdit({ bet: Math.min(v, 1000) }, true); }
+    else if (t === AK.loss) { var l = parseFloat(t.value); if (isFinite(l) && l >= 1) autoEdit({ daily_loss: Math.min(l, 10000) }, true); }
+    else if (t === AK.maxopen) { var m = parseInt(t.value, 10); if (isFinite(m) && m >= 1) autoEdit({ max_open: Math.min(m, 7) }, true); }
+    else if (t === AK.streak) { var k = parseInt(t.value, 10); if (isFinite(k) && k >= 0) autoEdit({ streak: Math.min(k, 20) }, true); }
+    else if (t === AK.stopc) { var sv = parseInt(t.value, 10); if (isFinite(sv) && sv >= 5) autoEdit({ stop_mode: "manual", stop_c: Math.min(sv, 90) }, true); }
+    else if (t === AK.tpc) { var tv = parseInt(t.value, 10); if (isFinite(tv) && tv >= 5) autoEdit({ tp_mode: "manual", tp_c: Math.min(tv, 90) }, true); }
+    else if (t === AK.cap) { var cv2 = parseFloat(t.value); if (isFinite(cv2) && cv2 >= 0) autoEdit({ max_money: Math.min(cv2, 100000) }, true); }
+    else if (t === AK.dis) { alertDiscord(t.value); }
+    else if (t === AK.dim) { A.dim = Number(t.value) || 0; store("kh_auto_dim", String(A.dim)); setText(AK.dimVal, String(A.dim)); autoBgApply(); }
+  }
+  function autoChange(ev) {
+    var t = ev.target;
+    if (t === AK.flips) return autoEdit({ flips: !!t.checked });
+    if (t === AK.pemFile && t.files && t.files[0]) return autoReadPem(t.files[0]);
+    if (t === AK.bgFile && t.files && t.files[0]) return autoBgFile(t.files[0]);
+    if (t === AK.stopc) { var cv = Math.round(numIn(t, 5, 90, 15)); t.value = cv; return autoEdit({ stop_mode: "manual", stop_c: cv }); }
+    if (t === AK.tpc) { var tcv = Math.round(numIn(t, 5, 90, 20)); t.value = tcv; return autoEdit({ tp_mode: "manual", tp_c: tcv }); }
+    if (t === AK.hoursOn) return autoEdit(withTz({ hours_on: !!t.checked }));
+    if (t === AK.hFrom || t === AK.hTo) { if (/^\d\d:\d\d$/.test(t.value)) return autoEdit(withTz(t === AK.hFrom ? { hours_from: t.value } : { hours_to: t.value })); return; }
+    if (t.dataset && t.dataset.a === "alertopt" && /^alert_(open|close|warn)$/.test(t.dataset.o || "")) { var po = {}; po[t.dataset.o] = !!t.checked; return autoEdit(po); }
+    if (t === AK.bet || t === AK.loss || t === AK.maxopen || t === AK.streak || t === AK.cap) { A.editAt = Date.now(); autoPaintSettings(); }
+  }
+
+  /* ---------- changing settings (saved a moment after you stop typing) ---------- */
+  function autoEdit(patch, typing) {
+    if (!A.set) A.set = Object.assign({}, AUTO_DEF);
+    for (var k in patch) A.set[k] = patch[k];
+    A.editAt = Date.now();
+    if (!typing) autoPaintSettings();
+    autoPaintHead();
+    savedSay( "Saving...");
+    clearTimeout(A.saveT); A.saveT = setTimeout(autoSave, typing ? 700 : 350);
+  }
+  function autoSave() {
+    A.saveT = null;
+    if (!S.token || !A.set) return Promise.resolve();
+    A.saving = true;
+    var sent = JSON.stringify(A.set);
+    return rpc("auto_save", { p_token: S.token, p_settings: A.set }).then(function (r) {
+      A.saving = false;
+      if (r && r.settings && !A.saveT && JSON.stringify(A.set) === sent) A.set = Object.assign({}, AUTO_DEF, r.settings);
+      savedSay( "Saved");
+      if (!(r && r.need_key) && AK.msg && AK.msg.classList.contains("err")) autoSay("");
+      if (r && r.need_key) { autoSay("Add your Kalshi key first. Real money needs it, so I kept practice money on.", "err"); autoTab("setup"); }
+      autoPaintSettings(); autoPaintHead(); autoNow(150);
+    }, function (e) { A.saving = false; savedSay( ""); autoSay(autoFriendly(e), "err"); if (/expired/i.test(String((e && e.message) || ""))) expired(); });
+  }
+  function savedSay(t) { setText(AK.saved, t); setText(AK.saved2, t); }
+  function autoSaveNow() { if (A.saveT) { clearTimeout(A.saveT); return autoSave(); } return Promise.resolve(); }
+
+  /* ---------- practice or real money ---------- */
+  function autoSetMoney(m) {
+    if (m === "paper") { A.rec = "paper"; return autoEdit({ mode: "paper" }); }
+    var k = A.st && A.st.key;
+    if (!k) { autoTab("setup"); return autoSay("Add your Kalshi key first (Key and look). Real money trades on your own Kalshi account.", "err"); }
+    if (k.status && k.status.ok === false) { autoTab("setup"); return autoSay("Your Kalshi key isn't working yet. Fix it first.", "err"); }
+    if (A.liveOk) { A.rec = "live"; return autoEdit({ mode: "live" }); }
+    autoConfirmLive();
+  }
+  function autoModalOpen(html, onClose) {
+    autoModalClose();
+    var m = document.createElement("div"); m.className = "at-modal"; m.id = "atModal"; m.setAttribute("role", "dialog"); m.setAttribute("aria-modal", "true");
+    m.innerHTML = "<div class='at-sheet'>" + html + "</div>";
+    m.addEventListener("click", function (ev) { if (ev.target === m) autoModalClose(); });
+    document.body.appendChild(m); A.onClose = onClose || null;
+    var f = m.querySelector("button, input"); if (f) f.focus();
+    return m;
+  }
+  function autoModalClose() { var m = $("atModal"); if (m) m.remove(); if (A.onClose) { try { A.onClose(); } catch (e) {} A.onClose = null; } }
+  document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && $("atModal")) autoModalClose(); });
+  function autoConfirmLive() {
+    var m = autoModalOpen("<h3 style='font:700 1.2rem/1.2 var(--font)'>Trade with real money?</h3>" +
+      "<p>The bot will place real orders on your Kalshi account, and you can lose what you put in. It has no track record yet and no result is promised.</p>" +
+      "<p class='sm'>Start with a small bet. Practice money first is the safer way to see how it behaves. You can stop any time with Stop and sell everything.</p>" +
+      "<label class='at-switch'><input type='checkbox' id='atOk'><span><b>I understand I can lose this money</b></span></label>" +
+      "<div class='at-row'><button type='button' class='at-btn' id='atNo'>Keep practicing</button><button type='button' class='at-btn go' id='atYes' disabled>Use real money</button></div>");
+    m.querySelector("#atOk").addEventListener("change", function () { m.querySelector("#atYes").disabled = !this.checked; });
+    m.querySelector("#atNo").addEventListener("click", autoModalClose);
+    m.querySelector("#atYes").addEventListener("click", function () { A.liveOk = true; autoModalClose(); A.rec = "live"; autoEdit({ mode: "live" }); });
+  }
+
+  /* ---------- start, stop, sell everything ---------- */
+  function autoGo() {
+    var st = A.st, on = !st.running;
+    AK.go.disabled = true;
+    autoSaveNow().then(function () { return rpc("auto_run", { p_token: S.token, p_on: on }); }).then(function (r) {
+      AK.go.disabled = false;
+      if (on && r && !r.running) {
+        if (r.need_coins) { autoTab("settings"); return autoSay("Pick at least one coin first.", "err"); }
+        if (r.need_key) { autoTab("setup"); return autoSay("Add your Kalshi key first, or switch to practice money.", "err"); }
+      }
+      autoSay(on ? "Started. The bot is watching your coins." : "Stopped. Trades that are already open are still watched until they end.", "ok");
+      autoNow(150);
+    }, function (e) { AK.go.disabled = false; autoSay(autoFriendly(e), "err"); if (/expired/i.test(String((e && e.message) || ""))) expired(); });
+  }
+  function autoFlat() { autoCmd("flat", "Selling everything now."); }
+  function autoCmd(c, msg) {
+    return autoSaveNow().then(function () { return rpc("auto_cmd", { p_token: S.token, p_cmd: c }); }).then(function () { if (msg) autoSay(msg, "ok"); autoNow(200); return true; }, function (e) { autoSay(autoFriendly(e), "err"); return false; });
+  }
+  function myTz() { try { var z = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; return /^([A-Za-z]+(\/[A-Za-z0-9_+-]+){1,2}|UTC)$/.test(z) && z.length <= 40 ? z : ""; } catch (e) { return ""; } }
+  function withTz(patch) { var z = myTz(); if (z && A.set && A.set.tz !== z) patch.tz = z; return patch; }      // the clock goes in the same change, so nothing repaints between reading a box and saving it
+  function useTz() { var z = myTz(); if (z && A.set && A.set.tz !== z) autoEdit({ tz: z }); }
+
+  /* ---------- sell one trade now ---------- */
+  function autoSell(c) {
+    var now = Date.now();
+    if (!(A.sellArm && A.sellArm.c === c && A.sellArm.until > now)) {                 // first tap asks, second tap sells
+      A.sellArm = { c: c, until: now + 4000 }; clearTimeout(A.sellArmT);
+      A.sellArmT = setTimeout(function () { A.sellArm = null; if (A.built && A.st && A.st.access) autoPaintTrade(); }, 4100);
+      return autoPaintTrade();
+    }
+    A.sellArm = null; A.sold[c] = now + 20000; autoPaintTrade();
+    autoCmd("sell:" + c, "Sell order sent for " + c + ". It sells at the next price check, a second or two.").then(function (ok) { if (!ok) { delete A.sold[c]; autoPaintTrade(); } });
+  }
+
+  /* ---------- alerts ---------- */
+  var DIS_RE = /^https:\/\/(discord|discordapp)\.com\/api\/webhooks\/[0-9]{15,25}\/[A-Za-z0-9_-]{20,100}$/;
+  function newTopic() {
+    var b = new Uint8Array(10), s = "kiros-";
+    if (!(window.crypto && crypto.getRandomValues)) return "";
+    crypto.getRandomValues(b);
+    for (var i = 0; i < b.length; i++) s += ("0" + b[i].toString(16)).slice(-2);
+    return s;
+  }
+  function alertsOn() {
+    var t = newTopic();
+    if (!t) return autoSay("This browser can't make a private alert name. Try another browser.", "err");
+    autoEdit({ alert_ntfy: t });
+  }
+  function copyTopic() {
+    var t = A.set && A.set.alert_ntfy; if (!t) return;
+    function done(ok) { autoSay(ok ? "Copied. Paste it into the ntfy app." : "Couldn't copy. Press and hold the name to copy it.", ok ? "ok" : "err"); }
+    try { navigator.clipboard.writeText(t).then(function () { done(true); }, function () { done(false); }); } catch (e) { done(false); }
+  }
+  function alertDiscord(v) {
+    v = String(v || "").trim();
+    if (!v) { A.disBad = false; return autoEdit({ alert_discord: "" }, true); }
+    if (DIS_RE.test(v)) { A.disBad = false; return autoEdit({ alert_discord: v }, true); }
+    A.disBad = true; autoPaintAlerts();
+  }
+  function alertTest() {
+    var s = A.set || {};
+    if (!s.alert_ntfy && !s.alert_discord) { A.alertNote = { m: "Turn on phone alerts or paste a Discord link first.", until: Date.now() + 8000 }; setTimeout(function () { if (A.built && AK.alertMsg) paintAlertMsg(); }, 8100); return paintAlertMsg(); }
+    A.testWait = Date.now() / 1000; paintAlertMsg();
+    autoCmd("test_alert", "").then(function (ok) { if (!ok) { A.testWait = 0; paintAlertMsg(); } });
+  }
+  function paintAlertMsg() {
+    var al = (A.st && A.st.state && A.st.state.alert) || null, m = "", k = "";
+    if (A.testWait) {
+      var fresh = al && al.at && al.at >= A.testWait - 10;
+      if (fresh && al.ok !== null && al.ok !== undefined) A.testWait = 0;
+      else if (Date.now() / 1000 - A.testWait > 30) { A.testWait = 0; m = "The bot didn't answer. Check that it is running, then try again."; k = "err"; }
+      else { m = "Sending the test..."; }
+    }
+    if (!m && A.alertNote && A.alertNote.until > Date.now()) { m = A.alertNote.m; k = "err"; }
+    if (!m && !A.testWait && al && al.msg) { m = al.msg; k = al.ok === false ? "err" : al.ok ? "ok" : ""; }
+    AK.alertMsg.className = "at-msg " + k; setText(AK.alertMsg, m);
+  }
+  function autoPaintAlerts() {
+    var s = A.set; if (!s || !AK.ntfyBox) return;
+    var t = s.alert_ntfy;
+    setHTML(AK.ntfyBox, t
+      ? "<span class='lbl'>Phone alerts are on</span><ol class='at-steps'><li>Install the free <b>ntfy</b> app from the App Store or Google Play.</li><li>Open it, tap <b>+</b>, and subscribe to this name: <code>" + esc(t) + "</code></li><li>Tap Send a test alert below. It should pop up on your phone.</li></ol><p class='hint sm'>Anyone who knows that name can read your alerts, so keep it to yourself.</p><div class='at-row' style='margin-top:6px'><button type='button' class='at-btn sm' data-a='copytopic'>Copy the name</button><button type='button' class='at-btn sm danger' data-a='alertsoff'>Turn off phone alerts</button></div>"
+      : "<span class='lbl'>Phone alerts</span><p class='hint sm'>Uses ntfy, a free app. No account needed.</p><div class='at-row' style='margin-top:6px'><button type='button' class='at-btn go sm' data-a='alertson'>Turn on phone alerts</button></div>");
+    if (AK.dis !== document.activeElement) A.disBad = false;
+    setIfIdle(AK.dis, s.alert_discord || "");
+    setText(AK.disHint, A.disBad ? "That doesn't look like a Discord webhook link, so it isn't saved. It starts with https://discord.com/api/webhooks/" : "In Discord: Server Settings, Integrations, Webhooks, New Webhook, then Copy Webhook URL. Paste it here.");
+    AK.aOpen.checked = s.alert_open !== false; AK.aClose.checked = s.alert_close !== false; AK.aWarn.checked = s.alert_warn !== false;
+    paintAlertMsg();
+  }
+
+  /* ---------- why a trade was made, and a spreadsheet of finished trades ---------- */
+  function whyHTML(t) {
+    var w = t.w; if (!w || w.p == null) return "";
+    var sm = w.sm === "manual" ? "your own, " + w.sc + "c" : "automatic", tm = w.tm === "manual" ? "your own, " + w.tc + "c" : "automatic";
+    return "<details class='at-whyd'><summary>Why did it trade?</summary><ul>" +
+      "<li>The bot gave " + esc(t.s) + " a " + Math.round(w.p * 100) + "% chance.</li>" +
+      "<li>Kalshi's price said " + Math.round((w.k || 0) * 100) + "%.</li>" +
+      "<li>The bot's edge after fees was about " + Math.round((w.ed || 0) * 100) + " points.</li>" +
+      "<li>" + leftText(w.lf || 0) + " were left in the market.</li>" +
+      "<li>Style: " + esc(String(w.sy || "")) + ". Stop loss: " + sm + ". Profit target: " + tm + ".</li></ul></details>";
+  }
+  function csvCell(v) {
+    v = v == null ? "" : String(v);
+    if (/^[=+\-@\t\r]/.test(v) && !/^-?\d+(\.\d+)?$/.test(v)) v = "'" + v;
+    return /[",\n\r]/.test(v) ? "\"" + v.replace(/"/g, "\"\"") + "\"" : v;
+  }
+  function csvTime(ts) { var d = new Date(ts * 1000), p = function (n) { return ("0" + n).slice(-2); }; return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds()); }
+  function autoCsv() {
+    var d = recData(), rows = d.trades;
+    if (!rows.length) return autoSay("There are no finished trades to save yet.", "err");
+    var head = ["time", "mode", "coin", "side", "contracts", "buy_c", "sell_c", "net_usd", "reason", "bot_odds_pct", "kalshi_odds_pct", "edge_pts", "secs_left_at_buy", "style", "stop_loss", "profit_target"];
+    var out = [head.join(",")].concat(rows.map(function (t) {
+      var w = t.w || {};
+      return [csvTime(t.t), t.m, t.c, t.s, t.n, t.e, t.x, t.net, t.r, w.p != null ? Math.round(w.p * 1000) / 10 : "", w.k != null ? Math.round(w.k * 1000) / 10 : "", w.ed != null ? Math.round(w.ed * 1000) / 10 : "", w.lf != null ? w.lf : "",
+        w.sy || "", w.sm ? (w.sm === "manual" ? "manual " + w.sc : "auto") : "", w.tm ? (w.tm === "manual" ? "manual " + w.tc : "auto") : ""].map(csvCell).join(",");
+    }));
+    try {
+      var blob = new Blob(["\ufeff" + out.join("\r\n") + "\r\n"], { type: "text/csv;charset=utf-8" }), a = document.createElement("a"), url = URL.createObjectURL(blob);
+      a.href = url; a.download = "auto-trades-" + d.mode + "-" + csvTime(Date.now() / 1000).slice(0, 10) + ".csv"; a.rel = "noopener"; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 15000);
+      autoSay("Saved " + rows.length + " trade" + (rows.length === 1 ? "" : "s") + " to a file.", "ok");
+    } catch (e) { autoSay("This browser wouldn't make the file.", "err"); }
+  }
+
+  /* ---------- the getting-started list ---------- */
+  function autoPaintChecklist() {
+    if (!AK.chk) return;
+    var st = A.st, s = st.state || {}, set = A.set || AUTO_DEF, P = (s.stats && s.stats.paper) || {}, np = (P.w || 0) + (P.l || 0) + (P.e || 0), k = st.key, kok = !!(k && k.status && k.status.ok);
+    AK.chkShow.hidden = store("kh_auto_chk") !== "1";
+    if (store("kh_auto_chk") === "1") { AK.chk.hidden = true; return; }
+    var items = [
+      [set.coins.length > 0, "Pick your coins", "", "settings"],
+      [np > 0 || !!(s.pos && Object.keys(s.pos).length), "Press Start and let it make a practice trade", "", "trade"],
+      [np >= 20, "Watch about 20 practice trades before real money", Math.min(np, 20) + " of 20 so far", "record"],
+      [kok, "Add your Kalshi key (only for real money)", "", "setup"],
+      [!!(set.alert_ntfy || set.alert_discord), "Turn on alerts (optional)", "", "settings"],
+      [set.mode === "live", "Switch to real money with a small bet", "", "trade"]];
+    AK.chk.hidden = false;
+    setHTML(AK.chk, "<h3>Getting started</h3><ul class='at-chk'>" + items.map(function (it) {
+      return "<li class='" + (it[0] ? "done" : "") + "'><button type='button' data-a='chk' data-go='" + it[3] + "'><span class='mk' aria-hidden='true'>&#10003;</span><span>" + it[1] + (it[2] ? "<small>" + it[2] + "</small>" : "") + "</span><span class='sr'>" + (it[0] ? "Done" : "Not done yet") + "</span></button></li>";
+    }).join("") + "</ul><div class='at-row'><button type='button' class='at-btn sm' data-a='chkhide'>Hide this list</button></div>");
+  }
+
+  /* ---------- the $15 purchase ---------- */
+  function autoBuyStart() {
+    if (A.buying) return;
+    var v = AK.rcpt.value.trim();
+    if (v.replace(/[^A-Za-z0-9]/g, "").length < 6) { AK.buyMsg.className = "at-msg err"; AK.buyMsg.textContent = "Type your receipt number first. It looks like 1234-5678."; return; }
+    A.buying = true; AK.buyGo.disabled = true; AK.buyGo.textContent = "Checking...";
+    AK.buyMsg.className = "at-msg"; AK.buyMsg.textContent = "Checking. This takes a few seconds.";
+    var tok = S.token;
+    function end(msg, kind) { A.buying = false; if (AK.buyGo) { AK.buyGo.disabled = false; AK.buyGo.textContent = "Unlock"; } if (AK.buyMsg) { AK.buyMsg.className = "at-msg " + (kind || ""); AK.buyMsg.textContent = msg; } }
+    rpc("auto_buy_request", { p_token: tok, p_receipt: v }).then(function (id) {
+      var t0 = Date.now(), n = 0;
+      (function poll() {
+        if (S.token !== tok) return;
+        if (Date.now() - t0 > 100000) return end("This is taking longer than usual. The bot may be restarting. Try again in a minute.", "err");
+        rpc("auto_buy_result", { p_token: tok, p_id: id }).then(function (r) {
+          if (!r || r.status === "pending") { n = 0; A.buyT = setTimeout(poll, 1200); return; }
+          if (r.status === "ok") { end("Unlocked.", "ok"); autoNow(0); return; }
+          if (r.status === "bad") return end(r.message || "That receipt didn't work.", "err");
+          if (r.status === "missing") return end("That got lost. Please try again.", "err");
+          end(r.message || "I couldn't check that just now. Try again in a minute.", "err");
+        }, function (e) { if (++n > 4) return end(autoFriendly(e), "err"); A.buyT = setTimeout(poll, 1500); });
+      })();
+    }, function (e) {
+      if (/have/i.test(String((e && e.message) || ""))) { end("You already have it.", "ok"); return autoNow(0); }
+      end(autoFriendly(e), "err");
+    });
+  }
+
+  /* ---------- the Kalshi key: sealed here, in this browser, before it goes anywhere ---------- */
+  function b64e(buf) { var b = new Uint8Array(buf), s = ""; for (var i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); }
+  function b64d(str) { var bin = atob(String(str).replace(/\s+/g, "")), b = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) b[i] = bin.charCodeAt(i); return b; }
+  function pemBody(p) { var m = /-----BEGIN [A-Z ]*-----([\s\S]*?)-----END [A-Z ]*-----/.exec(String(p || "")); return m ? m[1].replace(/\s+/g, "") : ""; }
+  function hex16(buf) { var b = new Uint8Array(buf), s = ""; for (var i = 0; i < 8; i++) s += ("0" + b[i].toString(16)).slice(-2); s = s.toUpperCase(); return s.replace(/(.{4})(?=.)/g, "$1-"); }
+  function sealKey(rk, keyId, pem, vault) {
+    var subtle = window.crypto && window.crypto.subtle;
+    if (!subtle) return Promise.reject(new Error("This browser can't lock the key. Open the site with https:// in an up-to-date browser."));
+    var spki;
+    try { spki = b64d(pemBody(vault.pub)); } catch (e) { return Promise.reject(new Error("The vault key looks wrong. Tell the owner.")); }
+    var enc = new TextEncoder();
+    return subtle.digest("SHA-256", spki).then(function (h) {
+      if (hex16(h) !== vault.fp) throw new Error("The vault key doesn't match its ID. Don't continue; tell the owner.");
+      return subtle.importKey("spki", spki, { name: "RSA-OAEP", hash: "SHA-256" }, false, ["encrypt"]);
+    }).then(function (pub) {
+      return subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt"]).then(function (aes) {
+        var iv = window.crypto.getRandomValues(new Uint8Array(12));
+        return subtle.encrypt({ name: "AES-GCM", iv: iv, additionalData: enc.encode("kiros-auto-v1|" + rk), tagLength: 128 }, aes, enc.encode(JSON.stringify({ id: keyId, pem: pem }))).then(function (ct) {
+          return subtle.exportKey("raw", aes).then(function (raw) {
+            return subtle.encrypt({ name: "RSA-OAEP" }, pub, raw).then(function (wk) {
+              return JSON.stringify({ v: 1, fp: vault.fp, wk: b64e(wk), iv: b64e(iv), ct: b64e(ct) });
+            });
+          });
+        });
+      });
+    });
+  }
+  function autoReadPem(f) {
+    if (f.size > 20000) { AK.keyMsg.className = "at-msg err"; AK.keyMsg.textContent = "That file is too big to be a key."; return; }
+    var r = new FileReader();
+    r.onload = function () { AK.pem.value = String(r.result || ""); AK.keyMsg.textContent = ""; };
+    r.onerror = function () { AK.keyMsg.className = "at-msg err"; AK.keyMsg.textContent = "I couldn't read that file. Paste the key instead."; };
+    r.readAsText(f);
+    AK.pemFile.value = "";
+  }
+  function autoSealAndSave() {
+    if (A.sealing || !A.st || !A.st.vault) return;
+    var id = AK.kid.value.trim(), pem = AK.pem.value.replace(/\r\n?/g, "\n").trim();
+    function bad(t) { AK.keyMsg.className = "at-msg err"; AK.keyMsg.textContent = t; }
+    if (!/^[A-Za-z0-9._-]{8,80}$/.test(id)) return bad("Check the key ID. It's the long ID Kalshi shows next to the key, with no spaces.");
+    if (!/-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----[\s\S]+-----END [A-Z0-9 ]*PRIVATE KEY-----/.test(pem)) return bad("The private key should start with -----BEGIN and end with -----END. Paste the whole thing, or choose the file Kalshi gave you.");
+    if (pem.length > 6000) return bad("That is too long to be a key.");
+    A.sealing = true; AK.keySave.disabled = true; AK.keyMsg.className = "at-msg"; AK.keyMsg.textContent = "Locking the key...";
+    var hint = id.replace(/[^A-Za-z0-9]/g, "").slice(-4).toLowerCase();
+    sealKey(A.st.rk, id, pem, A.st.vault).then(function (blob) {
+      return rpc("auto_put_key", { p_token: S.token, p_blob: blob, p_hint: hint });
+    }).then(function () {
+      A.sealing = false; AK.keySave.disabled = false;
+      AK.kid.value = ""; AK.pem.value = ""; pem = null;                                    // nothing readable is kept in the page
+      AK.keyMsg.className = "at-msg ok"; AK.keyMsg.textContent = "Saved and locked. The bot is checking it with Kalshi now.";
+      autoNow(300);
+    }, function (e) {
+      A.sealing = false; AK.keySave.disabled = false;
+      bad(e && e.message && !/^(HTTP|network)/.test(e.message) && !e.status && !e.net ? e.message : autoFriendly(e));
+    });
+  }
+  function autoKeyDelete() {
+    rpc("auto_del_key", { p_token: S.token }).then(function () { A.liveOk = false; autoSay("Key removed. Real money is off until you add one.", "ok"); autoNow(100); }, function (e) { autoSay(autoFriendly(e), "err"); });
+  }
+
+  /* ---------- your own background (picture or GIF), kept on this device ---------- */
+  var BGDB = { db: null };
+  function bgOpen() {
+    return new Promise(function (res, rej) {
+      if (BGDB.db) return res(BGDB.db);
+      try {
+        var q = indexedDB.open("kh_auto", 1);
+        q.onupgradeneeded = function () { q.result.createObjectStore("kv"); };
+        q.onsuccess = function () { BGDB.db = q.result; res(BGDB.db); };
+        q.onerror = function () { rej(q.error); };
+      } catch (e) { rej(e); }
+    });
+  }
+  function bgPut(key, val) { return bgOpen().then(function (db) { return new Promise(function (res, rej) { var t = db.transaction("kv", "readwrite"); if (val == null) t.objectStore("kv").delete(key); else t.objectStore("kv").put(val, key); t.oncomplete = res; t.onerror = function () { rej(t.error); }; }); }); }
+  function bgGet(key) { return bgOpen().then(function (db) { return new Promise(function (res, rej) { var q = db.transaction("kv").objectStore("kv").get(key); q.onsuccess = function () { res(q.result); }; q.onerror = function () { rej(q.error); }; }); }); }
+  function autoBgLoad() {
+    var d = parseInt(store("kh_auto_dim"), 10); A.dim = isFinite(d) ? Math.min(Math.max(d, 0), 85) : 55;
+    var raw = store("kh_auto_bg"), o = null; try { o = raw ? JSON.parse(raw) : null; } catch (e) {}
+    if (o && o.type === "url" && /^https?:\/\//i.test(o.url || "")) { A.bg = { type: "url", url: o.url }; autoBgApply(); return; }
+    if (o && o.type === "file") {
+      bgGet("bg").then(function (blob) { if (blob) { A.bg = { type: "file" }; if (A.bgObj) URL.revokeObjectURL(A.bgObj); A.bgObj = URL.createObjectURL(blob); A.bgBlob = blob; autoBgApply(); if (A.built && A.st && A.st.access) autoPaintSetup(); } }, function () {});
+    }
+  }
+  function autoBgApply() {
+    var on = A.mode === "auto" && !!A.bg && (A.bg.type === "url" ? !!A.bg.url : !!A.bgObj);
+    document.body.classList.toggle("autobg", on);
+    var f = $("bgFx"); f.hidden = !on; if (!on) return;
+    var u = A.bg.type === "url" ? A.bg.url : A.bgObj;
+    $("bgImg").style.backgroundImage = "url(\"" + u + "\")";
+    $("bgDim").style.background = "rgba(15,17,19," + (A.dim / 100) + ")";
+  }
+  function bgSay(t, kind) { if (AK.bgMsg) { AK.bgMsg.className = "at-msg " + (kind || ""); AK.bgMsg.textContent = t; } }
+  function autoBgFile(f) {
+    AK.bgFile.value = "";
+    if (!/^image\//.test(f.type)) return bgSay("That isn't a picture. Choose a JPG, PNG, GIF or WebP.", "err");
+    if (f.size > BG_MAX) return bgSay("That file is over 10 MB. Choose a smaller one.", "err");
+    bgPut("bg", f).then(function () {
+      store("kh_auto_bg", JSON.stringify({ type: "file", name: String(f.name || "").slice(0, 60) }));
+      if (A.bgObj) URL.revokeObjectURL(A.bgObj);
+      A.bgObj = URL.createObjectURL(f); A.bgBlob = f; A.bg = { type: "file" };
+      autoBgApply(); autoPaintSetup(); bgSay("Background set.", "ok");
+    }, function () { bgSay("This browser wouldn't save the picture. Try a smaller one, or paste a link instead.", "err"); });
+  }
+  function autoBgUrl(u) {
+    u = String(u || "").trim();
+    var p; try { p = new URL(u); } catch (e) { p = null; }
+    if (!p || !/^https?:$/.test(p.protocol)) return bgSay("Paste a full picture link that starts with https://", "err");
+    A.bg = { type: "url", url: p.href }; A.bgBlob = null;
+    store("kh_auto_bg", JSON.stringify({ type: "url", url: p.href })); bgPut("bg", null).then(function () {}, function () {});
+    autoBgApply(); autoPaintSetup(); bgSay("Background set. If it doesn't show, that website may not allow its pictures to be used. Try uploading the file instead.", "ok");
+  }
+  function autoBgClear() {
+    A.bg = null; A.bgBlob = null; if (A.bgObj) { URL.revokeObjectURL(A.bgObj); A.bgObj = ""; }
+    store("kh_auto_bg", null); bgPut("bg", null).then(function () {}, function () {});
+    autoBgApply(); autoPaintSetup(); bgSay("Background removed.", "ok");
+  }
+
+  /* ---------- the results card (a picture you can save or share) ---------- */
+  function shareOpen() {
+    var d = recData();
+    A.share = { money: true, bg: !!A.bg, mode: d.mode };
+    var m = autoModalOpen("<h3 style='font:700 1.2rem/1.2 var(--font)'>Your results card</h3><img id='atShareImg' alt='Your results card' hidden><p class='sm' id='atShareMsg'>Drawing it...</p>" +
+      "<label class='at-switch'><input type='checkbox' id='atShareMoney' checked><span><b>Show dollar amounts</b><small>Turn off to show only accuracy and trade counts.</small></span></label>" +
+      "<label class='at-switch' id='atShareBgRow'><input type='checkbox' id='atShareBg' " + (A.bg ? "checked" : "") + "><span><b>Use my background</b></span></label>" +
+      "<div class='at-row'><button type='button' class='at-btn go' id='atShareSave' disabled>Save picture</button><button type='button' class='at-btn' id='atShareSend' hidden>Share</button><button type='button' class='at-btn' id='atShareClose'>Close</button></div>",
+      function () { if (A.share && A.share.url) URL.revokeObjectURL(A.share.url); A.share = null; });
+    if (!A.bg) m.querySelector("#atShareBgRow").hidden = true;
+    function redraw() {
+      var sh = A.share; if (!sh) return;
+      sh.money = m.querySelector("#atShareMoney").checked; sh.bg = !!A.bg && m.querySelector("#atShareBg").checked;
+      m.querySelector("#atShareSave").disabled = true;
+      shareRender(sh).then(function (r) {
+        if (!A.share || A.share !== sh) { URL.revokeObjectURL(r.url); return; }
+        if (sh.url) URL.revokeObjectURL(sh.url);
+        sh.url = r.url; sh.blob = r.blob;
+        var img = m.querySelector("#atShareImg"); img.src = r.url; img.hidden = false;
+        m.querySelector("#atShareMsg").textContent = r.note || "Press and hold the picture to save it, or use the buttons.";
+        m.querySelector("#atShareSave").disabled = false;
+        var file; try { file = new File([r.blob], "kiros-results.png", { type: "image/png" }); } catch (e) { file = null; }
+        m.querySelector("#atShareSend").hidden = !(file && navigator.canShare && navigator.canShare({ files: [file] }));
+        sh.file = file;
+      }, function () { m.querySelector("#atShareMsg").textContent = "I couldn't draw the card on this device."; });
+    }
+    m.querySelector("#atShareMoney").addEventListener("change", redraw);
+    m.querySelector("#atShareBg").addEventListener("change", redraw);
+    m.querySelector("#atShareClose").addEventListener("click", autoModalClose);
+    m.querySelector("#atShareSave").addEventListener("click", function () {
+      if (!A.share || !A.share.url) return;
+      var a = document.createElement("a"); a.href = A.share.url; a.download = "kiros-results.png"; document.body.appendChild(a); a.click(); a.remove();
+    });
+    m.querySelector("#atShareSend").addEventListener("click", function () {
+      if (A.share && A.share.file) navigator.share({ files: [A.share.file], title: "My Auto-trader results" }).catch(function () {});
+    });
+    redraw();
+  }
+  function rrect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+  function shareImage() {
+    return new Promise(function (res) {
+      if (!A.bg) return res(null);
+      var img = new Image();
+      if (A.bg.type === "url") img.crossOrigin = "anonymous";
+      img.onload = function () { res(img); };
+      img.onerror = function () { res(null); };
+      img.src = A.bg.type === "url" ? A.bg.url : A.bgObj;
+    });
+  }
+  function shareRender(sh) {
+    var fonts = (document.fonts && document.fonts.load) ? Promise.all([document.fonts.load("800 40px Archivo"), document.fonts.load("600 30px Archivo")]).catch(function () {}) : Promise.resolve();
+    return Promise.all([fonts, sh.bg ? shareImage() : Promise.resolve(null)]).then(function (x) {
+      var img = x[1], note = "";
+      if (sh.bg && !img) note = "That background couldn't be used on the card, so a plain one is shown.";
+      var cv = document.createElement("canvas"); cv.width = 1080; cv.height = 1350;
+      shareDraw(cv.getContext("2d"), sh, img);
+      return new Promise(function (res, rej) {
+        try { cv.toBlob(function (b) { if (!b) return rej(new Error("blob")); res({ blob: b, url: URL.createObjectURL(b), note: note }); }, "image/png"); }
+        catch (e) {                                                                  // a picture from another website can taint the canvas: draw again without it
+          var c2 = document.createElement("canvas"); c2.width = 1080; c2.height = 1350; shareDraw(c2.getContext("2d"), sh, null);
+          c2.toBlob(function (b) { if (!b) return rej(new Error("blob")); res({ blob: b, url: URL.createObjectURL(b), note: "That website doesn't allow its picture on the card, so a plain background is shown." }); }, "image/png");
+        }
+      });
+    });
+  }
+  function shareDraw(c, sh, img) {
+    var W = 1080, H = 1350, P = 72, d = recData(), S_ = d.S, mode = sh.mode, F = "Archivo, 'Helvetica Neue', Arial, sans-serif";
+    var net = S_.net || 0, acc = pctOf(S_.w || 0, S_.l || 0), n = (S_.w || 0) + (S_.l || 0) + (S_.e || 0);
+    var UP = "#34C77B", DN = "#F0605D", INK = "#ECE9E4", MUT = "#979EA5", LINE = "#2A3036";
+    c.fillStyle = "#0F1113"; c.fillRect(0, 0, W, H);
+    if (img) {
+      var s = Math.max(W / img.width, H / img.height), w = img.width * s, h = img.height * s;
+      c.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+      c.fillStyle = "rgba(15,17,19," + Math.max(0.45, A.dim / 100) + ")"; c.fillRect(0, 0, W, H);
+    } else {
+      var g = c.createRadialGradient(W * 0.85, 0, 40, W * 0.85, 0, 900); g.addColorStop(0, "rgba(240,140,58,.28)"); g.addColorStop(1, "rgba(240,140,58,0)");
+      c.fillStyle = g; c.fillRect(0, 0, W, H);
+    }
+    // header
+    c.fillStyle = "#F08C3A"; c.beginPath(); c.arc(P + 14, 104, 14, 0, 7); c.fill();
+    c.fillStyle = INK; c.font = "700 44px " + F; c.textBaseline = "alphabetic"; c.fillText("Kiros helper", P + 42, 120);
+    var tag = mode === "paper" ? "PRACTICE MONEY" : "REAL MONEY"; c.font = "700 26px " + F;
+    var tw = c.measureText(tag).width + 40; rrect(c, W - P - tw, 78, tw, 52, 26); c.fillStyle = mode === "paper" ? "rgba(138,144,151,.25)" : "rgba(227,169,59,.25)"; c.fill();
+    c.fillStyle = mode === "paper" ? "#C9CED3" : "#E3A93B"; c.fillText(tag, W - P - tw + 20, 114);
+    c.fillStyle = MUT; c.font = "600 34px " + F; c.fillText("Auto-trader results", P, 200);
+    // the big number
+    var big = sh.money ? usd(net, true) : (acc == null ? "-" : acc + "%"), col = sh.money ? (net >= 0 ? UP : DN) : INK;
+    var size = 200; c.font = "800 " + size + "px " + F; while (c.measureText(big).width > W - 2 * P && size > 90) { size -= 8; c.font = "800 " + size + "px " + F; }
+    c.fillStyle = col; c.fillText(big, P, 400);
+    c.fillStyle = MUT; c.font = "500 32px " + F;
+    var since = d.s.since ? new Date(d.s.since * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "";
+    c.fillText(sh.money ? "profit after fees" + (since ? ", since " + since : "") : "accuracy" + (since ? ", since " + since : ""), P, 450);
+    // three boxes
+    var bx = [["Accuracy", acc == null ? "-" : acc + "%"], ["Trades", String(n)], ["Won - lost", (S_.w || 0) + " - " + (S_.l || 0)]], bw = (W - 2 * P - 2 * 24) / 3;
+    for (var i = 0; i < 3; i++) {
+      var x = P + i * (bw + 24); rrect(c, x, 500, bw, 150, 18); c.fillStyle = "rgba(27,31,35,.82)"; c.fill(); c.strokeStyle = LINE; c.lineWidth = 2; c.stroke();
+      c.fillStyle = MUT; c.font = "500 28px " + F; c.fillText(bx[i][0], x + 26, 552);
+      c.fillStyle = INK; c.font = "800 62px " + F; c.fillText(bx[i][1], x + 26, 620);
+    }
+    // by coin
+    c.fillStyle = INK; c.font = "700 36px " + F; c.fillText("By coin", P, 726);
+    var coins = Object.keys(S_.coins || {}).sort(function (a, b) { return (S_.coins[b].net || 0) - (S_.coins[a].net || 0); }).slice(0, 7);
+    var maxv = 0; coins.forEach(function (k) { maxv = Math.max(maxv, Math.abs(S_.coins[k].net || 0)); });
+    if (!coins.length) { c.fillStyle = MUT; c.font = "500 32px " + F; c.fillText("No finished trades yet.", P, 790); }
+    coins.forEach(function (k, j) {
+      var y = 760 + j * 76, x = S_.coins[k], ca = pctOf(x.w || 0, x.l || 0), v = x.net || 0;
+      c.fillStyle = INK; c.font = "800 40px " + F; c.fillText(k, P, y + 46);
+      var bx0 = P + 150, bwid = W - 2 * P - 150 - 250, fill = maxv ? Math.max(8, bwid * Math.abs(v) / maxv) : 8;
+      rrect(c, bx0, y + 18, bwid, 22, 11); c.fillStyle = "rgba(255,255,255,.08)"; c.fill();
+      rrect(c, bx0, y + 18, fill, 22, 11); c.fillStyle = v >= 0 ? UP : DN; c.fill();
+      c.textAlign = "right"; c.fillStyle = sh.money ? (v >= 0 ? UP : DN) : INK; c.font = "800 38px " + F;
+      c.fillText(sh.money ? usd(v, true) : (ca == null ? "-" : ca + "%"), W - P, y + 40);
+      c.fillStyle = MUT; c.font = "500 24px " + F; var nt = (x.w || 0) + (x.l || 0) + (x.e || 0); c.fillText(nt + (nt === 1 ? " trade, " : " trades, ") + (ca == null ? "-" : ca + "%") + " accurate", W - P, y + 68);
+      c.textAlign = "left";
+    });
+    // footer
+    c.fillStyle = INK; c.font = "700 30px " + F; c.fillText("getkirohelper.com", P, H - 62);
+    c.fillStyle = MUT; c.font = "500 22px " + F; c.textAlign = "right"; c.fillText("Past results don't promise future ones.", W - P, H - 62); c.textAlign = "left";
+  }
+  window.addEventListener("pagehide", function () { if (A.bgObj) { try { URL.revokeObjectURL(A.bgObj); } catch (e) {} } });
+  document.addEventListener("visibilitychange", function () { if (S.token && !document.hidden) autoSchedule(0); });
+
+  /* ---------- owner: pause real money for everyone, the payment link, who has the Auto-trader ---------- */
+  function autoOwnerRender(r) {
+    if (!r) return;
+    A.kill = !!r.auto_kill;
+    var b = $("autoKill"); b.setAttribute("aria-pressed", A.kill ? "true" : "false");
+    if (!b.dataset.armed) setText(b, A.kill ? "Resume real-money trading" : "Pause real-money trading");
+    setHTML($("ownerAutoNote"), A.kill ? "<b>Real-money trading is paused for everyone.</b> Practice trading keeps going. Open real trades are still watched and sold normally." : "Trades real money for people who paid the $15. The switch below pauses real-money trading for everyone at once (practice trading keeps going).");
+    if ($("ownerAutos").querySelector("[data-armed]")) return;
+    var list = r.autos || [];
+    $("ownerAutos").innerHTML = list.length ? list.map(function (x) {
+      var meta = (x.running ? "running" : "stopped") + (x.mode === "live" ? ", real money" : ", practice") + (x.has_key ? ", key saved" : "") + (x.open ? ", " + x.open + " open" : "") + (x.source === "owner" ? ", given by you" : "");
+      return "<div class='prow'><div class='pmain'><b>" + esc(x.label || "(no e-mail on the payment)") + "</b><span>" + esc(kname(x.key, true)) + "</span></div><div class='pmeta'>" + esc(meta) + "</div>" +
+        "<div class='pbtns'><button type='button' class='danger' data-act='autoremove' data-key='" + esc(x.key) + "'>Remove</button></div></div>";
+    }).join("") : "<p class='empty'>Nobody yet.</p>";
+  }
+  function autoOwnerAct(act, b) {
+    var key = b.dataset.key;
+    armOrRun(b, function () {
+      rpc(act === "autogrant" ? "auto_admin_grant" : "auto_admin_remove", { p_token: S.token, p_receipt_key: key }).then(function () {
+        ownerSay(act === "autogrant" ? "Gave " + kname(key) + " the Auto-trader." : "Removed the Auto-trader from " + kname(key) + ". Their saved key was deleted too.", true); ownerLoad(true);
+      }, ownerFail);
+    });
+  }
+  $("autoKill").addEventListener("click", function () {
+    var b = this, on = !A.kill;
+    function go() { rpc("auto_admin_kill", { p_token: S.token, p_on: on }).then(function () { ownerSay(on ? "Real-money trading is paused for everyone." : "Real-money trading is back on.", true); ownerLoad(true); autoNow(0); }, ownerFail); }
+    if (on) armOrRun(b, go); else go();
+  });
+  $("payForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var v = $("payUrl").value.trim();
+    $("payGo").disabled = true;
+    rpc("auto_admin_pay_url", { p_token: S.token, p_url: v }).then(function (r) {
+      $("payGo").disabled = false; ownerSay(r && r.pay_url ? "Saved. People who haven't paid now see a Pay $15 button with this link." : "Cleared. The built-in $15 link is used again.", true); autoNow(0);
+    }, function (e) { $("payGo").disabled = false; if (/bad link/i.test(String((e && e.message) || ""))) return ownerSay("That doesn't look like a link. It should start with https://", false); ownerFail(e); });
+  });
   /* ---------- start ---------- */
   function takeOwnerLink() {                                              // the private owner link carries the sign-in after a #; take it and clean the address bar
     var m = /[#&]owner=([0-9a-f]{64})(?![0-9a-f])/i.exec(location.hash || "");
