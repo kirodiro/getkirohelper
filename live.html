@@ -2005,7 +2005,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
      ==================================================================================================================== */
   var AUTO_TABS = [["trade", "Trade"], ["settings", "Settings"], ["record", "Record"], ["setup", "Key and look"]];
   var AUTO_PAY = "https://buy.stripe.com/cNifZj3H0bVGdSY56RefC02";            /* the built-in $15 Stripe link; a link the owner saves in the Owner panel is used instead */
-  var AUTO_DEF = { coins: [], bet: 5, mode: "paper", style: "balanced", pick: "best", daily_loss: 25, max_open: 3, streak: 3, flips: true, quick: true, catchup: false, stop_mode: "auto", stop_c: 15,
+  var AUTO_DEF = { coins: [], bet: 5, mode: "paper", style: "balanced", pick: "best", daily_loss: 25, max_open: 3, streak: 3, flips: true, quick: true, catchup: false, always: false, stop_mode: "auto", stop_c: 15,
                    tp_mode: "auto", tp_c: 20, max_money: 0, hours_on: false, hours_from: "09:00", hours_to: "17:00", tz: "", alert_ntfy: "", alert_discord: "", alert_open: true, alert_close: true, alert_warn: true };
   var AUTO_STYLES = [
     ["careful", "Careful", "Fewer trades. Only strong calls with a clear gap to the price."],
@@ -2164,7 +2164,8 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
             "<div class='at-field'><span class='lbl'>How many at a time</span><div class='at-opts' data-k='picks'>" + picks + "</div></div>" +
             "<div class='at-field'><label class='at-switch'><input type='checkbox' data-k='flips' data-a='flips'><span><b>Catch flips</b><small>The bot always sells when a call flips. Turn this on and it also buys the other side if that still looks good.</small></span></label></div>" +
             "<div class='at-field'><label class='at-switch'><input type='checkbox' data-k='quick' data-a='quick'><span><b>Bet right away</b><small>Buy the first time the bot is confident, instead of waiting for a few checks in a row. It also skips a trade when your own profit target or stop loss can't work at that price. You get in sooner, but a quick blip on the chart can fool it more often.</small></span></label></div>" +
-            "<div class='at-field'><label class='at-switch'><input type='checkbox' data-k='catchup' data-a='catchup'><span><b>Buy at 80% if nothing else traded</b><small>If the bot hasn't traded a coin in a market, it may buy the side (UP or DOWN) that costs 80c to 88c in the last 5 minutes. It only does this when its own call for that side is 90% or more and clearly better than the price, and after its usual checks. These trades win more often but pay little, about 12c a contract or less, and lose 80c or more when wrong.</small></span></label></div>" +
+            "<div class='at-field'><label class='at-switch'><input type='checkbox' data-k='catchup' data-a='catchup'><span><b>Buy at 80% if nothing else traded</b><small>If the bot hasn't traded a coin in a market, it buys the second a side (UP or DOWN) reaches 80c to 85c, with no waiting. It only does this when its own call for that side is 90% or more and clearly better than the price. These trades win more often but pay little, about 15c a contract or less, and lose 80c or more when wrong. Set your own stop loss if you use this.</small></span></label></div>" +
+            "<div class='at-field'><label class='at-switch'><input type='checkbox' data-k='always' data-a='always'><span><b>Trade every market</b><small>If the bot hasn't traded a coin in a market by the last 6 minutes, it buys the side it leans to (its call has to be 58% or more, the price sensible and the chart not against it), even when the price isn't clearly good. You get a trade in most markets, but trades without a clear edge lose to fees more often than they win. Try it on practice money first.</small></span></label></div>" +
             "<h4>Safety limits</h4>" +
             "<div class='at-field'><span class='lbl'>Stop loss</span><div class='at-opts' data-k='stops'>" +
               "<button type='button' class='at-opt' data-a='stopmode' data-v='auto' aria-pressed='true'><b>Automatic</b><span>The bot decides when a falling trade should be sold. Roughly 12 to 20 cents under what it paid, depending on your style, and only when its own odds agree the trade is going wrong.</span></button>" +
@@ -2380,7 +2381,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     setIfIdle(AK.bet, s.bet); setActive(AK.betchips, "data-bet", s.bet);
     var cap = A.st && A.st.state && A.st.state.max_bet; setText(AK.betHint, "The most one trade will spend. The bot works out how many contracts that buys." + (cap ? " The owner's cap is $" + cap + "." : ""));
     setActive(AK.styles, "data-v", s.style); setActive(AK.picks, "data-v", s.pick);
-    AK.flips.checked = !!s.flips; AK.quick.checked = !!s.quick; AK.catchup.checked = !!s.catchup;
+    AK.flips.checked = !!s.flips; AK.quick.checked = !!s.quick; AK.catchup.checked = !!s.catchup; AK.always.checked = !!s.always;
     var man = s.stop_mode === "manual", sc = Math.round(Number(s.stop_c)) || 15;
     setActive(AK.stops, "data-v", man ? "manual" : "auto"); AK.stopF.hidden = !man; setIfIdle(AK.stopc, sc); setActive(AK.stopchips, "data-c", sc);
     setText(AK.stopEx, "Example: if the bot pays 60c for a contract, it sells when the price falls to " + Math.max(60 - sc, 1) + "c. A fast drop can sell a little lower than that, and it can't sell in the last few seconds of a market.");
@@ -2515,6 +2516,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     if (t === AK.flips) return autoEdit({ flips: !!t.checked });
     if (t === AK.quick) return autoEdit({ quick: !!t.checked });
     if (t === AK.catchup) return autoEdit({ catchup: !!t.checked });
+    if (t === AK.always) return autoEdit({ always: !!t.checked });
     if (t === AK.pemFile && t.files && t.files[0]) return autoReadPem(t.files[0]);
     if (t === AK.bgFile && t.files && t.files[0]) return autoBgFile(t.files[0]);
     if (t === AK.stopc) { var cv = Math.round(numIn(t, 5, 90, 15)); t.value = cv; return autoEdit({ stop_mode: "manual", stop_c: cv }); }
