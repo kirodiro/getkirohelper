@@ -17,8 +17,13 @@ say() { printf '\n\033[1m%s\033[0m\n' "$*"; }
 
 mkdir -p "$DIR"
 cd "$DIR"
+UPDATE=0
+if [ -f "${KIROS_SVCFILE:-/etc/systemd/system/$SVC.service}" ]; then UPDATE=1; fi    # already set up: this run only uploads newer files and restarts the bot
 
-if [ "$TEST" != "1" ]; then
+if [ "$TEST" != "1" ] && [ "$UPDATE" = "1" ]; then
+  say "Updating the bot (it keeps running until the new files are in)."
+  "$DIR/venv/bin/pip" install -q "requests>=2.31" "Pillow>=10.1" "discord.py>=2.3" tzdata "cryptography>=42" || true
+elif [ "$TEST" != "1" ]; then
   say "1/3  Installing Python and the tools the bot needs (takes a minute or two)..."
   sudo DEBIAN_FRONTEND=noninteractive apt-get update -qq
   sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq python3 python3-venv python3-pip unzip openssl chrony fonts-dejavu-core >/dev/null
@@ -41,8 +46,8 @@ IP="$(echo "$IP" | tr -d '[:space:]')"
 if [ "$PORT" = "443" ]; then URL="https://$IP/$TOKEN"; else URL="https://$IP:$PORT/$TOKEN"; fi
 cat <<EOF
 
-On SillyDev: open your server's Files, select every file (kalshi15_bot.py, config.json, vault_key.pem, the .json files...), choose Archive,
-then download the archive to your phone.
+$(if [ "$UPDATE" = "1" ]; then echo "Upload only the files that changed (for example the new kalshi15_bot.py). Everything else stays as it is."; else echo "On SillyDev: open your server's Files, select every file (kalshi15_bot.py, config.json, vault_key.pem, the .json files...), choose Archive,
+then download the archive to your phone."; fi)
 
 Now open this link on your phone (copy it exactly):
 
@@ -177,6 +182,16 @@ for f in config.json vault_key.pem; do
 done
 
 if [ "$TEST" = "1" ]; then say "Test mode: files unpacked, stopping here."; exit 0; fi
+
+if [ "$UPDATE" = "1" ]; then
+  say "Restarting the bot with the new files"
+  sudo systemctl restart $SVC
+  sleep 8
+  sudo systemctl --no-pager --lines=15 status $SVC || true
+  echo
+  echo "Done. To watch it live: sudo journalctl -u $SVC -f"
+  exit 0
+fi
 
 # ---------------------------------------------------------------- 3. the bot as a service
 say "3/3  Starting the bot"

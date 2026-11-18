@@ -749,10 +749,13 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
                    lab: { on: true, min_n: 300, pick: null, strats: [{ k: "fav_late", n: 212, w: 196, avg: -0.6, roi: -0.7, proven: false, kind: "taker" },
                      { k: "fav_mid", n: 187, w: 133, avg: 0.9, roi: 1.3, proven: false, kind: "taker" }, { k: "agree", n: 240, w: 171, avg: -0.4, roi: -0.6, proven: false, kind: "taker" },
                      { k: "lag", n: 38, w: 22, avg: 1.8, roi: 3.1, proven: false, kind: "taker" }, { k: "maker", n: 96, w: 62, avg: -1.2, roi: -1.8, proven: false, kind: "maker", placed: 260, filled: 96 },
-                     { k: "gates", n: 64, w: 49, avg: 0.4, roi: 0.6, proven: false, kind: "taker" }, { k: "model", n: 301, w: 159, avg: -3.9, roi: -6.6, t: -2.4, proven: false, kind: "taker" }, { k: "fav_any", n: 305, w: 220, avg: -1.6, roi: -2.3, proven: false, kind: "taker" }, { k: "settle", n: 64, w: 55, avg: 1.1, roi: 1.4, proven: false, kind: "taker" }],
+                     { k: "gates", n: 64, w: 49, avg: 0.4, roi: 0.6, proven: false, kind: "taker" }, { k: "model", n: 301, w: 159, avg: -3.9, roi: -6.6, t: -2.4, proven: false, kind: "taker" }, { k: "fav_any", n: 305, w: 220, avg: -1.6, roi: -2.3, proven: false, kind: "taker" }, { k: "settle", n: 64, w: 55, avg: 1.1, roi: 1.4, proven: false, kind: "taker" }, { k: "catch", n: 118, w: 71, avg: 0.8, roi: 1.3, proven: false, kind: "taker" }],
                      cells: [["fav_mid", "HYPE", 64, 47, 3.1, 4.4, 1.2, false], ["fav_late", "DOGE", 58, 54, 1.0, 1.1, 0.6, false], ["model", "BTC", 71, 33, -5.1, -8.8, -2.2, false]],
                      hours: [["lag", 1, 52, 31, 2.4, 3.9, 1.1], ["fav_any", 4, 66, 45, -2.6, -3.7, -1.3]], cell_n: 200, rewards: { ok: true, coins: [], n: 0, types: [] },
-                     feed: { on: true, ok: true, coins: ["BTC", "ETH", "SOL", "XRP", "DOGE", "BNB", "HYPE"], fast: ["BTC", "ETH", "SOL", "XRP", "DOGE"], quotes: 7, ms: 3.2 } } } } };
+                     feed: { on: true, ok: true, coins: ["BTC", "ETH", "SOL", "XRP", "DOGE", "BNB", "HYPE"], fast: ["BTC", "ETH", "SOL", "XRP", "DOGE"], quotes: 7, ms: 3.2 },
+                     hist: { at: 1763490000, days: 7, markets: 4704, src: ["settlement index, second by second"], beat: { n: 4650, diff: 0.0008, z: 1.1 }, cf_denied: false,
+                             strats: [["fav_late", 1810, 1702, 0.9, 1.3], ["fav_mid", 2204, 1453, -2.1, -2.4], ["agree", 1950, 1260, -3.2, -3.1], ["maker", 1388, 905, -1.4, -1.2],
+                                      ["model", 2410, 1302, -4.4, -4.0], ["fav_any", 4688, 3170, -2.6, -4.6], ["settle", 205, 182, 2.2, 1.6], ["catch", 960, 571, 1.9, 1.8]] } } } } };
   }
   freshAcc(true);
   function log(kind, text, t) { ACC.s.log = ACC.s.log.concat([{ t: Math.floor(t), k: kind, x: text }]).slice(-30); }
@@ -2999,7 +3002,22 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     gates: ["All 7 gates", "Buys only when Data, Time, Strength, Lock, Reversal, Edge and Chop all pass."],
     model: ["Current method", "The bot is 6+ points more sure than Kalshi, like Balanced. For comparison."],
     fav_any: ["Always the favourite", "Kalshi's favourite once a market at any price. Shows what the market itself pays."],
-    settle: ["Final-minute settlement math", "In the last 90 seconds, works out the result from the settlement index itself (the part of the final-minute average already counted) and buys when that beats Kalshi's price by 4+ points after fees. Needs Kalshi's live feed."] };
+    settle: ["Final-minute settlement math", "In the last 90 seconds, works out the result from the settlement index itself (the part of the final-minute average already counted) and buys when that beats Kalshi's price by 4+ points after fees. Needs Kalshi's live feed."],
+    catch: ["Catch-up trade", "Kalshi's price runs behind the exchanges. Buys when the fair odds beat Kalshi's price by 7+ points after fees, then sells once Kalshi catches up, after 3 minutes at most, or at a 10-cent loss. Never holds into the last minute."] };
+  function histHTML(hs) {                                  // the strategies replayed on past markets (python kalshi15_bot.py --history-test 7)
+    if (!hs || !hs.strats) return "";
+    var rows = hs.strats.filter(function (r) { return LAB_NAMES[r[0]] && r[1] > 0; }).sort(function (a, b) { return b[3] - a[3]; });
+    var b = hs.beat || {}, verdict = !b.n ? "" : (b.z >= 1.64 && b.diff > 0 ? "<b class='up'>yes</b>" : b.diff > 0 ? "not clearly" : "<b class='down'>no</b>");
+    var when = hs.at ? new Date(hs.at * 1000).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "";
+    var h = "<h4>History test</h4><p class='sm'>The same strategies replayed on the last " + esc(String(hs.days)) + " day" + (hs.days === 1 ? "" : "s") + " of real Kalshi markets (" +
+      (hs.markets || 0) + " markets, " + esc((hs.src || []).join(", ") || "no prices") + (when ? ", run " + esc(when) : "") + "), once a minute at Kalshi's real prices plus a cent and the fee. A strong hint, not proof: the live lab still decides real money." +
+      (verdict ? " Did the bot's math beat Kalshi's price? " + verdict + "." : "") + "</p>";
+    if (!rows.length) return h + "<p class='sm'>No strategy would have bought in that time.</p>";
+    return h + "<table class='at-table at-lab'><thead><tr><th>Strategy</th><th>Trades</th><th>Won</th><th>Per $100 bet</th></tr></thead><tbody>" + rows.map(function (r) {
+      var sure = r[1] >= 100 && r[3] > 0 && r[4] >= 2 ? " <span class='up'>looks real</span>" : (r[1] >= 100 && r[4] <= -2 ? " <span class='down'>losing</span>" : "");
+      return "<tr><td><b>" + esc(LAB_NAMES[r[0]][0]) + "</b>" + sure + "</td><td>" + r[1] + "</td><td>" + Math.round(r[2] / r[1] * 100) + "%</td><td class='" + cls(r[3]) + "'>" + per100(r[3]) + "</td></tr>";
+    }).join("") + "</tbody></table>" + (hs.cf_denied ? "<p class='sm'>This Kalshi key can't read the settlement index's history, so Coinbase's prices were used and the final-minute strategy was left out.</p>" : "");
+  }
   function feedHTML(f) {                                    // Kalshi's live feed and how fast this server reaches Kalshi
     if (!f) return "";
     var ms = f.ms ? " <b>Speed to Kalshi:</b> " + Math.round(f.ms) + " ms per request" + (f.ms > 15 ? " (a server next to Kalshi gets a few ms)." : ".") : "";
@@ -3022,6 +3040,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       return "<tr><td><b>" + esc(LAB_NAMES[x.k][0]) + "</b>" + st + "<small class='at-sub'>" + esc(LAB_NAMES[x.k][1] + fill) + "</small></td><td>" + (x.n || 0) + "</td><td>" + (x.n ? Math.round((x.w || 0) / x.n * 100) + "%" : "-") + "</td><td class='" + cls(x.roi) + "'>" + (x.n ? per100(x.roi) : "-") + "</td></tr>";
     }).join("") + "</tbody></table>";
     h += labSplitHTML(lb);
+    h += histHTML(lb.hist);
     h += feedHTML(lb.feed);
     var rw = lb.rewards;
     if (rw && rw.ok === true) h += "<p class='sm'><b>Kalshi liquidity rewards:</b> " + (rw.n ? "running now on " + rw.coins.map(esc).join(", ") + " (" + rw.n + " market" + (rw.n === 1 ? "" : "s") + "). These pay for keeping limit orders posted, which the limit-order strategy does." : "none on these markets right now. The bot checks every 30 minutes.") + "</p>";

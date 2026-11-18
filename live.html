@@ -2594,7 +2594,22 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     gates: ["All 7 gates", "Buys only when Data, Time, Strength, Lock, Reversal, Edge and Chop all pass."],
     model: ["Current method", "The bot is 6+ points more sure than Kalshi, like Balanced. For comparison."],
     fav_any: ["Always the favourite", "Kalshi's favourite once a market at any price. Shows what the market itself pays."],
-    settle: ["Final-minute settlement math", "In the last 90 seconds, works out the result from the settlement index itself (the part of the final-minute average already counted) and buys when that beats Kalshi's price by 4+ points after fees. Needs Kalshi's live feed."] };
+    settle: ["Final-minute settlement math", "In the last 90 seconds, works out the result from the settlement index itself (the part of the final-minute average already counted) and buys when that beats Kalshi's price by 4+ points after fees. Needs Kalshi's live feed."],
+    catch: ["Catch-up trade", "Kalshi's price runs behind the exchanges. Buys when the fair odds beat Kalshi's price by 7+ points after fees, then sells once Kalshi catches up, after 3 minutes at most, or at a 10-cent loss. Never holds into the last minute."] };
+  function histHTML(hs) {                                  // the strategies replayed on past markets (python kalshi15_bot.py --history-test 7)
+    if (!hs || !hs.strats) return "";
+    var rows = hs.strats.filter(function (r) { return LAB_NAMES[r[0]] && r[1] > 0; }).sort(function (a, b) { return b[3] - a[3]; });
+    var b = hs.beat || {}, verdict = !b.n ? "" : (b.z >= 1.64 && b.diff > 0 ? "<b class='up'>yes</b>" : b.diff > 0 ? "not clearly" : "<b class='down'>no</b>");
+    var when = hs.at ? new Date(hs.at * 1000).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "";
+    var h = "<h4>History test</h4><p class='sm'>The same strategies replayed on the last " + esc(String(hs.days)) + " day" + (hs.days === 1 ? "" : "s") + " of real Kalshi markets (" +
+      (hs.markets || 0) + " markets, " + esc((hs.src || []).join(", ") || "no prices") + (when ? ", run " + esc(when) : "") + "), once a minute at Kalshi's real prices plus a cent and the fee. A strong hint, not proof: the live lab still decides real money." +
+      (verdict ? " Did the bot's math beat Kalshi's price? " + verdict + "." : "") + "</p>";
+    if (!rows.length) return h + "<p class='sm'>No strategy would have bought in that time.</p>";
+    return h + "<table class='at-table at-lab'><thead><tr><th>Strategy</th><th>Trades</th><th>Won</th><th>Per $100 bet</th></tr></thead><tbody>" + rows.map(function (r) {
+      var sure = r[1] >= 100 && r[3] > 0 && r[4] >= 2 ? " <span class='up'>looks real</span>" : (r[1] >= 100 && r[4] <= -2 ? " <span class='down'>losing</span>" : "");
+      return "<tr><td><b>" + esc(LAB_NAMES[r[0]][0]) + "</b>" + sure + "</td><td>" + r[1] + "</td><td>" + Math.round(r[2] / r[1] * 100) + "%</td><td class='" + cls(r[3]) + "'>" + per100(r[3]) + "</td></tr>";
+    }).join("") + "</tbody></table>" + (hs.cf_denied ? "<p class='sm'>This Kalshi key can't read the settlement index's history, so Coinbase's prices were used and the final-minute strategy was left out.</p>" : "");
+  }
   function feedHTML(f) {                                    // Kalshi's live feed and how fast this server reaches Kalshi
     if (!f) return "";
     var ms = f.ms ? " <b>Speed to Kalshi:</b> " + Math.round(f.ms) + " ms per request" + (f.ms > 15 ? " (a server next to Kalshi gets a few ms)." : ".") : "";
@@ -2617,6 +2632,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       return "<tr><td><b>" + esc(LAB_NAMES[x.k][0]) + "</b>" + st + "<small class='at-sub'>" + esc(LAB_NAMES[x.k][1] + fill) + "</small></td><td>" + (x.n || 0) + "</td><td>" + (x.n ? Math.round((x.w || 0) / x.n * 100) + "%" : "-") + "</td><td class='" + cls(x.roi) + "'>" + (x.n ? per100(x.roi) : "-") + "</td></tr>";
     }).join("") + "</tbody></table>";
     h += labSplitHTML(lb);
+    h += histHTML(lb.hist);
     h += feedHTML(lb.feed);
     var rw = lb.rewards;
     if (rw && rw.ok === true) h += "<p class='sm'><b>Kalshi liquidity rewards:</b> " + (rw.n ? "running now on " + rw.coins.map(esc).join(", ") + " (" + rw.n + " market" + (rw.n === 1 ? "" : "s") + "). These pay for keeping limit orders posted, which the limit-order strategy does." : "none on these markets right now. The bot checks every 30 minutes.") + "</p>";
