@@ -3031,7 +3031,9 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     if (!lb || !lb.strats || !lb.strats.length) return "";
     var need = lb.min_n || 300, h = "<h4>Strategy lab</h4><p class='sm'>The bot tests these on every coin with pretend money, the way a real buy would happen: Kalshi's price plus a cent, the fee, held to the end. A strategy is proven after " + need + " trades if its profit is bigger than luck explains. The Proven style trades only a proven one with real money.</p>";
     var picked = lb.pick && LAB_NAMES[lb.pick] ? LAB_NAMES[lb.pick][0] : "";
-    h += picked ? "<div class='at-ok'><b>Proven: " + esc(picked) + ".</b> The Proven style follows it with real money.</div>" : "";
+    h += !picked ? "" : lb.pick_src === "history"
+      ? "<div class='at-ok'><b>Proven by the history test: " + esc(picked) + ".</b> The Proven style trades it with real money at small bets ($" + Number(lb.hist_bet || 2).toFixed(2) + ") until the live lab confirms it.</div>"
+      : "<div class='at-ok'><b>Proven: " + esc(picked) + ".</b> The Proven style follows it with real money.</div>";
     var pc = (lb.cells || []).filter(function (c) { return c[7] && LAB_NAMES[c[0]]; });
     if (pc.length) h += "<div class='at-ok'><b>Proven on one coin:</b> " + pc.map(function (c) { return esc(LAB_NAMES[c[0]][0]) + " on " + esc(c[1]); }).join(", ") + ". The Proven style follows it on that coin only.</div>";
     h += "<table class='at-table at-lab'><thead><tr><th>Strategy</th><th>Trades</th><th>Won</th><th>Per $100 bet</th></tr></thead><tbody>" + lb.strats.filter(function (x) { return LAB_NAMES[x.k]; }).map(function (x) {
