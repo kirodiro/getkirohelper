@@ -452,6 +452,19 @@ textarea.at-in{min-height:120px;padding:10px 12px;font:500 .8rem/1.35 var(--code
 .at-table th{text-align:left;font:500 .78rem/1.2 var(--font);color:var(--muted);padding:6px 6px 6px 0;border-bottom:1px solid var(--line)}
 .at-table td{padding:9px 6px 9px 0;border-bottom:1px solid var(--line);white-space:nowrap}
 .at-table th:last-child,.at-table td:last-child{text-align:right;padding-right:0}
+.at-table tr.me td{background:rgba(255,255,255,.04)}
+.at-lab td:first-child{white-space:normal}.at-lab td:not(:first-child){vertical-align:top;padding-top:11px}
+.at-table .at-sub{display:block;white-space:normal;color:var(--muted);font-size:.78rem;margin-top:2px;max-width:34ch}
+.at-table td .up{font-size:.78rem;margin-left:4px}
+.at-gatehead{margin:0 0 6px;font-size:.95rem}
+.at-ord{display:grid;gap:4px;padding:10px 12px;border:1px dashed var(--line2);border-radius:10px;font-size:.9rem}.at-ord span:last-child{color:var(--muted);font-size:.84rem}
+.at-gatebar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-bottom:10px}.at-gatebar i{display:block;height:100%;background:var(--up)}
+.at-gates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.at-gate{padding:8px 10px;border-radius:8px;border:1px solid var(--line);min-width:0}
+.at-gate span{display:block;font:700 .72rem/1.2 var(--font)}.at-gate b{display:block;font-size:.9rem;margin-top:2px}.at-gate small{display:block;color:var(--muted);font-size:.78rem;line-height:1.35;margin-top:3px;overflow-wrap:anywhere}
+.at-gate.pass{border-color:rgba(46,189,133,.45);background:var(--upbg)}.at-gate.pass span{color:var(--up)}
+.at-gate.block{border-color:rgba(240,90,80,.45);background:var(--downbg)}.at-gate.block span{color:var(--down)}
+.at-ok{margin-top:10px;padding:10px 12px;border-radius:8px;border:1px solid rgba(46,189,133,.45);background:rgba(46,189,133,.08);font-size:.9rem}
 .at-trades{list-style:none;margin:0;padding:0}
 .at-trades li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 0;border-top:1px solid var(--line);font-size:.92rem}
 .at-trades li:first-child{border-top:0}
@@ -2044,6 +2057,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
                    tp_mode: "auto", tp_c: 20, max_money: 0, hours_on: false, hours_from: "09:00", hours_to: "17:00", tz: "", alert_ntfy: "", alert_discord: "", alert_open: true, alert_close: true, alert_warn: true };
   var AUTO_STYLES = [
     ["smart", "Smart", "Recommended. Reads every chart on its own (1 minute up to 1 hour, plus the other exchanges) and grades each one against how markets really ended, so it learns which time frames to trust. It buys when those learned odds beat the price after fees, in any minute of a market, so a confident market gets a trade each round. It asks for a bigger edge for as long as those learned odds haven't yet beaten Kalshi's own price on markets it hadn't seen. Sells only when the price pays more than the trade is worth, and can switch sides when the call flips. It does not bet until it has graded 40 finished markets (about 90 minutes after the bot first starts), and nothing here guarantees a profit."],
+    ["proven", "Proven only", "Follows only a strategy that has made money in the bot's own live test (Edge check, on the Record tab), using that strategy's buy rule, and holds each trade to the end. Real money waits until one passes, which can take days or may never happen. Practice follows the current leader so you can watch it."],
     ["careful", "Careful", "Fewer trades. Only strong calls with a clear gap to the price."],
     ["balanced", "Balanced", "The middle path. A good place to start."],
     ["active", "Active", "More trades. Accepts smaller gaps, so expect more small losses too."],
@@ -2210,6 +2224,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
         "<section class='at-card' data-k='head' aria-label='Auto-trader controls'>" +
           "<div class='at-top'><h2>Auto-trader</h2><span class='at-pill' data-k='pill'>Stopped</span></div>" +
           "<div class='at-row'><div class='seg' role='group' aria-label='Which money'><button type='button' data-a='money' data-m='paper' aria-pressed='true'>Practice money</button><button type='button' data-a='money' data-m='live' aria-pressed='false'>Real money</button></div></div>" +
+          "<div class='at-warn' data-k='edgeNote' hidden></div>" +
           "<div class='at-money'><div class='at-stat big'><span data-k='profLab'>Profit today</span><b data-k='profToday'>-</b><small data-k='profTotal'></small></div>" +
             "<div class='at-stat'><span data-k='balLab'>Practice money</span><b data-k='bal'>-</b><small data-k='balSub'></small></div></div>" +
           "<p class='at-bets' data-k='bets' aria-live='polite'></p>" +
@@ -2222,6 +2237,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
         "<div class='at-pane' data-pane='trade'>" +
           "<section class='at-card' data-k='chk' hidden></section>" +
           "<section class='at-card'><h3>Open trades</h3><div data-k='pos'></div></section>" +
+          "<section class='at-card'><h3>Trade readiness</h3><div data-k='gateBox'></div></section>" +
           "<section class='at-card'><h3>What the bot is doing</h3><ul class='at-why' data-k='why'></ul><p class='sm' data-k='whyNote'></p></section>" +
           "<section class='at-card'><h3>Activity</h3><ul class='at-log' data-k='log'></ul></section>" +
         "</div>" +
@@ -2275,6 +2291,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
             "<h4>By coin</h4><div data-k='recCoins'></div>" +
             "<div class='at-row'><button type='button' class='at-btn' data-a='share'>Share my results</button></div>" +
           "</section>" +
+          "<section class='at-card'><h3>Edge check</h3><p class='sm'>Does the bot know more than Kalshi's own price? Real money only trades when the answer is yes.</p><div data-k='edgeBox'></div></section>" +
           "<section class='at-card'><h3>Recent trades</h3><ul class='at-trades' data-k='recTrades'></ul>" +
             "<div class='at-row' data-k='csvRow'><button type='button' class='at-btn sm' data-a='csv'>Download these trades (CSV)</button></div><p class='sm'>Your last 40 trades. The page only keeps the most recent ones.</p>" +
             "<div class='at-row' data-k='resetRow'><button type='button' class='at-btn sm danger' data-a='resetpaper' data-k='resetBtn'>Reset practice account</button></div></section>" +
@@ -2389,6 +2406,10 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     setText(AK.balLab, live ? "Your Kalshi balance" : "Practice money");
     setText(AK.bal, bal != null ? usd(bal) : (live ? "-" : "$200.00"));
     setText(AK.balSub, live ? "Real money. Open trades are included once they close." : "Not real. Test the bot with this.");
+    var ed = s.edge, sty = A.set && A.set.style, ex = ed && ed.styles && sty ? ed.styles[sty] : null, isPv = sty === "proven";
+    var held = live && ed && (isPv ? !(ed.lab && ed.lab.pick) : (ed.on !== false && !(ex && ex.ok)));
+    AK.edgeNote.hidden = !held;
+    if (held) setHTML(AK.edgeNote, "<b>Real money is waiting.</b> " + (isPv ? "No strategy in the lab has proven itself yet." : ex && ex.wait === "learning" ? "Smart is still learning." : !ex ? "The edge check needs more finished markets first." : ex.beat === false ? "The bot's odds haven't beaten Kalshi's own price yet, so a real bet would mostly pay fees." : "Your style (" + esc(EDGE_NAMES[sty] || sty) + ") hasn't made money after fees in the edge check yet.") + " No real trades start until it passes. Practice keeps going. <a href='#' data-a='edgego'>See the Edge check</a>");
     Array.prototype.forEach.call(AK.head.querySelectorAll("[data-a=money]"), function (b) { b.setAttribute("aria-pressed", b.dataset.m === mode ? "true" : "false"); });
     var pos = s.pos ? Object.keys(s.pos).length : 0;
     setText(AK.go, st.running ? "Stop" : "Start");
@@ -2452,8 +2473,15 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
   function autoPaintTrade() {
     var st = A.st, s = st.state || {}, pos = s.pos ? Object.keys(s.pos).sort() : [];
     Object.keys(A.sold).forEach(function (c) { if (!(s.pos && s.pos[c])) delete A.sold[c]; });
-    var sig = pos.map(function (c) { return posSig(s.pos[c]); }).join("~") || "none";
-    if (AK.pos.__sig !== sig) { AK.pos.__sig = sig; AK.pos.innerHTML = pos.length ? "<div style='display:grid;gap:8px'>" + pos.map(function (c) { return posHTML(s.pos[c]); }).join("") + "</div>" : "<p class='at-empty'>No open trades. When a coin qualifies, the bot buys and the trade shows up here.</p>"; }
+    var ords = s.orders ? Object.keys(s.orders).sort() : [];
+    var sig = (pos.map(function (c) { return posSig(s.pos[c]); }).join("~") || "none") + "|" + ords.map(function (c) { var o = s.orders[c]; return c + o.n + o.lim + o.exp; }).join("~");
+    if (AK.pos.__sig !== sig) {
+      AK.pos.__sig = sig;
+      var oh = ords.map(function (c) { var o = s.orders[c];
+        return "<div class='at-ord'><b>" + esc(c) + " " + esc(o.s) + "</b> <span class='at-tag" + (o.m === "live" ? " real" : "") + "'>" + (o.m === "live" ? "Real money" : "Practice") + "</span>" +
+          "<span>Limit order: buy " + Number(o.n) + " at " + Math.round(o.lim) + "c. Waiting for a seller until " + esc(clockTime(o.exp)) + ". It never pays the asking price.</span></div>"; }).join("");
+      AK.pos.innerHTML = (pos.length || ords.length) ? "<div style='display:grid;gap:8px'>" + pos.map(function (c) { return posHTML(s.pos[c]); }).join("") + oh + "</div>" : "<p class='at-empty'>No open trades. When a coin qualifies, the bot buys and the trade shows up here.</p>";
+    }
     pos.forEach(function (c) { paintPosLive(s.pos[c]); });
     var coins = (A.set && A.set.coins) || [], notes = s.notes || {};
     var rows = COINS.filter(function (c) { return coins.indexOf(c[0]) >= 0 || (s.pos && s.pos[c[0]]); }).map(function (c) {
@@ -2465,6 +2493,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     });
     var quiet = !pos.length && st.running && rows.length && coins.every(function (c) { var w = s.why && s.why[c]; return w && w.n >= 60 && !w.ok; });
     setHTML(AK.why, rows.join("") || "<li><span>No coins picked yet. Pick some in Settings.</span></li>");
+    paintGates(s);
     setText(AK.whyNote, rows.length ? "The chart and indicators are for the coin you tap above. This list shows every coin you picked." + (quiet && A.set && (A.set.style === "careful" || A.set.style === "balanced") ? " No coin has passed every rule in the last hour. Careful and Balanced only buy when the bot's call clearly beats Kalshi's price, so quiet stretches are normal. Active buys more often (Settings, then Style)." : "") + (s.learn ? " " + s.learn : "") : "");
     var log = (s.log || []).slice().reverse().slice(0, 25);
     setHTML(AK.log, log.length ? log.map(function (l) { return "<li class='" + esc(l.k) + "'><i>" + esc(clockTime(l.t)) + "</i>" + esc(l.x) + "</li>"; }).join("") : "<li class='info'>Nothing yet. Press Start and the bot's decisions show up here.</li>");
@@ -2518,6 +2547,20 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     }
     return parts.join(" ");
   }
+  var GATE_NAMES = { data: "Data", time: "Time", strength: "Strength", lock: "Lock", reversal: "Reversal", edge: "Edge", chop: "Chop" };
+  function paintGates(s) {
+    if (!AK.gateBox) return;
+    var all = s.gates || {}, coins = Object.keys(all).filter(function (c) { return all[c] && all[c].g; });
+    if (!coins.length) { setHTML(AK.gateBox, "<p class='at-empty'>Press Start and pick some coins. Each coin's seven checks show up here.</p>"); return; }
+    var coin = coins.indexOf(S.coin) >= 0 ? S.coin : coins[0], x = all[coin], n = x.g.filter(function (g) { return g[1]; }).length;
+    var h = "<p class='at-gatehead'><b>" + esc(coin) + " " + esc(x.side) + "</b>: " + n + " of " + x.g.length + " gates passing</p>" +
+      "<div class='at-gatebar' role='img' aria-label='" + n + " of " + x.g.length + " gates passing'><i style='width:" + Math.round(n / Math.max(x.g.length, 1) * 100) + "%'></i></div><div class='at-gates'>";
+    h += x.g.map(function (g) {
+      return "<div class='at-gate " + (g[1] ? "pass" : "block") + "'><span>" + (g[1] ? "Pass" : "Block") + "</span><b>" + esc(GATE_NAMES[g[0]] || g[0]) + "</b><small>" + esc(g[2]) + "</small></div>";
+    }).join("") + "</div>";
+    h += "<p class='sm'>" + (coins.length > 1 ? "Showing the coin selected on the board. " : "") + "All seven have to pass for the All 7 gates strategy, which the lab is testing (Record tab). Passing them doesn't guarantee a profit.</p>";
+    setHTML(AK.gateBox, h);
+  }
   function autoPaintRecord() {
     var d = recData(), S_ = d.S, acc = pctOf(S_.w || 0, S_.l || 0), n = (S_.w || 0) + (S_.l || 0) + (S_.e || 0);
     Array.prototype.forEach.call($("autoWrap").querySelectorAll("[data-a=rec]"), function (b) { b.setAttribute("aria-pressed", b.dataset.m === d.mode ? "true" : "false"); });
@@ -2539,6 +2582,85 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       return "<li><span><b>" + esc(t.c) + " " + esc(t.s) + "</b> " + t.n + " at " + Math.round(t.e) + "c, ended " + Math.round(t.x) + "c</span><b class='" + cls(t.net) + "'>" + usd(t.net, true) + "</b><span class='sub'>" + esc(autoReason(t.r)) + " &middot; " + esc(clockTime(t.t)) + "</span>" + whyHTML(t) + "</li>";
     }).join("") : "<li><span class='at-empty'>Your finished trades show up here.</span></li>");
     AK.resetRow.hidden = d.mode !== "paper";
+    autoPaintEdge(d.s.edge);
+  }
+  var EDGE_NAMES = { careful: "Careful", balanced: "Balanced", active: "Active", scalp: "Scalp", smart: "Smart" };
+  function per100(roi) { var v = Number(roi) || 0; return (v >= 0 ? "+" : "-") + "$" + Math.abs(v).toFixed(2); }
+  var LAB_NAMES = { fav_late: ["Late favourite", "Kalshi's favourite at 85c to 95c in the last 3 minutes, when the bot agrees."],
+    fav_mid: ["Favourite, mid-market", "Kalshi's favourite at 60c to 80c with 3 to 8 minutes left, when the bot is at least as sure."],
+    agree: ["Bot and Kalshi agree", "Same side, within 5 points of each other, at 55c to 85c."],
+    lag: ["Catch the lag", "The bot's odds jumped 8+ points in 30 seconds and Kalshi's price hasn't followed yet."],
+    maker: ["Favourite with a limit order", "Waits at Kalshi's bid instead of paying the ask, and pays no fee on these markets (or the lower maker fee). The Proven style can trade it with real limit orders."],
+    gates: ["All 7 gates", "Buys only when Data, Time, Strength, Lock, Reversal, Edge and Chop all pass."],
+    model: ["Current method", "The bot is 6+ points more sure than Kalshi, like Balanced. For comparison."],
+    fav_any: ["Always the favourite", "Kalshi's favourite once a market at any price. Shows what the market itself pays."],
+    settle: ["Final-minute settlement math", "In the last 90 seconds, works out the result from the settlement index itself (the part of the final-minute average already counted) and buys when that beats Kalshi's price by 4+ points after fees. Needs Kalshi's live feed."] };
+  function feedHTML(f) {                                    // Kalshi's live feed and how fast this server reaches Kalshi
+    if (!f) return "";
+    var ms = f.ms ? " <b>Speed to Kalshi:</b> " + Math.round(f.ms) + " ms per request" + (f.ms > 15 ? " (a server next to Kalshi gets a few ms)." : ".") : "";
+    if (!f.on) return "<p class='sm'><b>Settlement price feed:</b> off. With a read-only Kalshi API key in config.json the bot reads the index these markets settle on, live." + ms + "</p>";
+    if (!f.ok) return "<p class='sm'><b>Settlement price feed:</b> reconnecting" + (f.why ? " (" + esc(f.why) + ")" : "") + ". The regular price checks are used meanwhile." + ms + "</p>";
+    var c = f.coins || [], fast = f.fast || [];
+    return "<p class='sm'><b>Settlement price feed:</b> live for " + (c.length ? c.map(esc).join(", ") : "no coin yet") + (fast.length ? " (" + fast.map(esc).join(", ") + " 5 times a second)" : "") +
+      (f.quotes ? ", plus Kalshi's own prices on " + f.quotes + " market" + (f.quotes === 1 ? "" : "s") : "") + "." + ms + "</p>";
+  }
+  function labHTML(lb) {
+    if (!lb || !lb.strats || !lb.strats.length) return "";
+    var need = lb.min_n || 300, h = "<h4>Strategy lab</h4><p class='sm'>The bot tests these on every coin with pretend money, the way a real buy would happen: Kalshi's price plus a cent, the fee, held to the end. A strategy is proven after " + need + " trades if its profit is bigger than luck explains. The Proven style trades only a proven one with real money.</p>";
+    var picked = lb.pick && LAB_NAMES[lb.pick] ? LAB_NAMES[lb.pick][0] : "";
+    h += picked ? "<div class='at-ok'><b>Proven: " + esc(picked) + ".</b> The Proven style follows it with real money.</div>" : "";
+    var pc = (lb.cells || []).filter(function (c) { return c[7] && LAB_NAMES[c[0]]; });
+    if (pc.length) h += "<div class='at-ok'><b>Proven on one coin:</b> " + pc.map(function (c) { return esc(LAB_NAMES[c[0]][0]) + " on " + esc(c[1]); }).join(", ") + ". The Proven style follows it on that coin only.</div>";
+    h += "<table class='at-table at-lab'><thead><tr><th>Strategy</th><th>Trades</th><th>Won</th><th>Per $100 bet</th></tr></thead><tbody>" + lb.strats.filter(function (x) { return LAB_NAMES[x.k]; }).map(function (x) {
+      var st = x.proven ? " <span class='up'>proven</span>" : (x.n >= 100 && x.t <= -2 ? " <span class='down'>losing</span>" : (x.n || 0) >= need ? " <small>not proven</small>" : " <small>testing " + (x.n || 0) + "/" + need + "</small>");
+      var fill = x.kind === "maker" && x.placed ? " Filled " + (x.filled || 0) + " of " + x.placed + " orders." : "";
+      return "<tr><td><b>" + esc(LAB_NAMES[x.k][0]) + "</b>" + st + "<small class='at-sub'>" + esc(LAB_NAMES[x.k][1] + fill) + "</small></td><td>" + (x.n || 0) + "</td><td>" + (x.n ? Math.round((x.w || 0) / x.n * 100) + "%" : "-") + "</td><td class='" + cls(x.roi) + "'>" + (x.n ? per100(x.roi) : "-") + "</td></tr>";
+    }).join("") + "</tbody></table>";
+    h += labSplitHTML(lb);
+    h += feedHTML(lb.feed);
+    var rw = lb.rewards;
+    if (rw && rw.ok === true) h += "<p class='sm'><b>Kalshi liquidity rewards:</b> " + (rw.n ? "running now on " + rw.coins.map(esc).join(", ") + " (" + rw.n + " market" + (rw.n === 1 ? "" : "s") + "). These pay for keeping limit orders posted, which the limit-order strategy does." : "none on these markets right now. The bot checks every 30 minutes.") + "</p>";
+    return h;
+  }
+  function blockName(b) {                                   // a 4-hour block of the day (UTC) in this viewer's own time
+    var d = new Date(Date.UTC(2026, 0, 1, b * 4)), e = new Date(Date.UTC(2026, 0, 1, b * 4 + 4));
+    var f = function (x) { return x.toLocaleTimeString([], { hour: "numeric" }).replace(":00", "").replace(/\s/g, "").toLowerCase(); };
+    try { return f(d) + " to " + f(e); } catch (x) { return (b * 4) + ":00 to " + (b * 4 + 4) + ":00 UTC"; }
+  }
+  function labSplitHTML(lb) {
+    var rows = [];
+    (lb.cells || []).forEach(function (c) { if (LAB_NAMES[c[0]] && c[2] >= 50) rows.push({ t: c[6], txt: LAB_NAMES[c[0]][0] + " on " + c[1], n: c[2], w: c[3], roi: c[5] }); });
+    (lb.hours || []).forEach(function (c) { if (LAB_NAMES[c[0]] && c[2] >= 50) rows.push({ t: c[6], txt: LAB_NAMES[c[0]][0] + ", " + blockName(c[1]), n: c[2], w: c[3], roi: c[5] }); });
+    if (!rows.length) return "<p class='sm'>The split by coin and by time of day shows up once a strategy has 50 trades in one of them.</p>";
+    rows.sort(function (a, b) { return b.t - a.t; });
+    var best = rows.filter(function (r) { return r.t > 0; }).slice(0, 4), worst = rows.filter(function (r) { return r.t < 0; }).slice(-3).reverse();
+    var tr = function (r) { return "<tr><td>" + esc(r.txt) + "</td><td>" + r.n + "</td><td>" + Math.round(r.w / r.n * 100) + "%</td><td class='" + cls(r.roi) + "'>" + per100(r.roi) + "</td></tr>"; };
+    return "<h4>By coin and time of day</h4><p class='sm'>Where each strategy has done best and worst so far. With this many splits some will look good by luck: one coin only counts as proven after " + (lb.cell_n || 200) + " trades and a much higher bar.</p>" +
+      "<table class='at-table at-lab'><thead><tr><th>Best so far</th><th>Trades</th><th>Won</th><th>Per $100 bet</th></tr></thead><tbody>" + (best.length ? best.map(tr).join("") : "<tr><td colspan='4'>Nothing ahead yet.</td></tr>") + "</tbody></table>" +
+      (worst.length ? "<table class='at-table at-lab'><thead><tr><th>Worst so far</th><th>Trades</th><th>Won</th><th>Per $100 bet</th></tr></thead><tbody>" + worst.map(tr).join("") + "</tbody></table>" : "");
+  }
+  function autoPaintEdge(e) {
+    if (!AK.edgeBox) return;
+    if (!e || !e.styles) {
+      setHTML(AK.edgeBox, "<p class='at-empty'>" + (e && e.on === false ? "The owner has switched the edge check off, so real money trades without it." : "Not enough finished markets yet. The bot grades every market it watches, and this fills in within a couple of hours.") + "</p>" + labHTML(e && e.lab));
+      return;
+    }
+    var mine = A.set && A.set.style, okNames = Object.keys(e.styles).filter(function (k) { return e.styles[k].ok; }), b = e.beat, h = "";
+    if (e.demo) h += "<p class='sm'><i>Demo: these are made-up sample numbers. The real page shows the bot's own results.</i></p>";
+    if (e.on === false) h += "<div class='at-warn'>The owner has switched the edge check off. Real money trades even where the bot hasn't shown an edge.</div>";
+    else if (okNames.length) h += "<div class='at-ok'><b>Real money is on for " + okNames.map(function (k) { return EDGE_NAMES[k] || k; }).join(", ") + ".</b> Those passed both tests below.</div>";
+    else h += "<div class='at-warn'><b>Real money is paused for every style.</b> Practice keeps trading, and the check runs again every few minutes as markets finish.</div>";
+    if (b) h += "<p class='sm'><b>Test 1, does it know more than Kalshi?</b> On " + b.markets + " markets it hadn't learned from, the bot's odds " + (b.ok ? "<span class='up'>beat</span>" : "<span class='down'>did not beat</span>") + " Kalshi's own price" + (b.ok ? "." : ". Kalshi's price already carries most of what the charts show, so a gap between them is usually the bot being wrong, not Kalshi.") + "</p>";
+    else if (e.learned) h += "<p class='sm'><b>Test 1, does it know more than Kalshi?</b> Needs " + (e.need || 60) + " finished markets it hasn't learned from. It has graded " + e.markets + " so far.</p>";
+    h += "<p class='sm'><b>Test 2, would it have made money?</b> Each style's buy rule on the same markets: one bet per market at Kalshi's price plus fees, held to the end. A style needs " + (e.min_trades || 30) + " test trades and a profit to pass.</p>";
+    h += "<table class='at-table'><thead><tr><th>Style</th><th>Trades</th><th>Won</th><th>Per $100 bet</th></tr></thead><tbody>" + Object.keys(EDGE_NAMES).filter(function (k) { return e.styles[k]; }).map(function (k) {
+      var x = e.styles[k], wait = x.wait === "learning" ? "still learning" : x.wait === "test" ? "needs more markets" : "";
+      return "<tr" + (k === mine ? " class='me'" : "") + "><td><b>" + EDGE_NAMES[k] + "</b>" + (k === mine ? " <small>(yours)</small>" : "") + (x.ok ? " <span class='up'>passes</span>" : "") + "</td>" +
+        (wait ? "<td colspan='3'>" + wait + "</td>" : "<td>" + (x.n || 0) + "</td><td>" + (x.n ? Math.round((x.w || 0) / x.n * 100) + "%" : "-") + "</td><td class='" + cls(x.roi) + "'>" + (x.n ? per100(x.roi) : "-") + "</td>") + "</tr>";
+    }).join("") + "</tbody></table>";
+    h += labHTML(e.lab);
+    h += "<p class='sm'>A high win rate is not the same as making money: buying at 90c wins 9 times out of 10 and still loses if it should have won 9.5. These are past markets, not a promise, and a few dozen trades can swing a lot by luck.</p>";
+    setHTML(AK.edgeBox, h);
   }
   function autoReason(r) { return { TP: "Took profit", FLIP: "Call flipped, got out", CUT: "Cut the loss", STOP: "Hit your stop loss", TARGET: "Hit your profit target", BE: "Got out at break-even", TIME: "Sold before the last minute", SELL: "You sold it", WON: "Held to the end: won", LOST: "Held to the end: lost", FLAT: "You sold everything", ERR: "Closed" }[r] || r; }
   function keyBoxHTML(k, hasVault) {
@@ -2610,6 +2732,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     if (a === "chkhide") { store("kh_auto_chk", "1"); return autoPaintChecklist(); }
     if (a === "chkshow") { store("kh_auto_chk", null); autoTab("trade"); return autoPaintChecklist(); }
     if (a === "rec") { A.rec = b.dataset.m; return autoPaintRecord(); }
+    if (a === "edgego") { ev.preventDefault(); autoTab("record"); var eb = AK.edgeBox; if (eb && eb.scrollIntoView) eb.scrollIntoView({ block: "center" }); return; }
     if (a === "share") return shareOpen();
     if (a === "resetpaper") return armOrRun(b, function () { autoCmd("reset_paper", "Practice account reset."); });
     if (a === "keycheck") return autoCmd("check_key", "Checking the key...");
