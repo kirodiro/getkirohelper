@@ -489,6 +489,27 @@ textarea.at-in{min-height:120px;padding:10px 12px;font:500 .8rem/1.35 var(--code
 .bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none}
 .bgfx .bgimg{position:absolute;inset:0;background:center/cover no-repeat}
 .bgfx .bgdim{position:absolute;inset:0;background:rgba(15,17,19,.55)}
+.bgfx .bgstars{position:absolute;inset:0;width:100%;height:100%;display:block}
+.bgfx .bgstars[hidden]{display:none}
+.at-desk,.mdock{display:none}
+.at-ends{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-top:-2px}
+.at-sky{display:grid;gap:0;margin-top:12px}
+@media (hover:hover) and (pointer:fine) and (min-width:900px){
+.at-desk{display:block;margin-top:18px;padding-top:6px;border-top:1px solid var(--line)}
+.mdock:not([hidden]){display:flex;flex-direction:column;align-items:flex-end;gap:8px;position:fixed;right:16px;bottom:16px;z-index:30;width:min(380px,calc(100vw - 32px))}
+}
+.mtab{appearance:none;cursor:pointer;min-height:40px;padding:0 16px;border-radius:20px;border:1px solid var(--line2);background:var(--panel);color:var(--ink);font:700 .9rem/1 var(--font);display:inline-flex;align-items:center;gap:8px;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+.mtab:hover{border-color:var(--muted)}
+.mdot{width:8px;height:8px;border-radius:50%;background:var(--line2)}
+.mdock.has .mdot{background:var(--up)}
+.mpanel{width:100%;padding:12px;border:1px solid var(--line2);border-radius:12px;background:#15181B;box-shadow:0 8px 30px rgba(0,0,0,.55)}
+.mdock:not(.open) .mpanel{position:absolute;right:0;bottom:0;clip-path:inset(100%);pointer-events:none}
+.mform{display:flex;gap:8px}.mform .at-in{min-height:40px;flex:1 1 auto;min-width:0}
+.mmsg{min-height:1.2em;margin:6px 0 0;font-size:.85rem;color:var(--muted)}.mmsg.err{color:#FFAAA3}.mmsg.ok{color:var(--up)}
+.mframe{margin-top:6px}.mframe:empty{display:none}
+.mplayer{display:block;width:100%;border:0;border-radius:12px;background:transparent;color-scheme:normal}
+.mbar{display:flex;gap:8px;margin-top:8px}
+.mnote{margin:8px 0 0;font-size:.78rem;line-height:1.4;color:var(--muted)}
 body.autobg{--panel:rgba(21,24,27,.74);--raise:rgba(27,31,35,.8)}
 body.autobg .panel,body.autobg .card,body.autobg .strip,body.autobg .at-card,body.autobg .status,body.autobg .trialbar{backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
 body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
@@ -496,7 +517,20 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
 </style>
 </head>
 <body>
-<div class="bgfx" id="bgFx" hidden aria-hidden="true"><div class="bgimg" id="bgImg"></div><div class="bgdim" id="bgDim"></div></div>
+<div class="bgfx" id="bgFx" hidden aria-hidden="true"><div class="bgimg" id="bgImg"></div><div class="bgdim" id="bgDim"></div><canvas class="bgstars" id="bgStars" hidden></canvas></div>
+<aside class="mdock" id="mDock" hidden aria-label="Music player">
+  <div class="mpanel" id="mPanel">
+    <form class="mform" id="mForm" autocomplete="off" novalidate>
+      <input class="at-in" id="mUrl" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="400" placeholder="Paste a Spotify or Apple Music link" aria-label="Spotify or Apple Music link">
+      <button class="at-btn sm go" type="submit">Play</button>
+    </form>
+    <p class="mmsg" id="mMsg" role="status" aria-live="polite"></p>
+    <div class="mframe" id="mFrame"></div>
+    <div class="mbar" id="mBar" hidden><button type="button" class="at-btn sm" id="mSize">Show the song list</button><button type="button" class="at-btn sm" id="mClear">Remove</button></div>
+    <p class="mnote">Paste a song, album or playlist link. Full songs play when you are signed in to Spotify or Apple Music in this browser, otherwise you get short previews. Music keeps playing when you switch between the Live board and the Auto-trader. Reloading the page stops it.</p>
+  </div>
+  <button type="button" class="mtab" id="mTab" aria-expanded="false" aria-controls="mPanel"><span class="mdot" aria-hidden="true"></span>Music</button>
+</aside>
 <header class="top">
   <div class="wrap">
     <a class="brand" href="./">Kiros <span>helper</span></a>
@@ -593,7 +627,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
   var POLL_VIS = 1000, POLL_HID = 2500, WAIT_MS = 1000, HIDDEN_IDLE_MS = 3 * 60 * 60 * 1000;
   var COINS = [["BTC", "Bitcoin"], ["ETH", "Ethereum"], ["SOL", "Solana"], ["XRP", "XRP"], ["DOGE", "Dogecoin"], ["BNB", "BNB"], ["HYPE", "Hyperliquid"]];
   var TV_SRC = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-  var TV_SYM = { BTC: "COINBASE:BTCUSD", ETH: "COINBASE:ETHUSD", SOL: "COINBASE:SOLUSD", XRP: "COINBASE:XRPUSD", DOGE: "COINBASE:DOGEUSD", BNB: "BINANCE:BNBUSDT", HYPE: "KUCOIN:HYPEUSDT" };
+  var TV_SYM = { BTC: "COINBASE:BTCUSD", ETH: "COINBASE:ETHUSD", SOL: "COINBASE:SOLUSD", XRP: "COINBASE:XRPUSD", DOGE: "COINBASE:DOGEUSD", BNB: "COINBASE:BNBUSD", HYPE: "KUCOIN:HYPEUSDT" };
   var CONF = { "VERY STRONG": "Very strong", "STRONG": "Strong", "LEAN": "Lean", "TOSS-UP": "Toss-up" };
 
   var $ = function (id) { return document.getElementById(id); };
@@ -642,7 +676,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
 
   /* ---------- view switching ---------- */
   function showGate(msg, kind) {
-    stopPolling();
+    stopPolling(); musicHide();
     S.token = null; store("kh_live_tok", null); S.trialAt = 0; updateTrial();
     $("board").hidden = true;
     $("gate").hidden = false;
@@ -666,6 +700,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     buildBoard();
     startPolling();
     autoStart();
+    musicShow();
   }
   function setMsg(t, kind) { var m = $("gateMsg"); m.textContent = t; m.className = "msg" + (kind ? " " + kind : ""); }
 
@@ -2008,6 +2043,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
   var AUTO_DEF = { coins: [], bet: 5, mode: "paper", style: "balanced", pick: "best", daily_loss: 25, max_open: 3, streak: 3, flips: true, quick: true, catchup: false, always: false, stop_mode: "auto", stop_c: 15,
                    tp_mode: "auto", tp_c: 20, max_money: 0, hours_on: false, hours_from: "09:00", hours_to: "17:00", tz: "", alert_ntfy: "", alert_discord: "", alert_open: true, alert_close: true, alert_warn: true };
   var AUTO_STYLES = [
+    ["smart", "Smart", "Recommended. Reads every chart on its own (1 minute up to 1 hour, plus the other exchanges) and grades each one against how markets really ended, so it learns which time frames to trust. It buys when those learned odds beat the price after fees, in any minute of a market, so a confident market gets a trade each round. It asks for a bigger edge for as long as those learned odds haven't yet beaten Kalshi's own price on markets it hadn't seen. Sells only when the price pays more than the trade is worth, and can switch sides when the call flips. It does not bet until it has graded 40 finished markets (about 90 minutes after the bot first starts), and nothing here guarantees a profit."],
     ["careful", "Careful", "Fewer trades. Only strong calls with a clear gap to the price."],
     ["balanced", "Balanced", "The middle path. A good place to start."],
     ["active", "Active", "More trades. Accepts smaller gaps, so expect more small losses too."],
@@ -2021,6 +2057,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
             rec: null, msgT: null, liveOk: false, buyT: null, buying: false, sealing: false, bg: null, bgObj: "", dim: 55, share: null, kill: false };
   var AK = {};
   A.sellArm = null; A.sellArmT = null; A.sold = {}; A.testWait = 0; A.disBad = false;
+  A.live = null; A.liveT = null; A.liveBusy = false; A.liveOff = false; A.liveFails = 0;
 
   function usd(x, plus) {
     if (x == null || !isFinite(x)) return "-";
@@ -2073,7 +2110,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     autoSchedule(A.mode === "auto" ? 0 : 1200);
   }
   function autoStop() {
-    clearTimeout(A.timer); A.timer = null; clearTimeout(A.saveT); A.saveT = null; clearTimeout(A.buyT); A.buyT = null; A.busy = false; A.buying = false;
+    clearTimeout(A.timer); A.timer = null; clearTimeout(A.liveT); A.liveT = null; A.liveBusy = false; A.live = null; clearTimeout(A.saveT); A.saveT = null; clearTimeout(A.buyT); A.buyT = null; A.busy = false; A.buying = false;
     A.st = null; A.ver = 0; A.set = null;
     var d = $("modeDot"); if (d) d.hidden = true;
     var s = $("stage"); if (s) s.setAttribute("data-mode", "board");
@@ -2081,6 +2118,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     A.built = false; AK = {};
     autoModalClose();
     document.body.classList.remove("autobg"); var f = $("bgFx"); if (f) f.hidden = true;
+    skyStop();
   }
 
   /* ---------- asking the database ---------- */
@@ -2106,10 +2144,38 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       A.busy = false;
       if (!S.token || S.token !== tok) return;
       if (/expired/i.test(String((e && e.message) || ""))) return expired();
-      if (e && e.status === 404) { A.st = { access: false, missing: true }; autoRender(); return; }        // auto_setup.sql hasn't been run yet
+      if (e && e.status === 404) { A.st = { access: false, missing: true }; fxAccess(false); autoRender(); return; }        // auto_setup.sql hasn't been run yet
       A.fails++;
       if (A.mode === "auto") autoSay(autoFriendly(e), "err");
       autoSchedule(Math.min(autoEvery() * Math.pow(2, A.fails), 20000));
+    });
+  }
+  /* ---------- the fast price feed: open-trade price and profit, about three times a second ---------- */
+  function liveWanted() { var s = A.st && A.st.state; return !!(A.mode === "auto" && !document.hidden && !A.liveOff && S.token && A.st && A.st.access && s && s.pos && Object.keys(s.pos).length); }
+  function liveSchedule(ms) { clearTimeout(A.liveT); A.liveT = setTimeout(livePoll, ms); }
+  function liveFor(p) {             // the newest numbers for one open trade, or null when the fast feed has nothing fresh and matching (then the card uses the slower update)
+    var L = A.live, l = L && L.d && L.d[p.c]; if (!l || l.t !== p.tk || l.k !== p.n) return null;
+    var age = (L.age == null ? 999 : Number(L.age)) + (performance.now() - L.recv) / 1000;
+    return age < 8 ? { bid: Number(l.b), sell: Number(l.x), pnl: Number(l.p), age: age } : null;
+  }
+  function livePaint() {
+    var pos = A.st && A.st.state && A.st.state.pos; if (!pos || !AK.pos) return;
+    Object.keys(pos).forEach(function (c) { paintPosLive(pos[c]); });
+  }
+  function livePoll() {
+    A.liveT = null;
+    if (!liveWanted() || A.liveBusy) return;
+    var tok = S.token, t0 = performance.now(); A.liveBusy = true;
+    rpc("auto_live", { p_token: tok }).then(function (r) {
+      A.liveBusy = false; if (S.token !== tok) return;
+      A.liveFails = 0;
+      if (r && r.ok && r.data) { A.live = { d: r.data, age: r.age, recv: performance.now() }; livePaint(); }
+      if (liveWanted()) liveSchedule(Math.max(0, 300 - (performance.now() - t0)));
+    }, function (e) {
+      A.liveBusy = false;
+      if (e && e.status === 404) { A.liveOff = true; return; }                  // the new SQL hasn't been run: the slower update carries on alone
+      if (/expired/i.test(String((e && e.message) || ""))) return;
+      A.liveFails++; if (liveWanted()) liveSchedule(Math.min(1000 * A.liveFails, 10000));
     });
   }
   function autoApply(r) {
@@ -2118,12 +2184,15 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     if (r.same && A.st && A.st.access) {
       A.st.age = r.age; A.st.kill = r.kill; A.recv = performance.now();
       autoPaintLive();
+      if (!A.liveT && !A.liveBusy && liveWanted()) liveSchedule(0);
       return;
     }
     A.st = r; A.recv = performance.now(); A.ver = r.ver || 0;
+    fxAccess(r.access);
     if (r.owner && r.pay_url && $("payUrl") !== document.activeElement && !$("payUrl").value) $("payUrl").value = r.pay_url;
     var d = $("modeDot"); if (d) d.hidden = !(r.access && r.running);
     if (A.mode === "auto") autoRender();
+    if (!A.liveT && !A.liveBusy && liveWanted()) liveSchedule(0);
   }
   function autoNow(ms) { A.ver = 0; autoSchedule(ms || 0); }
 
@@ -2182,7 +2251,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
             "<div class='at-two'><div class='at-field'><label for='atLoss'>Stop for the day after losing</label><div class='at-bet'><span>$</span><input class='at-in' id='atLoss' data-k='loss' type='number' inputmode='decimal' min='1' max='10000' step='1'></div></div>" +
               "<div class='at-field' data-k='maxopenF'><label for='atOpen'>Most open at once</label><input class='at-in' id='atOpen' data-k='maxopen' type='number' inputmode='numeric' min='1' max='7' step='1'></div></div>" +
             "<div class='at-field'><label for='atCap'>Most money open at once</label><div class='at-bet'><span>$</span><input class='at-in' id='atCap' data-k='cap' type='number' inputmode='decimal' min='0' max='100000' step='1'></div><p class='hint sm'>Adds up what all your open trades cost. When it is full, the bot waits, or buys a smaller amount with what is left. 0 means no limit.</p></div>" +
-            "<div class='at-field'><label for='atStreak'>Take a 30 minute break after this many losses in a row</label><input class='at-in' id='atStreak' data-k='streak' type='number' inputmode='numeric' min='0' max='20' step='1' style='max-width:130px'><p class='hint sm'>0 turns the break off. The day resets at midnight Pacific time.</p></div>" +
+            "<div class='at-field'><label for='atStreak'>Take a 30 minute break after this many losses in a row</label><input class='at-in' id='atStreak' data-k='streak' type='number' inputmode='numeric' min='0' max='20' step='1' style='max-width:130px'><p class='hint sm'>0 turns the break off. A new day (for Profit today and your daily loss limit) starts at midnight on this device's clock.</p></div>" +
 
             "<div class='at-field'><label class='at-switch'><input type='checkbox' data-k='hoursOn' data-a='hoursOn'><span><b>Only start new trades during set hours</b><small>Outside those hours the bot starts nothing new. It still watches and sells the trades it already has.</small></span></label>" +
               "<div data-k='hoursF' hidden><div class='at-two' style='margin-top:10px'><div class='at-field' style='margin:0'><label for='atFrom'>From</label><input class='at-in' id='atFrom' data-k='hFrom' type='time'></div><div class='at-field' style='margin:0'><label for='atTo'>Until</label><input class='at-in' id='atTo' data-k='hTo' type='time'></div></div><p class='hint sm' data-k='hoursNote' style='margin-top:8px'></p></div></div>" +
@@ -2202,7 +2271,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
         "</div>" +
         "<div class='at-pane' data-pane='record' hidden>" +
           "<section class='at-card'><div class='at-top'><h3>Win and loss record</h3><div class='seg' role='group' aria-label='Which record'><button type='button' data-a='rec' data-m='paper' aria-pressed='true'>Practice</button><button type='button' data-a='rec' data-m='live' aria-pressed='false'>Real money</button></div></div>" +
-            "<div class='at-money' data-k='recTiles'></div><p class='sm' data-k='recNote'></p>" +
+            "<div class='at-money' data-k='recTiles'></div><p class='sm' data-k='recNote'></p><p class='sm' data-k='recExec'></p>" +
             "<h4>By coin</h4><div data-k='recCoins'></div>" +
             "<div class='at-row'><button type='button' class='at-btn' data-a='share'>Share my results</button></div>" +
           "</section>" +
@@ -2232,12 +2301,23 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
             "<p class='at-vault' data-k='vaultId'></p>" +
             "<div class='at-row'><button type='button' class='at-btn sm' data-a='chkshow' data-k='chkShow' hidden>Show the getting-started list again</button></div>" +
           "</section>" +
-          "<section class='at-card'><h3>Your background</h3><p class='sm'>Put a picture or GIF behind the Auto-trader. It stays on this device only.</p>" +
+          "<section class='at-card'><h3>Your background</h3><p class='sm'>Put a picture or GIF behind the Live board and the Auto-trader. It stays on this device only.</p>" +
             "<div class='at-thumb' data-k='bgThumb' hidden></div>" +
             "<div class='at-row'><label class='at-btn sm' style='display:inline-flex;align-items:center;cursor:pointer'>Choose a picture or GIF<input type='file' data-k='bgFile' accept='image/*' hidden></label><button type='button' class='at-btn sm' data-a='bgclear' data-k='bgClear' hidden>Remove</button></div>" +
             "<div class='at-field' style='margin-top:12px'><label for='atBgUrl'>Or paste a picture link</label><div class='at-bet'><input class='at-in' id='atBgUrl' data-k='bgUrl' type='url' inputmode='url' autocomplete='off' autocapitalize='off' spellcheck='false' placeholder='https://...'><button type='button' class='at-btn sm' data-a='bgurl'>Use it</button></div></div>" +
             "<div class='at-field'><label for='atDim'>Darken the picture: <span data-k='dimVal'>55</span>%</label><input class='at-range' id='atDim' data-k='dim' type='range' min='0' max='85' step='5'></div>" +
-            "<p class='at-msg' data-k='bgMsg' role='status' aria-live='polite'></p>" +
+            "<div class='at-desk'><h4 style='margin-top:12px'>Starry sky</h4>" +
+            "<p class='sm'>Twinkling stars and shooting stars over your background. They also work with no picture at all.</p>" +
+            "<label class='at-switch' style='margin-top:10px'><input type='checkbox' data-k='starOn'><span><b>Show the starry sky</b></span></label>" +
+            "<div class='at-sky' data-k='starBox' hidden>" +
+              "<div class='at-field'><label for='atStarTw'>Twinkle speed: <span data-k='twVal'>Medium</span></label><input class='at-range' id='atStarTw' data-k='starTw' type='range' min='1' max='10' step='1'><div class='at-ends'><span>Slow</span><span>Fast</span></div></div>" +
+              "<div class='at-field'><label for='atStarSs'>Shooting star speed: <span data-k='ssVal'>Medium</span></label><input class='at-range' id='atStarSs' data-k='starSs' type='range' min='1' max='10' step='1'><div class='at-ends'><span>Slow</span><span>Fast</span></div></div>" +
+              "<div class='at-field'><label for='atStarSf'>Shooting stars: <span data-k='sfVal'>Now and then</span></label><input class='at-range' id='atStarSf' data-k='starSf' type='range' min='0' max='10' step='1'><div class='at-ends'><span>Never</span><span>All the time</span></div></div>" +
+              "<div class='at-field'><label for='atStarN'>How many stars: <span data-k='nVal'>Plenty</span></label><input class='at-range' id='atStarN' data-k='starN' type='range' min='1' max='10' step='1'><div class='at-ends'><span>A few</span><span>Packed</span></div></div>" +
+              "<p class='sm' data-k='starRm' hidden>Your computer is set to reduce motion, so the stars stay still.</p>" +
+            "</div>" +
+          "</div>" +
+          "<p class='at-msg' data-k='bgMsg' role='status' aria-live='polite'></p>" +
           "</section>" +
         "</div>" +
       "</div>";
@@ -2327,7 +2407,13 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     AK.restRow.hidden = !st.running; AK.rest.hidden = paused; AK.wake.hidden = !paused;
     autoPaintBets();
   }
-  function posStat(p) { var bid = p.bid; return { bid: bid, pnl: bid != null ? (bid - p.e) * p.n / 100 : null, left: p.cl - botNow() }; }
+  function posStat(p) {            // pnl = what pressing sell right now would leave you with, after the fee paid to buy and the fee for selling (the bot works it out; older records fall back to price change minus the buy fee)
+    var bid = p.bid, pnl = p.pn != null ? Number(p.pn) : (bid != null ? (bid - p.e) * p.n / 100 - (Number(p.fi) || 0) : null);
+    var cost = (Number(p.n0) || p.n) * p.e / 100 + (Number(p.fi) || 0), got = Number(p.pr) || 0;
+    var sell = p.px != null ? Number(p.px) : bid, age = p.pq != null ? botNow() - p.pq : null, lv = liveFor(p);
+    if (lv) { bid = lv.bid; sell = lv.sell; pnl = lv.pnl; age = lv.age; }
+    return { bid: bid, sell: sell, pnl: pnl, left: p.cl - botNow(), age: age, win: got + p.n - cost, lose: got - cost };
+  }
   function posSig(p) {              // everything that changes the card's shape; the numbers that tick are filled in separately, so a tap never lands on a card that was just rebuilt
     var x = posStat(p), st = A.set || {}, arm = A.sellArm && A.sellArm.c === p.c && A.sellArm.until > Date.now(), sent = (A.sold[p.c] || 0) > Date.now();
     return [p.c, p.s, p.n, p.e, p.m, x.bid != null, x.left > 3, arm ? 1 : 0, sent ? 1 : 0, st.stop_mode, st.stop_c, st.tp_mode, st.tp_c].join("|");
@@ -2341,16 +2427,26 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       "<span class='sm'>Pays 100c if the market ends " + esc(p.s) + ".</span>" +
       (st.stop_mode === "manual" ? "<span class='sm'>Your stop loss: sells at " + Math.max(Math.floor(p.e - sc + 1e-9), 1) + "c or lower.</span>" : "") +
       (st.tp_mode === "manual" ? "<span class='sm'>" + (tp > 99 ? "Your profit target can't be reached on this trade. It would need " + tp + "c, and a contract tops out at 100c." : "Your profit target: sells at " + tp + "c or higher.") + "</span>" : "") +
-      "<span class='sm'>" + p.n + " contract" + (p.n === 1 ? "" : "s") + " bought at " + Math.round(p.e) + "c. Would sell at <span class='px-bid'></span> now.</span>" +
+      "<span class='sm'>" + p.n + " contract" + (p.n === 1 ? "" : "s") + " bought at " + Math.round(p.e) + "c" + (Number(p.fi) > 0 ? " (fee " + usd(Number(p.fi)) + ")" : "") + ". A sale right now gets <span class='px-bid'></span>.</span>" +
+      "<span class='sm'>The number at the top is what you'd get if you sold right now, after fees.</span>" +
+      "<span class='sm px-end'></span>" +
+      "<span class='sm px-old' hidden></span>" +
       "<span class='sm px-left'></span>" +
       (x.bid != null && x.left > 3 ? "<div class='at-row' style='margin-top:6px'><button type='button' class='at-btn sm danger" + (arm ? " armed" : "") + "' data-a='sellnow' data-c='" + esc(p.c) + "'" + (sent ? " disabled" : "") + ">" + (sent ? "Sell order sent..." : arm ? "Tap again to sell" : "Sell this trade now") + "</button></div>" : "") +
       "</div>";
   }
   function paintPosLive(p) {
     var c = AK.pos.querySelector(".at-pos[data-c='" + p.c + "']"); if (!c) return;
-    var x = posStat(p), a = c.querySelector(".pnl"), b = c.querySelector(".px-bid"), l = c.querySelector(".px-left");
-    a.className = "pnl " + cls(x.pnl); setText(a, x.pnl == null ? "-" : usd(x.pnl, true));
-    setText(b, x.bid != null ? Math.round(x.bid) + "c" : "-");
+    var x = posStat(p), a = c.querySelector(".pnl"), b = c.querySelector(".px-bid"), l = c.querySelector(".px-left"), o = c.querySelector(".px-old"), e = c.querySelector(".px-end");
+    var prev = c.__pnl, arrow = c.__arrow || "";
+    if (x.pnl != null && prev != null && x.pnl > prev + 0.004) arrow = "\u25B2 "; else if (x.pnl != null && prev != null && x.pnl < prev - 0.004) arrow = "\u25BC ";
+    if (x.pnl != null) c.__pnl = x.pnl;
+    c.__arrow = arrow;
+    a.className = "pnl " + cls(x.pnl); setText(a, x.pnl == null ? "-" : arrow + usd(x.pnl, true));
+    setText(b, x.sell != null ? (Math.round(x.sell * 10) / 10) + "c each" : "-");
+    setText(e, "Held to the end: " + usd(x.win, true) + " if it ends " + p.s + ", " + usd(x.lose, true) + " if it doesn't. No fee at settlement.");
+    var old_ = x.age != null && x.age > 12 && x.left > 3;
+    o.hidden = !old_; setText(o, old_ ? "This price is " + Math.round(x.age) + " seconds old. The bot is having trouble reading Kalshi's price, so the number above may be out of date." : "");
     setText(l, x.left > 0 ? "Market closes at " + clockTime(p.cl) + ", in " + leftText(x.left) + "." : "Market closed. Waiting for Kalshi to settle it.");
   }
   function autoPaintTrade() {
@@ -2369,7 +2465,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     });
     var quiet = !pos.length && st.running && rows.length && coins.every(function (c) { var w = s.why && s.why[c]; return w && w.n >= 60 && !w.ok; });
     setHTML(AK.why, rows.join("") || "<li><span>No coins picked yet. Pick some in Settings.</span></li>");
-    setText(AK.whyNote, rows.length ? "The chart and indicators are for the coin you tap above. This list shows every coin you picked." + (quiet && A.set && (A.set.style === "careful" || A.set.style === "balanced") ? " No coin has passed every rule in the last hour. Careful and Balanced only buy when the bot's call clearly beats Kalshi's price, so quiet stretches are normal. Active buys more often (Settings, then Style)." : "") : "");
+    setText(AK.whyNote, rows.length ? "The chart and indicators are for the coin you tap above. This list shows every coin you picked." + (quiet && A.set && (A.set.style === "careful" || A.set.style === "balanced") ? " No coin has passed every rule in the last hour. Careful and Balanced only buy when the bot's call clearly beats Kalshi's price, so quiet stretches are normal. Active buys more often (Settings, then Style)." : "") + (s.learn ? " " + s.learn : "") : "");
     var log = (s.log || []).slice().reverse().slice(0, 25);
     setHTML(AK.log, log.length ? log.map(function (l) { return "<li class='" + esc(l.k) + "'><i>" + esc(clockTime(l.t)) + "</i>" + esc(l.x) + "</li>"; }).join("") : "<li class='info'>Nothing yet. Press Start and the bot's decisions show up here.</li>");
   }
@@ -2384,7 +2480,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     AK.flips.checked = !!s.flips; AK.quick.checked = !!s.quick; AK.catchup.checked = !!s.catchup; AK.always.checked = !!s.always;
     var man = s.stop_mode === "manual", sc = Math.round(Number(s.stop_c)) || 15;
     setActive(AK.stops, "data-v", man ? "manual" : "auto"); AK.stopF.hidden = !man; setIfIdle(AK.stopc, sc); setActive(AK.stopchips, "data-c", sc);
-    setText(AK.stopEx, "Example: if the bot pays 60c for a contract, it sells when the price falls to " + Math.max(60 - sc, 1) + "c. A fast drop can sell a little lower than that, and it can't sell in the last few seconds of a market.");
+    setText(AK.stopEx, "Example: if the bot pays 60c for a contract, it sells when the price falls to " + Math.max(60 - sc, 1) + "c. The bot checks your stop about 3 times a second. A fast drop can still sell lower than that, because the order goes in after the price has already moved, and it can't sell in the last few seconds of a market.");
     AK.stopWarn.hidden = !(man && sc < 8); setText(AK.stopWarn, sc < 8 ? "That is tighter than the usual gap between the buy and sell price (3 to 5 cents), so normal wiggle could sell you out right away. 10 or more is safer." : "");
     var tman = s.tp_mode === "manual", tc = Math.round(Number(s.tp_c)) || 20;
     setActive(AK.tps, "data-v", tman ? "manual" : "auto"); AK.tpF.hidden = !tman; setIfIdle(AK.tpc, tc); setActive(AK.tpchips, "data-c", tc);
@@ -2400,6 +2496,28 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     var S_ = (s.stats && s.stats[mode]) || { w: 0, l: 0, e: 0, net: 0, coins: {} };
     return { s: s, mode: mode, S: S_, trades: (s.trades || []).filter(function (t) { return t.m === mode; }) };
   }
+  function wilson(w, n) {                                   // a rough 95% range for the true win rate, from w wins in n decided trades
+    if (!(n > 0)) return null;
+    var z = 1.96, p = w / n, d = 1 + z * z / n, c = p + z * z / (2 * n), m = z * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n));
+    return [Math.max(0, (c - m) / d), Math.min(1, (c + m) / d)];
+  }
+  function recExecText(d, S_) {
+    var parts = [], wl = (S_.w || 0) + (S_.l || 0), n = wl + (S_.e || 0), x = S_.x || null;
+    if (n > 0 && n < 30) parts.push("Only " + n + " finished trade" + (n === 1 ? "" : "s") + " so far, which is too few to tell a real edge from luck. Wait for at least 30 (100 is better) before changing settings.");
+    else if (n >= 30 && n < 100) parts.push(n + " finished trades so far. 100 or more gives a clearer picture.");
+    var r = wilson(S_.w || 0, wl);
+    if (r) parts.push("With " + wl + " decided trade" + (wl === 1 ? "" : "s") + ", the real accuracy could be anywhere from about " + Math.round(r[0] * 100) + "% to " + Math.round(r[1] * 100) + "%.");
+    if (d.mode === "paper") {
+      if (n > 0) parts.push("Practice buys are assumed to fill at the price the bot saw plus 1 cent. Real orders can miss or fill worse when the price moves, so real results can come out lower than practice.");
+    } else if (x && x.bt) {
+      var bf = x.bf || 0, pct = Math.round(bf / x.bt * 100), sl = x.bg ? (x.bs || 0) / x.bg : 0;
+      parts.push("Your real buy orders: " + x.bt + " sent, " + bf + " filled (" + pct + "%)" + (x.bp ? ", " + x.bp + " of those only partly" : "") + "." +
+        (x.bg ? (Math.abs(sl) < 0.05 ? " On average you paid about the price the bot saw." : " On average you paid " + Math.abs(sl).toFixed(1) + " cents per contract " + (sl > 0 ? "more" : "less") + " than the price the bot saw.") : "") +
+        " Fees paid so far (buys and sells): " + usd(S_.fees || 0) + "." +
+        (x.bt >= 10 && pct < 70 ? " A fill rate under 70% means the price is often moving before the order lands, so the bot misses trades it wanted." : ""));
+    }
+    return parts.join(" ");
+  }
   function autoPaintRecord() {
     var d = recData(), S_ = d.S, acc = pctOf(S_.w || 0, S_.l || 0), n = (S_.w || 0) + (S_.l || 0) + (S_.e || 0);
     Array.prototype.forEach.call($("autoWrap").querySelectorAll("[data-a=rec]"), function (b) { b.setAttribute("aria-pressed", b.dataset.m === d.mode ? "true" : "false"); });
@@ -2410,6 +2528,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       "<div class='at-stat'><span>Trades</span><b>" + n + "</b></div>" +
       "<div class='at-stat'><span>Fees paid</span><b>" + usd(S_.fees || 0) + "</b><small>Already taken out of profit</small></div>");
     setText(AK.recNote, d.mode === "paper" ? "Practice money. These results are not real, and real trading can go differently." : "Real money on your Kalshi account, after fees.");
+    setText(AK.recExec, recExecText(d, S_));
     var coins = Object.keys(S_.coins || {}).sort(function (a, b) { return (S_.coins[b].net || 0) - (S_.coins[a].net || 0); });
     setHTML(AK.recCoins, coins.length ? "<table class='at-table'><thead><tr><th>Coin</th><th>Won - lost</th><th>Accuracy</th><th>Profit</th></tr></thead><tbody>" + coins.map(function (c) {
       var x = S_.coins[c], a = pctOf(x.w || 0, x.l || 0);
@@ -2440,6 +2559,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     setText(AK.dimVal, String(A.dim)); if (AK.dim !== document.activeElement) AK.dim.value = A.dim;
     AK.bgThumb.hidden = !A.bg; AK.bgClear.hidden = !A.bg;
     if (A.bg) AK.bgThumb.style.backgroundImage = "url(\"" + (A.bg.type === "file" ? A.bgObj : A.bg.url) + "\")";
+    starsPaint();
   }
   function autoPaintLock() {
     var st = A.st, pay = st.pay_url || AUTO_PAY;
@@ -2510,6 +2630,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     else if (t === AK.cap) { var cv2 = parseFloat(t.value); if (isFinite(cv2) && cv2 >= 0) autoEdit({ max_money: Math.min(cv2, 100000) }, true); }
     else if (t === AK.dis) { alertDiscord(t.value); }
     else if (t === AK.dim) { A.dim = Number(t.value) || 0; store("kh_auto_dim", String(A.dim)); setText(AK.dimVal, String(A.dim)); autoBgApply(); }
+    else starsInput(t);
   }
   function autoChange(ev) {
     var t = ev.target;
@@ -2519,6 +2640,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     if (t === AK.always) return autoEdit({ always: !!t.checked });
     if (t === AK.pemFile && t.files && t.files[0]) return autoReadPem(t.files[0]);
     if (t === AK.bgFile && t.files && t.files[0]) return autoBgFile(t.files[0]);
+    if (t === AK.starOn) return starsToggle(t.checked);
     if (t === AK.stopc) { var cv = Math.round(numIn(t, 5, 90, 15)); t.value = cv; return autoEdit({ stop_mode: "manual", stop_c: cv }); }
     if (t === AK.tpc) { var tcv = Math.round(numIn(t, 5, 90, 20)); t.value = tcv; return autoEdit({ tp_mode: "manual", tp_c: tcv }); }
     if (t === AK.hoursOn) return autoEdit(withTz({ hours_on: !!t.checked }));
@@ -2832,6 +2954,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
   function bgPut(key, val) { return bgOpen().then(function (db) { return new Promise(function (res, rej) { var t = db.transaction("kv", "readwrite"); if (val == null) t.objectStore("kv").delete(key); else t.objectStore("kv").put(val, key); t.oncomplete = res; t.onerror = function () { rej(t.error); }; }); }); }
   function bgGet(key) { return bgOpen().then(function (db) { return new Promise(function (res, rej) { var q = db.transaction("kv").objectStore("kv").get(key); q.onsuccess = function () { res(q.result); }; q.onerror = function () { rej(q.error); }; }); }); }
   function autoBgLoad() {
+    starsLoad();
     var d = parseInt(store("kh_auto_dim"), 10); A.dim = isFinite(d) ? Math.min(Math.max(d, 0), 85) : 55;
     var raw = store("kh_auto_bg"), o = null; try { o = raw ? JSON.parse(raw) : null; } catch (e) {}
     if (o && o.type === "url" && /^https?:\/\//i.test(o.url || "")) { A.bg = { type: "url", url: o.url }; autoBgApply(); return; }
@@ -2840,12 +2963,16 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     }
   }
   function autoBgApply() {
-    var on = A.mode === "auto" && !!A.bg && (A.bg.type === "url" ? !!A.bg.url : !!A.bgObj);
+    var pic = !!A.bg && (A.bg.type === "url" ? !!A.bg.url : !!A.bgObj);
+    var on = FXACC && (pic || starsWanted());
     document.body.classList.toggle("autobg", on);
-    var f = $("bgFx"); f.hidden = !on; if (!on) return;
-    var u = A.bg.type === "url" ? A.bg.url : A.bgObj;
-    $("bgImg").style.backgroundImage = "url(\"" + u + "\")";
-    $("bgDim").style.background = "rgba(15,17,19," + (A.dim / 100) + ")";
+    var f = $("bgFx"); f.hidden = !on;
+    if (on) {
+      var u = pic ? (A.bg.type === "url" ? A.bg.url : A.bgObj) : "";
+      $("bgImg").style.backgroundImage = u ? "url(\"" + u + "\")" : "none";
+      $("bgDim").style.background = pic ? "rgba(15,17,19," + (A.dim / 100) + ")" : "transparent";
+    }
+    starsSync();
   }
   function bgSay(t, kind) { if (AK.bgMsg) { AK.bgMsg.className = "at-msg " + (kind || ""); AK.bgMsg.textContent = t; } }
   function autoBgFile(f) {
@@ -3031,6 +3158,269 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       $("payGo").disabled = false; ownerSay(r && r.pay_url ? "Saved. People who haven't paid now see a Pay $15 button with this link." : "Cleared. The built-in $15 link is used again.", true); autoNow(0);
     }, function (e) { $("payGo").disabled = false; if (/bad link/i.test(String((e && e.message) || ""))) return ownerSay("That doesn't look like a link. It should start with https://", false); ownerFail(e); });
   });
+
+  /* ================= desktop extras: a starry sky over the background, and a music dock ================= */
+  var DESK = null, MOTION = null;
+  try { DESK = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 900px)"); MOTION = window.matchMedia("(prefers-reduced-motion: reduce)"); } catch (e) {}
+  function isDesk() { return !!DESK && DESK.matches; }
+  function calmMotion() { return !!MOTION && MOTION.matches; }
+  function onMedia(mq, fn) { if (!mq) return; try { mq.addEventListener("change", fn); } catch (e) { try { mq.addListener(fn); } catch (e2) {} } }
+  function pin(v, lo, hi, d) { v = parseInt(v, 10); return isFinite(v) ? Math.min(Math.max(v, lo), hi) : d; }
+  var FXACC = false;                                                   // does this person have the Auto-trader? The background, the sky and the music belong to it, on both sides of the page
+  function fxAccess(on) { on = !!on; if (on === FXACC) return; FXACC = on; autoBgApply(); musicSync(); }
+
+  /* ---------- the sky ---------- */
+  var STAR = { on: false, tw: 5, ss: 5, sf: 4, n: 6 };           // on/off, twinkle speed, shooting-star speed, how often they fly (0 = never), how many stars
+  var SKY = { raf: 0, last: 0, clock: 0, tw: 0, stars: [], shots: [], next: 0, w: 0, h: 0, ctx: null, running: false, pv: 0 };
+  var STAR_TINTS = ["rgb(255,255,255)", "rgb(255,255,255)", "rgb(255,255,255)", "rgb(200,222,255)", "rgb(255,238,200)"];
+  function starsLoad() {
+    var o = null; try { o = JSON.parse(store("kh_auto_stars") || "null"); } catch (e) {}
+    if (!o || typeof o !== "object") return;
+    STAR.on = o.on === 1 || o.on === true;
+    STAR.tw = pin(o.tw, 1, 10, 5); STAR.ss = pin(o.ss, 1, 10, 5); STAR.sf = pin(o.sf, 0, 10, 4); STAR.n = pin(o.n, 1, 10, 6);
+  }
+  function starsSave() { store("kh_auto_stars", JSON.stringify({ on: STAR.on ? 1 : 0, tw: STAR.tw, ss: STAR.ss, sf: STAR.sf, n: STAR.n })); }
+  function starsWanted() { return STAR.on && isDesk() && FXACC; }
+  function twinkleFactor() { return Math.pow(2, (STAR.tw - 5) * 0.35); }                       // 0.38x to 3.4x
+  function shootPx() { return 560 * Math.pow(2, (STAR.ss - 5) * 0.3); }                         // pixels a second, about 240 to 1600
+  function shootGap() { return 18 * Math.pow(0.72, STAR.sf - 1); }                              // average seconds between shooting stars, about 18 down to 1
+  function starCount() { return Math.round(Math.min(320, SKY.w * SKY.h / 10000 * (0.1 + STAR.n * 0.1))); }
+  var WORDS = {
+    tw: ["", "Very slow", "Very slow", "Slow", "Slow", "Medium", "Medium", "Fast", "Fast", "Very fast", "Very fast"],
+    ss: ["", "Very slow", "Very slow", "Slow", "Slow", "Medium", "Medium", "Fast", "Fast", "Very fast", "Very fast"],
+    sf: ["Never", "Rare", "Rare", "Now and then", "Now and then", "Often", "Often", "Very often", "Very often", "All the time", "All the time"],
+    n: ["", "A few", "A few", "Some", "Some", "Plenty", "Plenty", "Lots", "Lots", "Packed", "Packed"]
+  };
+  function starOne() {
+    var big = Math.random() < 0.12;
+    return { x: Math.random(), y: Math.random(), r: big ? 1.1 + Math.random() * 0.9 : 0.35 + Math.random() * 0.75,
+      a: big ? 0.75 + Math.random() * 0.25 : 0.3 + Math.random() * 0.5, ph: Math.random() * 6.283, rt: 0.6 + Math.random() * 0.9,
+      glint: big && Math.random() < 0.65, col: STAR_TINTS[Math.floor(Math.random() * STAR_TINTS.length)] };
+  }
+  function skySize() {
+    var c = $("bgStars"); if (!c) return false;
+    var w = Math.max(window.innerWidth || 0, 1), h = Math.max(window.innerHeight || 0, 1), dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    var pw = Math.round(w * dpr), ph = Math.round(h * dpr);
+    if (c.width !== pw || c.height !== ph) { c.width = pw; c.height = ph; }
+    SKY.ctx = c.getContext("2d"); if (!SKY.ctx) return false;
+    SKY.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    SKY.w = w; SKY.h = h;
+    var want = starCount();
+    while (SKY.stars.length > want) SKY.stars.pop();
+    while (SKY.stars.length < want) SKY.stars.push(starOne());
+    return true;
+  }
+  function skyShoot(forced) {
+    if (SKY.shots.length >= 4 || !SKY.w) return;
+    var dir = Math.random() < 0.5 ? 1 : -1, ang = (16 + Math.random() * 28) * Math.PI / 180, sp = shootPx() * (0.85 + Math.random() * 0.3);
+    var dist = SKY.w * (0.22 + Math.random() * 0.35);
+    SKY.shots.push({ x: SKY.w * (0.08 + Math.random() * 0.84), y: SKY.h * (0.02 + Math.random() * 0.42), vx: dir * Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
+      age: 0, life: Math.max(dist / sp, 0.35), len: Math.min(Math.max(sp * 0.16, 70), 260), forced: !!forced });
+  }
+  function skyDraw(dt, still) {
+    var ctx = SKY.ctx, i, s, st;
+    ctx.clearRect(0, 0, SKY.w, SKY.h);
+    for (i = 0; i < SKY.stars.length; i++) {
+      st = SKY.stars[i];
+      s = still ? 0.75 : 0.5 + 0.5 * Math.sin(SKY.tw * st.rt + st.ph);
+      var x = st.x * SKY.w, y = st.y * SKY.h;
+      ctx.globalAlpha = st.a * (0.25 + 0.75 * s);
+      ctx.fillStyle = st.col;
+      ctx.beginPath(); ctx.arc(x, y, st.r * (0.8 + 0.3 * s), 0, 6.2832); ctx.fill();
+      if (st.glint && !still) {
+        var g = Math.pow(s, 6);
+        if (g > 0.08) {
+          var L = st.r * (3 + 9 * g);
+          ctx.globalAlpha = Math.min(1, 0.7 * g * st.a + 0.1); ctx.strokeStyle = st.col; ctx.lineWidth = 0.8;
+          ctx.beginPath(); ctx.moveTo(x - L, y); ctx.lineTo(x + L, y); ctx.moveTo(x, y - L); ctx.lineTo(x, y + L); ctx.stroke();
+        }
+      }
+    }
+    if (!still) {
+      for (i = SKY.shots.length - 1; i >= 0; i--) {
+        var q = SKY.shots[i];
+        q.age += dt; q.x += q.vx * dt; q.y += q.vy * dt;
+        var f = q.age / q.life;
+        if (f >= 1 || q.y > SKY.h + 40 || q.x < -300 || q.x > SKY.w + 300) { SKY.shots.splice(i, 1); continue; }
+        var al = Math.max(0, Math.min(1, f / 0.12, (1 - f) / 0.4)), m = Math.sqrt(q.vx * q.vx + q.vy * q.vy), ux = q.vx / m, uy = q.vy / m;
+        var tx = q.x - ux * q.len, ty = q.y - uy * q.len, gr = ctx.createLinearGradient(tx, ty, q.x, q.y);
+        gr.addColorStop(0, "rgba(190,215,255,0)"); gr.addColorStop(1, "rgba(255,255,255,1)");
+        ctx.lineCap = "round"; ctx.strokeStyle = gr;
+        ctx.globalAlpha = al * 0.28; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(q.x, q.y); ctx.stroke();
+        ctx.globalAlpha = al; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(q.x, q.y); ctx.stroke();
+        ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(q.x, q.y, 1.7, 0, 6.2832); ctx.fill();
+      }
+      if (STAR.sf > 0) {
+        SKY.clock += dt;
+        if (SKY.clock >= SKY.next) { skyShoot(false); SKY.next = SKY.clock + shootGap() * (0.4 + Math.random() * 1.2); }
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+  function skyFrame(ts) {
+    if (!SKY.running) { SKY.raf = 0; return; }
+    SKY.raf = requestAnimationFrame(skyFrame);
+    if (ts - SKY.last < 33) return;                                              // about 30 frames a second is plenty for stars
+    var dt = Math.min((ts - SKY.last) / 1000, 0.1); SKY.last = ts;
+    SKY.tw += dt * twinkleFactor();
+    skyDraw(dt, false);
+  }
+  function skyStop() {
+    SKY.running = false; if (SKY.raf) { cancelAnimationFrame(SKY.raf); SKY.raf = 0; }
+    SKY.shots.length = 0;
+    var c = $("bgStars"); if (c) c.hidden = true;
+  }
+  function starsSync() {                                                         // one place decides whether the sky is drawing
+    var c = $("bgStars"), f = $("bgFx"); if (!c || !f) return;
+    var show = starsWanted() && !f.hidden;
+    if (!show) return skyStop();
+    c.hidden = false;
+    if (!skySize()) return skyStop();
+    if (calmMotion()) {                                                          // asked for less motion: the stars hold still
+      SKY.running = false; if (SKY.raf) { cancelAnimationFrame(SKY.raf); SKY.raf = 0; }
+      SKY.shots.length = 0; skyDraw(0, true); return;
+    }
+    if (document.hidden) { SKY.running = false; if (SKY.raf) { cancelAnimationFrame(SKY.raf); SKY.raf = 0; } return; }
+    if (!SKY.running) { SKY.running = true; SKY.last = performance.now(); SKY.next = SKY.clock + Math.min(shootGap(), 4) * Math.random(); SKY.raf = requestAnimationFrame(skyFrame); }
+  }
+  var skyResizeT = null;
+  window.addEventListener("resize", function () { clearTimeout(skyResizeT); skyResizeT = setTimeout(function () { if (SKY.running || starsWanted()) starsSync(); }, 150); });
+  document.addEventListener("visibilitychange", starsSync);
+  onMedia(DESK, function () { autoBgApply(); musicSync(); });
+  onMedia(MOTION, function () { starsSync(); starsPaint(); });
+
+  /* the controls in the Your background card */
+  function starsPaint() {
+    if (!AK || !AK.starOn) return;
+    AK.starOn.checked = STAR.on;
+    AK.starBox.hidden = !STAR.on;
+    var sl = [["starTw", "tw", "twVal"], ["starSs", "ss", "ssVal"], ["starSf", "sf", "sfVal"], ["starN", "n", "nVal"]];
+    for (var i = 0; i < sl.length; i++) {
+      var el = AK[sl[i][0]]; if (!el) continue;
+      if (el !== document.activeElement) el.value = STAR[sl[i][1]];
+      setText(AK[sl[i][2]], WORDS[sl[i][1]][STAR[sl[i][1]]]);
+    }
+    if (AK.starRm) AK.starRm.hidden = !calmMotion();
+  }
+  function starsPreview() {                                                      // move a slider, see a shooting star straight away
+    if (!starsWanted() || !SKY.running || STAR.sf === 0) return;
+    var now = Date.now(); if (now - SKY.pv < 700) return; SKY.pv = now; skyShoot(true);
+  }
+  function starsInput(t) {
+    if (t === AK.starTw) STAR.tw = pin(t.value, 1, 10, 5);
+    else if (t === AK.starSs) STAR.ss = pin(t.value, 1, 10, 5);
+    else if (t === AK.starSf) { STAR.sf = pin(t.value, 0, 10, 4); SKY.next = SKY.clock + 0.3; }
+    else if (t === AK.starN) { STAR.n = pin(t.value, 1, 10, 6); if (SKY.ctx) { skySize(); if (!SKY.running) skyDraw(0, true); } }
+    else return false;
+    starsSave(); starsPaint();
+    if (t === AK.starSs || t === AK.starSf) starsPreview();
+    return true;
+  }
+  function starsToggle(on) { STAR.on = !!on; starsSave(); starsPaint(); autoBgApply(); }
+
+  /* ---------- the music dock: a Spotify or Apple Music link plays in their own player ---------- */
+  var MUSIC = { src: "", tall: false, open: false, link: "", ready: false, loaded: false };
+  function musicParse(raw) {
+    raw = String(raw || "").trim().slice(0, 400);
+    var m = /^spotify:(track|album|playlist|artist|episode|show):([A-Za-z0-9]{10,40})$/.exec(raw);
+    if (m) return { who: "Spotify", type: m[1], src: "https://open.spotify.com/embed/" + m[1] + "/" + m[2] + "?utm_source=generator&theme=0" };
+    var u; try { u = new URL(raw); } catch (e) { return null; }
+    if (u.protocol !== "https:" && u.protocol !== "http:") return null;
+    var host = u.hostname.toLowerCase();
+    if (host === "open.spotify.com") {
+      m = /(?:^|\/)(track|album|playlist|artist|episode|show)\/([A-Za-z0-9]{10,40})(?:$|\/)/.exec(u.pathname);
+      if (!m) return null;
+      return { who: "Spotify", type: m[1], src: "https://open.spotify.com/embed/" + m[1] + "/" + m[2] + "?utm_source=generator&theme=0" };
+    }
+    if (host === "music.apple.com" || host === "embed.music.apple.com") {
+      m = /^\/[a-z]{2}(?:-[a-z]{2})?\/(album|playlist|song|station|artist|music-video)\/[^?#\s]+$/i.exec(u.pathname);
+      if (!m || u.pathname.indexOf("..") >= 0) return null;
+      var q = /^\?i=\d{4,20}$/.test(u.search) ? u.search : "";
+      return { who: "Apple Music", type: m[1].toLowerCase(), src: "https://embed.music.apple.com" + u.pathname + q };
+    }
+    return null;
+  }
+  function musicHeights(p) {
+    if (p.who === "Spotify") return { low: 152, high: /^(track|episode)$/.test(p.type) ? 152 : 352 };
+    return { low: 175, high: /^(song|music-video)$/.test(p.type) ? 175 : 450 };
+  }
+  function musicSave() { store("kh_music", MUSIC.link ? JSON.stringify({ u: MUSIC.link, o: MUSIC.open ? 1 : 0, t: MUSIC.tall ? 1 : 0 }) : null); }
+  function musicSay(t, kind) { var m = $("mMsg"); if (m) { m.textContent = t; m.className = "mmsg" + (kind ? " " + kind : ""); } }
+  function musicFrame(p) {
+    var box = $("mFrame"), h = musicHeights(p);
+    box.innerHTML = "";
+    var f = document.createElement("iframe");
+    f.title = p.who + " player";
+    f.setAttribute("allow", p.who === "Spotify" ? "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" : "autoplay *; encrypted-media *; fullscreen *; clipboard-write");
+    if (p.who !== "Spotify") f.setAttribute("sandbox", "allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation");
+    f.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+    f.className = "mplayer";
+    f.style.height = (MUSIC.tall ? h.high : h.low) + "px";
+    f.src = p.src;
+    box.appendChild(f);
+    MUSIC.src = p.src; MUSIC.p = p;
+    $("mBar").hidden = false;
+    $("mSize").hidden = h.low === h.high;
+    $("mSize").textContent = MUSIC.tall ? "Hide the song list" : "Show the song list";
+    $("mDock").classList.add("has");
+  }
+  function musicClearFrame() {
+    var box = $("mFrame"); if (box) box.innerHTML = "";
+    MUSIC.src = ""; MUSIC.p = null;
+    var b = $("mBar"); if (b) b.hidden = true;
+    var d = $("mDock"); if (d) d.classList.remove("has");
+  }
+  function musicPlay(raw, keepOpen) {
+    var p = musicParse(raw);
+    if (!p) return musicSay("That doesn't look like a Spotify or Apple Music link. Open a song, album or playlist, choose Share, then Copy link.", "err");
+    MUSIC.link = String(raw).trim().slice(0, 400); MUSIC.tall = false;
+    musicFrame(p); musicSave();
+    musicSay(p.who + " is ready. Press play in the player.", "ok");
+    if (!keepOpen) musicOpen(true);
+  }
+  function musicOpen(on) {
+    MUSIC.open = !!on;
+    var d = $("mDock"); if (!d) return;
+    d.classList.toggle("open", MUSIC.open);
+    $("mTab").setAttribute("aria-expanded", MUSIC.open ? "true" : "false");
+    musicSave();
+  }
+  function musicRestore() {                                                      // the last link comes back (it still needs a press on play)
+    var o = null; try { o = JSON.parse(store("kh_music") || "null"); } catch (e) {}
+    var p = o && typeof o.u === "string" ? musicParse(o.u) : null;
+    if (!p) return;
+    MUSIC.link = o.u.slice(0, 400); MUSIC.tall = o.t === 1;
+    $("mUrl").value = MUSIC.link;
+    musicFrame(p);
+    musicOpen(o.o === 1);
+  }
+  function musicSync() {                                                         // shown only on a desktop, only while signed in, only with the Auto-trader
+    var d = $("mDock"); if (!d) return;
+    if (MUSIC.ready && isDesk() && FXACC) {
+      d.hidden = false;
+      if (!MUSIC.loaded) { MUSIC.loaded = true; musicRestore(); }
+    } else {
+      d.hidden = true;
+      if (MUSIC.src) musicClearFrame();                                          // access ended or the window shrank: the player goes away and stops
+      MUSIC.loaded = false; d.classList.remove("open");
+    }
+  }
+  function musicShow() { MUSIC.ready = true; musicSync(); }
+  function musicHide() {                                                         // signed out: the player goes away and stops
+    MUSIC.ready = false; FXACC = false; musicSync();
+  }
+  (function musicWire() {
+    var d = $("mDock"); if (!d) return;
+    $("mTab").addEventListener("click", function () { musicOpen(!MUSIC.open); });
+    $("mForm").addEventListener("submit", function (ev) { ev.preventDefault(); musicPlay($("mUrl").value, true); });
+    $("mSize").addEventListener("click", function () {
+      if (!MUSIC.p) return; MUSIC.tall = !MUSIC.tall;
+      var h = musicHeights(MUSIC.p), f = d.querySelector("iframe"); if (f) f.style.height = (MUSIC.tall ? h.high : h.low) + "px";
+      $("mSize").textContent = MUSIC.tall ? "Hide the song list" : "Show the song list"; musicSave();
+    });
+    $("mClear").addEventListener("click", function () { musicClearFrame(); MUSIC.link = ""; $("mUrl").value = ""; musicSave(); musicSay("Removed. Paste another link any time.", ""); });
+    d.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && MUSIC.open) { musicOpen(false); $("mTab").focus(); } });
+  })();
   /* ---------- start ---------- */
   function takeOwnerLink() {                                              // the private owner link carries the sign-in after a #; take it and clean the address bar
     var m = /[#&]owner=([0-9a-f]{64})(?![0-9a-f])/i.exec(location.hash || "");
