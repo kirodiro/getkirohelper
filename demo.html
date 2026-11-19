@@ -619,6 +619,28 @@ body.sheet-open{overflow:hidden}
 .corder .at-btn.sm{min-height:34px;padding:0 10px}
 .corder [data-chide][aria-pressed=false]{color:var(--faint)}
 @media(max-width:640px){.mpanel2{top:auto;left:0;width:auto;max-height:92vh;border-left:0;border-top:1px solid var(--line2);border-radius:14px 14px 0 0}}
+/* the Guide: Beginner mode, lessons, calculator, quiz, tour */
+.bhint{display:block;margin:8px 0 0;padding:8px 10px 8px 12px;border-left:3px solid var(--brand);border-radius:0 6px 6px 0;background:rgba(240,140,58,.08);color:var(--ink);font-size:.86rem;line-height:1.45}
+.bhint[hidden]{display:none}
+.s-px .bhint{grid-column:1/-1}
+.bellnum.newdot{min-width:0;padding:0 5px;font-size:.62rem;letter-spacing:.02em}
+.gstart{padding:12px 14px;border-radius:10px;border:1px solid var(--line2);background:var(--raise)}.gstart p{margin:0}.gstart .at-switch{margin-top:10px}
+.glesson{border-top:1px solid var(--line)}.glesson:last-of-type{border-bottom:1px solid var(--line)}
+.glesson summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:46px;font:600 .95rem/1.3 var(--font)}
+.glesson summary::-webkit-details-marker{display:none}
+.glesson summary::after{content:"+";font:400 1.3rem/1 var(--font);color:var(--muted)}.glesson[open] summary::after{content:"\2212"}
+.gbody{padding:0 0 12px;font-size:.9rem}.gbody p{margin:0 0 8px}.gbody ul,.mbody>ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:.9rem}
+.gcalc{margin-top:4px}
+.gq{padding:10px 0;border-top:1px solid var(--line)}.gq p{margin:0}.gqa{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.gqa .at-btn{flex:1 1 auto}
+.gqa .at-btn.right{border-color:var(--up);color:var(--up);background:var(--upbg)}.gqa .at-btn.wrong{border-color:var(--down);color:var(--down);background:var(--downbg)}
+.gqx{margin-top:6px!important}.gscore{margin:10px 0 0;font-weight:600}
+.gloss{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0;font-size:.88rem}.gloss dt{font-weight:700}.gloss dd{margin:0;color:var(--muted)}
+.tourbox{position:fixed;z-index:80;border-radius:10px;box-shadow:0 0 0 3px var(--brand),0 0 0 9999px rgba(5,6,7,.66);pointer-events:none;transition:left .2s,top .2s,width .2s,height .2s}
+.tourcard{position:fixed;z-index:81;padding:14px 16px;border-radius:12px;border:1px solid var(--line2);background:var(--panel);box-shadow:0 18px 50px rgba(0,0,0,.6)}
+.tourcard.dock{left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));top:auto;width:auto}
+.tourcard h3{font:800 1.1rem/1.2 var(--font);margin:2px 0 6px}.tourcard p{margin:0;font-size:.92rem}.tstep{color:var(--muted);font-size:.8rem!important}
+.trow{display:flex;align-items:center;gap:8px;margin-top:12px}.trow .sp{flex:1}.trow .at-btn{flex:0 0 auto}
+@media(prefers-reduced-motion:reduce){.tourbox{transition:none}}
 /* the Auto-trader's maintenance sign */
 .at-maint{border-color:rgba(227,169,59,.5);background:linear-gradient(180deg,rgba(227,169,59,.10),rgba(227,169,59,.02))}
 .mt-sign{display:inline-block;margin:0 0 12px;padding:6px 12px;border:2px solid var(--warn);border-radius:6px;color:var(--warn);font:800 1.05rem/1 var(--font);font-stretch:120%;letter-spacing:.08em;text-transform:uppercase;background:repeating-linear-gradient(-45deg,rgba(227,169,59,.16) 0 10px,transparent 10px 20px)}
@@ -676,6 +698,7 @@ body.sheet-open{overflow:hidden}
     <div class="status" id="status">
       <span class="dot" id="dot"></span><span id="statusTxt" aria-live="polite">Connecting...</span><span class="pill" id="ownerPill" hidden>Owner</span><span class="sp"></span>
       <a class="link" id="recLink" href="#recWrap" hidden>Bot record</a>
+      <button type="button" class="tbtn" id="guideBtn" title="New here? The Guide explains the board in plain words"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.6 2.3c-.8.4-1.2 1-1.2 1.9v.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1.2" fill="currentColor"/></svg><span>Guide</span><b class="bellnum newdot" id="guideDot" hidden>New</b></button>
       <button type="button" class="tbtn" id="bellBtn" aria-expanded="false" aria-controls="bellBox" title="Your alerts"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 3a6 6 0 0 0-6 6v3.6L4.3 15.4A1 1 0 0 0 5.2 17h13.6a1 1 0 0 0 .9-1.6L18 12.6V9a6 6 0 0 0-6-6zm0 19a3 3 0 0 0 2.8-2H9.2A3 3 0 0 0 12 22z" fill="currentColor"/></svg><span>Alerts</span><b class="bellnum" id="bellNum" hidden>0</b></button>
       <button type="button" class="tbtn" id="custBtn" aria-expanded="false" aria-controls="meSheet"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="16" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="10" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Customize</span></button>
       <button type="button" class="link" id="signout">Sign out</button>
@@ -1755,16 +1778,16 @@ body.sheet-open{overflow:hidden}
         "<div class='s-call'><p class='whoami lab' data-k='who'></p>" +
           "<div class='big'><span class='side flat' data-k='side'>-</span><span class='pct' data-k='pct'></span><span class='pctlab' data-k='pctlab'>chance</span><span class='conf' data-k='conf'></span></div>" +
           "<p class='calltext' data-k='calltext'></p>" +
-          "<div class='split' role='img' data-k='split'><i data-k='splitFill'></i></div><div class='splitlab'><span data-k='splitUp'></span><span data-k='splitDn'></span></div></div>" +
+          "<div class='split' role='img' data-k='split'><i data-k='splitFill'></i></div><div class='splitlab'><span data-k='splitUp'></span><span data-k='splitDn'></span></div><p class='bhint' data-k='hCall' hidden></p></div>" +
         "<div class='s-flip' data-panel='flip'><div class='lab'><span data-k='flipHead'>Chance it flips</span><span class='fcbadge' data-k='fcBadge' hidden></span></div>" +
           "<div class='flipnum'><b data-k='flipPct'>-</b><span class='lvl' data-k='flipLvl'></span></div>" +
           "<div class='meter' role='img' data-k='flipMeter'><i data-k='flipFill'></i><span style='left:24%'></span><span style='left:60%'></span><em class='fcbase' data-k='fcBase' hidden></em></div>" +
-          "<p class='sm' data-k='flipTxt'></p><p class='sm fcwhy' data-k='fcWhy' hidden></p><p class='sm' data-k='flipTxt2'></p><p class='sm fcrec' data-k='fcRec' hidden></p></div>" +
+          "<p class='sm' data-k='flipTxt'></p><p class='sm fcwhy' data-k='fcWhy' hidden></p><p class='sm' data-k='flipTxt2'></p><p class='sm fcrec' data-k='fcRec' hidden></p><p class='bhint' data-k='hFlip' hidden></p></div>" +
         "<div class='s-time'><div class='lab'>Time left</div><div class='clock' data-k='cd' id='cdT'>0:00</div><p class='sm' data-k='cdSub'></p></div>" +
         "<div class='s-px'><div class='pxrow'><span class='lab'>Price now</span><b data-k='spot'></b></div>" +
           "<div class='pxrow'><span class='lab' data-k='targetLab'>Target</span><b data-k='target'></b></div>" +
           "<div class='pxrow'><span class='lab'>Gap</span><b data-k='gap'></b></div>" +
-          "<div class='pxrow'><span class='lab'>Likely finish</span><b data-k='finish'></b></div></div>" +
+          "<div class='pxrow'><span class='lab'>Likely finish</span><b data-k='finish'></b></div><p class='bhint' data-k='hPx' hidden></p></div>" +
         "<div class='wban' data-k='wban' hidden><div class='wbt' role='status'><b data-k='wbanT'></b></div><span class='wage' data-k='wbanS' aria-hidden='true'></span><button type='button' class='wgo' data-k='wbanGo'>See it</button></div>" +
         "<div class='tline' aria-hidden='true'><i data-k='tline'></i></div>" +
       "</section>" +
@@ -1774,19 +1797,20 @@ body.sheet-open{overflow:hidden}
           "<div class='tfs' role='group' aria-label='Candle size'><button type='button' data-tf='1' aria-pressed='true'>1m</button><button type='button' data-tf='5' aria-pressed='false'>5m</button><button type='button' data-tf='15' aria-pressed='false'>15m</button><button type='button' data-tf='60' aria-pressed='false'>1h</button></div></div>" +
           "<div class='legend' data-k='legend'><span class='lg tg'>Target</span><span class='lg px'>Price</span></div></div>" +
         "<div class='inds' data-k='inds' role='group' aria-label='Chart indicators'>" + indChips() + "</div>" +
+        "<p class='bhint' data-k='hChart' hidden></p>" +
         "<div class='readout' data-k='readout' aria-live='off'></div>" +
         "<div class='cwrap' data-k='botChart'><div id='chart' class='lwbox' data-k='lwbox' role='img' aria-label='Live candles'></div><button type='button' class='lwreset' data-k='lwReset' hidden>Back to now</button><p class='sm fine2 indnote' data-k='indNote'>Drag to look back. Scroll the mouse wheel or pinch to zoom. Drawn from the same candles the bot uses. These help you read the trend and don&rsquo;t change the call. Chart by <a href='https://www.tradingview.com/' target='_blank' rel='noopener'>TradingView Lightweight Charts&trade;</a>.</p></div>" +
         "<div data-k='tvChart' hidden><div class='tvtools'><button type='button' class='tvtg' data-k='tvTgBtn' aria-pressed='false'>Target line</button><span class='sm tvtgtx' data-k='tvTgTxt'></span></div><p class='tvmsg' data-k='tvMsg' hidden></p><div class='tvhost' data-k='tvHost'></div>" +
           "<p class='sm tvnote'>TradingView draws exchange prices, so they can sit a little away from Kalshi&rsquo;s own price. Switch Target line on to ask TradingView to draw Kalshi&rsquo;s target on its own chart. The chart reloads when a new round starts. If no line appears, switch it off; the target is always shown next to the switch and on the Candles tab. Add more indicators with the Indicators button at the top of the chart.</p></div>" +
       "</section>" +
-        "<section class='panel plain kal' data-panel='kal' aria-label='Kalshi price'><h3>Kalshi price</h3><div data-k='kalshi'></div></section>" +
+        "<section class='panel plain kal' data-panel='kal' aria-label='Kalshi price'><h3>Kalshi price</h3><div data-k='kalshi'></div><p class='bhint' data-k='hKal' hidden></p></section>" +
         "<section class='panel plain mine' data-panel='mine' aria-label='Your calls'><div class='ph'><h3>Your calls</h3><span class='sm' data-k='mineSum'></span></div><div data-k='mine'></div></section>" +
         "<section class='panel plain fcp' data-panel='fcrec' aria-label='Flip calls'><div class='ph'><h3>Flip calls</h3><span class='sm' data-k='fcpSum'></span></div><div data-k='fcp'></div></section>" +
         "<section class='panel plain feed' data-panel='feed' aria-label='Your alerts'><div class='ph'><h3>Your alerts</h3><button type='button' class='link sm' data-me='open' data-tab='alerts'>Choose alerts</button></div><div data-k='feed'></div></section>" +
       "</div>" +
       "<div class='colR'>" +
         "<section class='panel plain mykal' data-panel='mykal' aria-label='Your Kalshi'><div class='ph'><h3>Your Kalshi</h3><span class='sm' data-k='mykalAge'></span></div><div data-k='mykal'></div></section>" +
-        "<aside class='panel signals' data-panel='ind' aria-label='Indicators'><h3>Indicators</h3><p class='verdict v-mix' data-k='verdict'></p><p class='sm' data-k='verdict2'></p>" +
+        "<aside class='panel signals' data-panel='ind' aria-label='Indicators'><h3>Indicators</h3><p class='verdict v-mix' data-k='verdict'></p><p class='sm' data-k='verdict2'></p><p class='bhint' data-k='hInd' hidden></p>" +
           "<div class='sig'><div class='sig-h'><span>EMA 9 and 21 (1 min)</span><b class='chip' data-k='emaChip'></b></div><p class='sm' data-k='emaTxt'></p><p class='sm' data-k='emaPx'></p></div>" +
           "<div class='sig'><div class='sig-h'><span>RSI 14 (1 min)</span><b class='rsival' data-k='rsiVal'></b></div>" +
             "<div class='gwrap'><div class='gauge' aria-hidden='true'><i></i><i></i><i></i><i></i><i></i></div><span class='gmark' data-k='gmark'></span>" +
@@ -1795,10 +1819,10 @@ body.sheet-open{overflow:hidden}
           tfTable() +
           "<div class='sig' data-k='rnd' hidden><div class='sig-h'><span>This round</span><span class='rsince' data-k='rndSince'></span></div><p class='sm' data-k='rndRsi'></p><p class='sm' data-k='rndEma'></p></div>" +
           "<p class='fine2'>The lean count above uses EMA, RSI and MACD. The bot&rsquo;s own model reads all of these when it makes its call, along with the other charts.</p></aside>" +
-        "<section class='panel plain scalpp' data-panel='scalp' aria-label='Buy signal'><h3>Buy signal</h3><div data-k='scalp'></div></section>" +
+        "<section class='panel plain scalpp' data-panel='scalp' aria-label='Buy signal'><h3>Buy signal</h3><div data-k='scalp'></div><p class='bhint' data-k='hScalp' hidden></p></section>" +
       "</div>" +
         "<section class='panel plain walert' data-panel='whale' data-k='walerts' aria-label='Whale watch'><h3>Whale watch</h3>" +
-          "<p class='sm'>Big buys on Kalshi&rsquo;s 15-minute markets, and big moves on the exchanges. Someone else&rsquo;s bet is not a call from the bot.</p>" +
+          "<p class='sm'>Big buys on Kalshi&rsquo;s 15-minute markets, and big moves on the exchanges. Someone else&rsquo;s bet is not a call from the bot.</p><p class='bhint' data-k='hWhale' hidden></p>" +
           "<div class='wsec'><h4>Big buys on Kalshi</h4><button type='button' class='wlate' data-k='wlate' aria-pressed='false'>97c and up: hidden</button></div>" +
           "<div data-k='wbuys'></div>" +
           "<p class='sm wnote'>Most big buys are at 97c and up, late in a round: someone locking in a side that has all but won. They say little about where the round ends, so they stay hidden unless you switch them on. Big buyers lose too.</p>" +
@@ -4294,7 +4318,7 @@ body.sheet-open{overflow:hidden}
     nConf: "any", nSound: "chime", nVol: 60, nVib: true, nSys: false, nFlash: true, nQuiet: false, nQFrom: "23:00", nQTo: "07:00",
     hide: {}, compact: false, text: "m", amt: 5,
     tStyle: "line", tShow: "call", tOrder: [], tHide: {}, tAuto: true, title: "call", fav: true,
-    accent: "orange", cb: false, music: true };
+    accent: "orange", cb: false, music: true, beginner: false };
   var CONF_RANK = { "TOSS-UP": 0, "LEAN": 1, "STRONG": 2, "VERY STRONG": 3 }, CONF_MIN = { any: 0, lean: 1, strong: 2, very: 3 };
   var ME = { on: false, pmem: {}, pulse: {}, pAt: 0, pBusy: false, pFail: 0, pOff: false, picks: null, pkVer: 0, pkAt: 0, pkBusy: false, pkOff: false, pkNext: 0, hist: [], unread: 0,
     audio: null, flashT: null, flashOn: false, sheet: false, tab: "alerts", gseq: null, gseqRk: "", cool: {}, whaleT: {}, sw: null, saveT: null, buying: false, msg: {} };
@@ -4323,7 +4347,7 @@ body.sheet-open{overflow:hidden}
   /* ---------- start and stop (sign in / sign out) */
   function meStart() {
     ME.on = true; ME.pmem = {}; ME.pulse = {}; ME.pAt = 0; ME.pFail = 0; ME.picks = null; ME.pkVer = 0; ME.pkNext = Date.now() + 800; ME.gseq = null; ME.whaleT = {};
-    mePrefsApply(); meTabsApply(); mePaintFeed(); meBell(); mePaintMine(); mePaintKal(); mePaintFc();
+    mePrefsApply(); meTabsApply(); mePaintFeed(); meBell(); mePaintMine(); mePaintKal(); mePaintFc(); guideNew();
     if (P.nSys) meSwReady();
   }
   function meStop() {
@@ -4390,7 +4414,7 @@ body.sheet-open{overflow:hidden}
       ME.pulse[coin] = snap;
       meDetect(coin, snap, v);
     }
-    mePaintTabCalls(); mePaintMine(); mePaintFc();
+    mePaintTabCalls(); mePaintMine(); mePaintFc(); mePaintHints(v);
   }
 
   /* ---------- turning changes into alerts */
@@ -4437,6 +4461,7 @@ body.sheet-open{overflow:hidden}
   function meOnAuto(r) {                                    // the Your Kalshi box, and alerts for your hand trades
     if (!ME.on) return;
     mePaintKal();
+    if (ME.sheet && ME.tab === "kalshi" && kalSig() !== ME.kSig) mePaintSheet();     // the account just loaded (or the key changed): the Stop loss tab shows its settings
     var st = A.st, s = st && st.state;
     if (!s || !st.access || !Array.isArray(s.gev)) return;
     var rk = st.rk || "", key = "kh_gseq_" + rk.replace(/[^A-Za-z0-9-]/g, "").slice(0, 40);
@@ -4616,6 +4641,8 @@ body.sheet-open{overflow:hidden}
     else { ["--up", "--down", "--upbg", "--downbg"].forEach(function (k) { root.style.removeProperty(k); }); }
     root.style.fontSize = P.text === "s" ? "93.75%" : P.text === "l" ? "110%" : "";
     document.body.classList.toggle("compact", !!P.compact);
+    document.body.classList.toggle("beginner", !!P.beginner);
+    if (S.view && S.view[S.coin]) mePaintHints(S.view[S.coin]);
     mePanelsApply();
     if (typeof musicSync === "function") musicSync();
   }
@@ -4842,7 +4869,7 @@ body.sheet-open{overflow:hidden}
   function sw(key, title, sub, on, attr) {
     return "<label class='at-switch'><input type='checkbox' data-" + (attr || "pref") + "='" + esc(key) + "'" + (on ? " checked" : "") + "><span><b>" + esc(title) + "</b>" + (sub ? "<small>" + esc(sub) + "</small>" : "") + "</span></label>";
   }
-  var SHEET_TABS = [["alerts", "Alerts"], ["board", "Board"], ["tabs", "Tabs"], ["look", "Look"], ["kalshi", "Stop loss"]];
+  var SHEET_TABS = [["guide", "Guide"], ["alerts", "Alerts"], ["board", "Board"], ["tabs", "Tabs"], ["look", "Look"], ["kalshi", "Stop loss"]];
   function meSheet(on, tab) {
     var el = $("meSheet"); if (!el) return;
     if (tab) ME.tab = tab;
@@ -4872,7 +4899,8 @@ body.sheet-open{overflow:hidden}
     var body = el.querySelector("[data-me-body]"), look = el.querySelector("[data-me-look]"), h = "";
     look.hidden = ME.tab !== "look";
     var foc = document.activeElement, fk = foc && foc.dataset && (foc.dataset.pref || foc.dataset.set || foc.dataset.meIn);
-    if (ME.tab === "alerts") {
+    if (ME.tab === "guide") h = guideHTML();
+    else if (ME.tab === "alerts") {
       var perm = !("Notification" in window) ? "This browser can't show system notifications." : Notification.permission === "denied" ? "Blocked in this browser's site settings. Allow notifications for this site there." : Notification.permission === "granted" ? "Allowed." : "Your browser asks the first time you switch this on.";
       h = sw("nOn", "Alerts on this device", "They work while this page is open, even in a background tab.", P.nOn) +
         "<h4>Which coins</h4>" + seg("Which coins", [["nCoins", "view", "The coin I'm looking at"], ["nCoins", "all", "All coins"], ["nCoins", "pick", "Pick coins"]], P.nCoins) +
@@ -4922,8 +4950,10 @@ body.sheet-open{overflow:hidden}
     COINS.forEach(function (x) { if (!seen[x[0]]) out.push(x); });
     return out;
   }
+  function kalSig() { var st = A.st; return (st && st.access ? "a" : "") + (st && st.key ? "k" : ""); }
   function sheetKalshi() {
     var st = A.st;
+    ME.kSig = kalSig();
     if (!st || !st.access) return "<p>The stop loss watches the trades you place on Kalshi yourself. It comes with the $15 unlock (people who paid for the Auto-trader already have it).</p><div class='at-row'><button type='button' class='at-btn go' data-me='tokal'>See how to unlock it</button></div>";
     if (!st.key) return "<p>Connect your Kalshi key first. The bot needs it to see your trades.</p><div class='at-row'><button type='button' class='at-btn go' data-me='key'>Connect your Kalshi key</button></div>";
     var s = Object.assign({}, AUTO_DEF, st.settings || {}, A.set || {});
@@ -4952,6 +4982,7 @@ body.sheet-open{overflow:hidden}
   function meSheetClick(ev) {
     var t = ev.target, b = t.closest && t.closest("button, [data-me]"); if (!b || b.tagName === "LABEL") return;
     var me = b.dataset.me;
+    if (guideClick(b)) return;
     if (me === "close") return meSheet(false);
     if (me === "tab") { ME.tab = b.dataset.tab; return mePaintSheet(); }
     if (me === "test") return meTest();
@@ -4994,6 +5025,7 @@ body.sheet-open{overflow:hidden}
   }
   function meSheetInput(ev) {
     var t = ev.target;
+    if (guideInput(t)) return;
     if (t === LKH.dim) { A.dim = Number(t.value) || 0; store("kh_auto_dim", String(A.dim)); setText(LKH.dimVal, String(A.dim)); return autoBgApply(); }
     if (starsInput(t)) return;
     if (t.dataset.pref === "nVol") { prefSet("nVol", Number(t.value) || 0); var lab = t.parentNode.querySelector("label span"); if (lab) lab.textContent = P.nVol + "%"; }
@@ -5029,6 +5061,210 @@ body.sheet-open{overflow:hidden}
     if (t.dataset.meIn === "px") ME.pxTyped = t.value;
   });
   $("view").addEventListener("submit", function (ev) { var f = ev.target; if (f.dataset && f.dataset.meForm === "buy") { ev.preventDefault(); meBuy(f); } });
+  /* ================= the Guide: for people new to the bot, Kalshi or charts =================
+     A Guide tab in Customize (lessons, tips, a "what can I win" calculator, a short quiz), Beginner mode (plain words under each part of the board,
+     worked out from what is on screen right now), and a tour that points at each part of the board in turn. */
+  var G = { tour: null, ti: 0, quiz: {} };
+  function gEsc(s) { return esc(s); }
+
+  /* ---------- Beginner mode: plain words under each part of the board */
+  function hintSet(el, t) { if (!el) return; el.hidden = !t; setText(el, t ? t : ""); }
+  function mePaintHints(v) {
+    if (!R || !R.hCall) return;
+    var on = !!P.beginner && v && v.data;
+    ["hCall", "hPx", "hFlip", "hChart", "hInd", "hKal", "hScalp", "hWhale"].forEach(function (k) { if (!on && R[k]) R[k].hidden = true; });
+    if (!on) return;
+    var d = v.data, c = d.call || {}, left = leftNow(v), toss = c.conf === "TOSS-UP", pct = Math.round((c.prob || 0) * 100), above = d.diff >= 0, lead = above ? "UP" : "DOWN";
+    var conf = (CONF[c.conf] || c.conf || "").toLowerCase();
+    hintSet(R.hCall, toss ? "In plain words: the bot can't tell which way this one goes. " + pct + "% is close to a coin flip, so most people skip these."
+      : "In plain words: the bot thinks " + d.coin + " ends " + (c.side === "UP" ? "above" : "below") + " " + money(d.target) + " when this market closes at " + clockTime(d.close_ts) + ". It's " + pct + "% sure (" + conf + ")." +
+        (c.price != null && c.price >= 95 ? " At " + Math.round(c.price) + "c there's almost nothing left to win." : ""));
+    hintSet(R.hPx, left > 0 ? "Right now " + d.coin + " is $" + dollars(d.diff, d.spot) + " " + (above ? "above" : "below") + " the target, so " + lead + " would win if the market ended this second. " + leftText(left) + " left for that to change." : "This market has closed. The next one starts in a moment.");
+    hintSet(R.hFlip, "Flip risk is the chance that the side winning now (" + lead + ") ends up losing. Under about 15% is calm. Over 50% means the bot expects the other side to win.");
+    var tfw = { "1": "one minute", "5": "five minutes", "15": "fifteen minutes", "60": "one hour" }[S.tf] || "one minute";
+    hintSet(R.hChart, "Each bar (a candle) is " + tfw + ": green means the price went up during it, red means down. The dashed yellow line is the target: while the price is above it, UP is winning.");
+    var r1 = d.ind && d.ind["1m"] && d.ind["1m"].rsi != null ? Number(d.ind["1m"].rsi) : (d.rsi != null ? Number(d.rsi) : null);
+    var rs = r1 == null ? "" : r1 >= 70 ? " RSI " + Math.round(r1) + ": buyers have pushed hard, and moves this stretched often pause or pull back." : r1 <= 30 ? " RSI " + Math.round(r1) + ": sellers have pushed hard, and moves this stretched often pause or bounce." : " RSI " + Math.round(r1) + ": nothing extreme.";
+    hintSet(R.hInd, "These read the recent trend. When most of them point the same way as the bot's call, the picture is clearer." + rs + " They show the past, not the future.");
+    var k = d.kalshi || {}, side = c.side, p = side === "UP" ? k.yes_ask : k.no_ask;
+    hintSet(R.hKal, p != null ? "Buying " + (side === "UP" ? "Yes (UP)" : "No (DOWN)") + " costs " + Math.round(p) + "c. If you're right you get 100c back, so you make " + (100 - Math.round(p)) + "c per contract before Kalshi's small fee. If you're wrong you lose the " + Math.round(p) + "c." : "Prices are in cents. A price is roughly the market's guess at the chance: 60c is about 60%.");
+    var s = d.scalp || {};
+    hintSet(R.hScalp, s.on ? "The bot sees a quick trade: buy " + s.side + " at about " + Math.round(s.entry) + "c, sell near " + Math.round(s.tp) + "c for a profit, or get out near " + Math.round(s.sl) + "c to keep a loss small." : "No buy signal right now, and that's normal. It only shows up when the bot is confident and the price is good at the same time.");
+    hintSet(R.hWhale, "Big bets by other people. Interesting to see, but they can be wrong too. Not a reason to copy them.");
+  }
+
+  /* ---------- the Guide tab */
+  function lesson(title, body, open) { return "<details class='glesson'" + (open ? " open" : "") + "><summary>" + gEsc(title) + "</summary><div class='gbody'>" + body + "</div></details>"; }
+  function li(arr) { return "<ul>" + arr.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>"; }
+  var QUIZ = [
+    ["Bitcoin is $50 above the target with 2 minutes left. If the market ended right now, which side wins?", ["UP", "DOWN", "Nobody"], 0, "Above the target means UP is winning. It can still change before the end."],
+    ["You buy UP at 80c and UP wins. What do you get back for each contract?", ["80c", "100c", "180c"], 1, "A winning contract pays 100c. You paid 80c, so you made 20c (before the fee)."],
+    ["The bot says Skip (toss-up). What do most careful traders do?", ["Bet big", "Sit this one out", "Bet the other side"], 1, "Skip means the bot can't tell. Not trading is a real choice."],
+    ["What does a green candle mean?", ["The price ended that time higher than it started", "UP is winning", "The bot says buy"], 0, "Green and red only show whether the price rose or fell during that candle."],
+    ["RSI is at 78. What does that usually mean?", ["Sellers are in control", "Buyers pushed hard and the move may be stretched", "The market is about to close"], 1, "Over 70, buying has been strong. Stretched moves often pause, but not always."],
+    ["Why is buying at 97c risky for a beginner?", ["You can win 3c but lose 97c", "Kalshi doesn't allow it", "It always loses"], 0, "One loss at 97c wipes out about 30 wins."]
+  ];
+  function quizHTML() {
+    return QUIZ.map(function (q, i) {
+      var ans = G.quiz[i];
+      return "<div class='gq'><p><b>" + (i + 1) + ". " + gEsc(q[0]) + "</b></p><div class='gqa'>" + q[1].map(function (a, j) {
+        var cls = ans == null ? "" : j === q[2] ? " right" : j === ans ? " wrong" : "";
+        return "<button type='button' class='at-btn sm" + cls + "' data-quiz='" + i + "' data-a='" + j + "'" + (ans != null ? " aria-pressed='" + (j === ans) + "'" : "") + ">" + gEsc(a) + "</button>";
+      }).join("") + "</div>" + (ans != null ? "<p class='sm gqx'>" + (ans === q[2] ? "Right. " : "Not quite. ") + gEsc(q[3]) + "</p>" : "") + "</div>";
+    }).join("") + (Object.keys(G.quiz).length === QUIZ.length ? "<p class='gscore'>" + QUIZ.filter(function (q, i) { return G.quiz[i] === q[2]; }).length + " of " + QUIZ.length + " right. <button type='button' class='link sm' data-me='quizreset'>Try again</button></p>" : "");
+  }
+  function calcDefaults() {
+    var v = S.view && S.view[S.coin], d = v && v.data, k = (d && d.kalshi) || {}, side = d && d.call ? d.call.side : "UP";
+    var p = side === "UP" ? k.yes_ask : k.no_ask;
+    return { p: G.cp != null ? G.cp : (p != null && p >= 1 && p <= 99 ? Math.round(p) : 60), a: G.ca != null ? G.ca : (Number(P.amt) || 5) };
+  }
+  function calcOut() {
+    var c = calcDefaults(), p = Math.min(99, Math.max(1, Math.round(Number(c.p) || 0))), a = Math.max(0, Number(c.a) || 0), n = Math.floor(a * 100 / p);
+    if (!n) return "<p class='sm'>That isn't enough for one contract at " + p + "c. One contract costs " + usd(p / 100) + ".</p>";
+    var cost = n * p / 100, fee = Math.ceil(0.07 * n * (p / 100) * (1 - p / 100) * 100 - 1e-9) / 100, win = n - cost - fee, loss = cost + fee, be = Math.round(100 * loss / n);
+    return "<div class='mstats gcalc'><div><span>Contracts</span><b>" + n + "</b><small>" + gEsc(usd(cost)) + " + " + gEsc(usd(fee)) + " fee</small></div>" +
+      "<div><span>If you're right</span><b class='up'>" + gEsc(usd(win, true)) + "</b><small>you get " + gEsc(usd(n)) + " back</small></div>" +
+      "<div><span>If you're wrong</span><b class='down'>" + gEsc(usd(-loss, true)) + "</b><small>the whole amount</small></div></div>" +
+      "<p class='sm'>At " + p + "c you need to be right more than <b>" + be + "%</b> of the time to come out ahead. " + (p >= 90 ? "That's why very high prices are risky: one loss undoes many wins." : p <= 20 ? "Cheap prices win big when they hit, but they rarely hit." : "Compare that with how often calls like this one are right in the Bot record.") + "</p>";
+  }
+  function guideHTML() {
+    var c = calcDefaults();
+    return "<div class='gstart'><p><b>New to this?</b> Start here. Everything on the board is explained below in plain words.</p>" +
+      "<div class='at-row'><button type='button' class='at-btn go' data-me='tour'>Take the 1-minute tour</button></div>" +
+      sw("beginner", "Beginner mode", "Short explanations under each part of the board, about what it shows right now.", P.beginner) + "</div>" +
+      "<h4>Learn the basics</h4>" +
+      lesson("1. What you're betting on", "<p>Every 15 minutes Kalshi opens a market for each coin that asks one question: <b>will the price be above the target when the market closes?</b></p>" +
+        li(["<b>UP</b> means yes, it ends above the target. On Kalshi that's <b>Yes</b>.", "<b>DOWN</b> means no, it ends below. On Kalshi that's <b>No</b>.", "When time runs out, the right side pays <b>$1 per contract</b> and the other side pays nothing. Then a new market starts."]), true) +
+      lesson("2. Reading the bot's call", li(["The big word is the bot's pick: <b>UP</b>, <b>DOWN</b> or <b>Skip</b>.", "The % is how likely the bot thinks its pick is.",
+          "The label says how sure it is: <b>Toss-up</b> (under 58%, shown as Skip), <b>Lean</b> (58 to 69%), <b>Strong</b> (70 to 84%), <b>Very strong</b> (85% and up).",
+          "Stronger calls are right more often, but they also cost more on Kalshi, so they pay less.", "Skip means too close to call. Sitting a market out is a real choice."])) +
+      lesson("3. Price, target and time left", li(["<b>Price now</b> above the <b>Target</b> means UP is winning right now. Below means DOWN is winning.", "<b>Gap</b> is how far apart they are. A small gap can flip with one quick move.",
+          "<b>Time left</b> counts down to the close. Early on a lot can change. Near the end, the side that's ahead usually holds, but not always.",
+          "Kalshi decides the result from an average of the coin's price over the last minute, so the final seconds still count."])) +
+      lesson("4. Flip watch", li(["<b>Flip risk</b> is the chance that the side winning now ends up losing.", "The thin mark on the bar is the risk from distance alone. The big number also counts which way the price is moving and how fast.",
+          "<b>Calm</b>: nothing worrying. <b>Flip watch</b>: the price is drifting toward the target. <b>Flip call</b>: the bot thinks it will end on the other side.",
+          "Flip calls are new. Check how they've done in the Flip calls box before you lean on them."])) +
+      lesson("5. Kalshi prices and what you can win", "<p>Prices are in cents, from 1c to 99c, and work like chances: Yes at 60c means the market thinks UP has about a 60% chance.</p>" +
+        li(["You pay the price. If you're right you get 100c back. Buy at 60c: win 40c, or lose 60c.", "Kalshi takes a small fee on each trade. It's biggest near 50c.",
+          "<b>Buy at</b> is what you pay. <b>Sell at</b> is what someone pays you if you sell early. The gap between them is a cost too.",
+          "<b>Our odds vs Kalshi's price</b>: a plus number means the bot thinks that side is worth more than it costs.", "At 95c and up you risk a lot to win a little."])) +
+      lesson("6. Reading the chart", li(["Each bar is a <b>candle</b>. With 1m picked, one candle is one minute.", "<b>Green</b>: the price ended that minute higher than it started. <b>Red</b>: lower.",
+          "The thick part shows where the price started and ended. The thin lines above and below (wicks) show the highest and lowest it went.",
+          "The dashed yellow line is the <b>target</b>.", "<b>1m, 5m, 15m, 1h</b> change how much time each candle covers. Longer candles show the bigger picture.",
+          "Drag to look back, pinch or scroll to zoom, and tap <b>Back to now</b> to return."])) +
+      lesson("7. The indicators, in plain words", li(["<b>EMA 9 and 21</b>: two averages of the recent price. Fast (9) above slow (21) means the price has been rising; below means falling. When they cross, the trend may be turning.",
+          "<b>RSI</b>: a 0 to 100 gauge of buying versus selling. Over 70, buyers pushed hard and the move may be stretched. Under 30, sellers did. Around 50 is balanced.",
+          "<b>MACD</b>: another trend reader. Bull means momentum is up, Bear means down.", "<b>Bollinger</b>: where the price sits in its normal range. Near 100% is the top, near 0% the bottom. Past either end is an unusual move.",
+          "<b>Stoch RSI</b>: a faster, jumpier RSI. Over 80 is hot, under 20 is cold.", "The table shows each one on 1 minute up to 1 hour. When most agree, the trend is clearer.",
+          "They describe what already happened. The bot already reads them when it makes its call."])) +
+      lesson("8. Buy signal and whale watch", li(["<b>Buy signal</b> only shows when the bot is confident and the price is good at the same time: a price to buy at, where to take profit and where to get out. Most of the time there isn't one, and that's normal.",
+          "<b>Whale watch</b> lists big bets by other people. Whales lose too, and buys at 97c or more say very little."])) +
+      lesson("9. Your tools", li(["<b>Your calls</b>: after you trade on Kalshi, tap I took UP or DOWN. The bot grades it when the market ends, so you get an honest record.",
+          "<b>Alerts</b>: choose what you want to hear about, like a call flipping or a buy signal, in the Alerts tab here.",
+          "<b>Your Kalshi</b> ($15): your balance, your open trades and a <b>stop loss</b>. A stop loss sells your trade (or warns you) once it has fallen a set number of cents, so one bad trade can't take everything."])) +
+      "<h4>What can I win?</h4><p class='sm'>Try a price and an amount. It's filled in with the price on Kalshi now for the bot's side.</p>" +
+      "<div class='at-two'><div class='at-field'><label for='gCalcP'>Price (cents)</label><input class='at-in' id='gCalcP' data-calc='p' type='number' inputmode='numeric' min='1' max='99' step='1' value='" + gEsc(c.p) + "'></div>" +
+      "<div class='at-field'><label for='gCalcA'>Amount ($)</label><input class='at-in' id='gCalcA' data-calc='a' type='number' inputmode='decimal' min='1' step='1' value='" + gEsc(c.a) + "'></div></div>" +
+      "<div data-calc-out='1'>" + calcOut() + "</div>" +
+      "<h4>Tips before you start</h4>" + li(["<b>Start tiny.</b> $1 to $5 a trade until you know how winning and losing feel.", "<b>Set a daily limit</b> and stop when you reach it. Never chase a loss.",
+        "<b>Skip toss-ups.</b> Not trading is often the best trade.", "<b>Watch what you pay.</b> At 90c and up, one loss wipes out many wins.",
+        "<b>Be careful in the last minute.</b> The result is an average of the final minute, and prices jump around.", "<b>Check the records</b> (Bot record, Flip calls, Your calls) before trusting any signal.",
+        "<b>Only use money you can afford to lose.</b> The bot is a helper, not a promise. It can be wrong."]) +
+      "<h4>Test yourself</h4><div data-quiz-box='1'>" + quizHTML() + "</div>" +
+      "<h4>Words you'll see</h4><dl class='gloss'>" + [["Contract", "One share of a side. Pays $1 if that side wins."], ["Target", "The price the coin has to end above (UP) or below (DOWN)."], ["Settle", "When the market ends and pays out."],
+        ["Toss-up", "Too close to call. The bot shows Skip."], ["Edge (points)", "How much more the bot thinks a side is worth than its price."], ["Fee", "What Kalshi charges per trade."],
+        ["Spread", "The gap between the buy and sell price."], ["Stop loss", "A line where a losing trade is sold (or you're warned) to keep the loss small."], ["Take profit", "A line where a winning trade is sold to lock in the gain."],
+        ["Candle", "One bar on the chart: where the price started, ended, and how high and low it went."], ["Momentum", "How fast and which way the price is moving."], ["Whale", "Someone placing a very big bet."]]
+        .map(function (x) { return "<dt>" + gEsc(x[0]) + "</dt><dd>" + gEsc(x[1]) + "</dd>"; }).join("") + "</dl>" +
+      "<p class='sm'>Not financial advice. Prices move fast, so check Kalshi before you act.</p>";
+  }
+  function guideClick(b) {
+    if (b.dataset.quiz != null) { G.quiz[Number(b.dataset.quiz)] = Number(b.dataset.a); var qb = $("meSheet").querySelector("[data-quiz-box]"); if (qb) qb.innerHTML = quizHTML(); return true; }
+    if (b.dataset.me === "quizreset") { G.quiz = {}; var qb2 = $("meSheet").querySelector("[data-quiz-box]"); if (qb2) qb2.innerHTML = quizHTML(); return true; }
+    if (b.dataset.me === "tour") { meSheet(false); tourStart(); return true; }
+    return false;
+  }
+  function guideInput(t) {
+    if (!t.dataset || !t.dataset.calc) return false;
+    if (t.dataset.calc === "p") G.cp = t.value; else G.ca = t.value;
+    var out = $("meSheet").querySelector("[data-calc-out]"); if (out) out.innerHTML = calcOut();
+    return true;
+  }
+  function guideSeen() { store("kh_guide_seen", "1"); var dt = $("guideDot"); if (dt) dt.hidden = true; }
+  function guideNew() { var dt = $("guideDot"); if (dt) dt.hidden = !!store("kh_guide_seen"); }
+  $("guideBtn").addEventListener("click", function () { guideSeen(); meSheet(true, "guide"); });
+
+  /* ---------- the tour: one part of the board at a time */
+  var TOUR = [
+    ["#coins", "Pick a coin", "Each tab is one coin's 15-minute market. Tap one to see its call and chart."],
+    ["#view .s-call", "The bot's call", "UP or DOWN is the bot's pick for where the price ends against the target. The % is how sure it is. Skip means too close to call."],
+    ["#view .s-flip", "Flip watch", "The chance the side that's winning now ends up losing. When it says Flip call, the bot thinks the other side will win."],
+    ["#view .s-time", "Time left", "Each market lasts 15 minutes. The result is set by the average price in the final minute."],
+    ["#view .s-px", "Price and target", "If the price now is above the target, UP is winning. The gap is how far it would have to move to flip."],
+    ["#view .chartp", "The chart", "Green candles went up, red went down. The dashed yellow line is the target. Switch candle sizes with 1m, 5m, 15m and 1h."],
+    ["#view [data-panel=kal]", "Kalshi price", "What each side costs right now in cents. A winning contract pays 100c."],
+    ["#view [data-panel=scalp]", "Buy signal", "Shows only when the bot is confident and the price is good. Most of the time it's empty, and that's normal."],
+    ["#view [data-panel=mine]", "Your calls", "After you trade, tap the side you took. The bot grades it when the market ends."],
+    ["#view [data-panel=mykal]", "Your Kalshi", "With the $15 unlock: your balance, your open trades and a stop loss for the trades you place."],
+    ["#bellBtn", "Alerts", "Get a pop-up and a sound when the call flips, a buy signal appears and more. Choose them in Customize."],
+    ["#guideBtn", "The Guide", "Come back here any time for the lessons, the calculator, tips and Beginner mode."]
+  ];
+  function tourSteps() { return TOUR.filter(function (s) { var el = document.querySelector(s[0]); return el && el.getClientRects().length && !el.closest(".me-off") && getComputedStyle(el).display !== "none"; }); }
+  function tourStart() {
+    tourEnd();
+    var steps = tourSteps(); if (!steps.length) return;
+    var box = document.createElement("div"); box.className = "tourbox"; box.setAttribute("aria-hidden", "true");
+    var card = document.createElement("div"); card.className = "tourcard"; card.setAttribute("role", "dialog"); card.setAttribute("aria-modal", "true"); card.setAttribute("aria-labelledby", "tourT");
+    document.body.appendChild(box); document.body.appendChild(card);
+    G.tour = { box: box, card: card, steps: steps, el: null, raf: 0, last: document.activeElement };
+    card.addEventListener("click", function (ev) {
+      var b = ev.target.closest && ev.target.closest("[data-tour]"); if (!b) return;
+      var a = b.dataset.tour;
+      if (a === "next") return G.ti + 1 >= G.tour.steps.length ? tourEnd(true) : tourGo(G.ti + 1);
+      if (a === "back") return tourGo(Math.max(0, G.ti - 1));
+      if (a === "end") return tourEnd(true);
+    });
+    window.addEventListener("resize", tourPlace); window.addEventListener("scroll", tourPlace, { passive: true });
+    tourGo(0);
+  }
+  function tourGo(i) {
+    var t = G.tour; if (!t) return;
+    G.ti = i;
+    var s = t.steps[i], el = document.querySelector(s[0]); t.el = el;
+    var calm = false; try { calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
+    if (el) { try { el.scrollIntoView({ block: "center", behavior: calm ? "auto" : "smooth" }); } catch (e) { el.scrollIntoView(); } }
+    t.card.innerHTML = "<p class='tstep'>" + (i + 1) + " of " + t.steps.length + "</p><h3 id='tourT'>" + gEsc(s[1]) + "</h3><p>" + gEsc(s[2]) + "</p>" +
+      "<div class='trow'><button type='button' class='link sm' data-tour='end'>Skip the tour</button><span class='sp'></span>" + (i ? "<button type='button' class='at-btn sm' data-tour='back'>Back</button>" : "") +
+      "<button type='button' class='at-btn sm go' data-tour='next'>" + (i + 1 === t.steps.length ? "Done" : "Next") + "</button></div>";
+    tourPlace(); setTimeout(tourPlace, 350); setTimeout(tourPlace, 700);
+    var nb = t.card.querySelector("[data-tour=next]"); if (nb) nb.focus({ preventScroll: true });
+  }
+  function tourPlace() {
+    var t = G.tour; if (!t || !t.el) return;
+    var r = t.el.getBoundingClientRect(), pad = 6, vw = window.innerWidth, vh = window.innerHeight;
+    t.box.style.left = (r.left - pad) + "px"; t.box.style.top = (r.top - pad) + "px"; t.box.style.width = (r.width + 2 * pad) + "px"; t.box.style.height = (r.height + 2 * pad) + "px";
+    if (vw <= 640) { t.card.style.left = ""; t.card.style.top = ""; t.card.classList.add("dock"); return; }
+    t.card.classList.remove("dock");
+    var cw = Math.min(360, vw - 24), ch = t.card.offsetHeight || 180, x = Math.min(Math.max(12, r.left), vw - cw - 12), y = r.bottom + 14;
+    if (y + ch > vh - 12) y = r.top - ch - 14;
+    if (y < 12) { x = vw - cw - 24; y = vh - ch - 24; }                         // a big part (the chart): the card waits in the corner instead of covering it
+    t.card.style.left = x + "px"; t.card.style.top = y + "px"; t.card.style.width = cw + "px";
+  }
+  function tourEnd(done) {
+    var t = G.tour; if (!t) return;
+    window.removeEventListener("resize", tourPlace); window.removeEventListener("scroll", tourPlace);
+    if (t.box.parentNode) t.box.parentNode.removeChild(t.box);
+    if (t.card.parentNode) t.card.parentNode.removeChild(t.card);
+    G.tour = null;
+    if (done) { guideSeen(); store("kh_tour_done", "1"); }
+    var g = $("guideBtn"); if (g) g.focus({ preventScroll: true });
+  }
+  document.addEventListener("keydown", function (ev) {
+    if (!G.tour) return;
+    if (ev.key === "Escape") { ev.stopImmediatePropagation(); tourEnd(true); }
+    else if (ev.key === "ArrowRight") tourGo(Math.min(G.tour.steps.length - 1, G.ti + 1));
+    else if (ev.key === "ArrowLeft") tourGo(Math.max(0, G.ti - 1));
+  }, true);
   /* ---------- start ---------- */
   function takeOwnerLink() {                                              // the private owner link carries the sign-in after a #; take it and clean the address bar
     var m = /[#&]owner=([0-9a-f]{64})(?![0-9a-f])/i.exec(location.hash || "");
