@@ -94,7 +94,11 @@ button{font-family:inherit}
 
 /* the board */
 .board{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;position:relative}
-@media(min-width:940px){.board{grid-template-columns:minmax(0,1fr) 340px;align-items:start}.strip,.details,.walert{grid-column:1/-1}.chartp,.kal{grid-column:1}.signals,.scalpp{grid-column:2}.chartp,.signals{grid-row:2}.kal,.scalpp{grid-row:3}}
+.colL,.colR{display:contents}
+.colL>.chartp{order:1}.colR>.mykal{order:2}.colR>.signals{order:3}.colL>.kal{order:4}.colR>.scalpp{order:5}.colL>.mine{order:6}.colL>.fcp{order:7}.colL>.feed{order:8}.board>.walert{order:9}.board>.details{order:10}.board>.strip{order:0}.board>.loading{order:0}
+@media(min-width:940px){.board{grid-template-columns:minmax(0,1fr) 340px;align-items:start}.strip,.details,.walert{grid-column:1/-1}
+  .colL,.colR{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-content:start;min-width:0}.colL{grid-column:1}.colR{grid-column:2}.colL>*,.colR>*{order:0}}
+.me-off{display:none!important}
 .board.is-loading .strip>*,.board.is-loading .chartp,.board.is-loading .signals,.board.is-loading .plain{opacity:.22}
 .loading{position:absolute;inset:0;z-index:2;display:flex;align-items:flex-start;justify-content:center;padding-top:72px;color:var(--muted);text-align:center;pointer-events:none}
 .panel,.card{border:1px solid var(--line);border-radius:8px;background:var(--panel)}
@@ -360,6 +364,7 @@ button{font-family:inherit}
   .stage[data-mode=auto] .board{grid-template-columns:minmax(0,1fr)}
   .stage[data-mode=auto] .board>.strip,.stage[data-mode=auto] .board>.details,.stage[data-mode=auto] .board>.walert,.stage[data-mode=auto] .board>.chartp,.stage[data-mode=auto] .board>.kal,
   .stage[data-mode=auto] .board>.signals,.stage[data-mode=auto] .board>.scalpp{grid-column:auto;grid-row:auto}
+  .stage[data-mode=auto] .colL,.stage[data-mode=auto] .colR{display:contents}
   .stage[data-mode=auto] .strip{grid-template-columns:1fr 1fr;grid-template-areas:"call flip" "time px";align-items:start;padding:18px 18px 20px 24px}
   .stage[data-mode=auto] .s-id{display:none}
   .stage[data-mode=auto] .s-time{text-align:left}
@@ -527,6 +532,98 @@ body.autobg{--panel:rgba(21,24,27,.74);--raise:rgba(27,31,35,.8)}
 body.autobg .panel,body.autobg .card,body.autobg .strip,body.autobg .at-card,body.autobg .status,body.autobg .trialbar{backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
 body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
 @media(max-width:420px){.at-money{grid-template-columns:1fr 1fr}.at-stat b{font-size:1.15rem}.at-stat.big b{font-size:1.45rem}}
+/* ---------- the board's own tools (alerts, your calls, your Kalshi, flip calls, Customize) ---------- */
+.ph{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px}.ph h3{margin:0}
+.panel h4{font:600 .86rem/1.2 var(--font);margin:14px 0 6px;color:var(--muted)}
+.warnc{color:var(--warn)}
+.tbtn{appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border-radius:999px;border:1px solid var(--line2);background:var(--raise);color:var(--muted);font:600 .84rem/1 var(--font);position:relative}
+.tbtn:hover,.tbtn[aria-expanded=true]{color:var(--ink);border-color:var(--muted)}
+.bellnum{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--brand);color:#121416;font:800 .7rem/18px var(--font);text-align:center}
+@media(max-width:520px){.tbtn span{display:none}.tbtn{padding:0 9px}}
+.bellbox{position:absolute;right:0;z-index:40;width:min(420px,calc(100vw - 24px));max-height:min(70vh,560px);overflow:auto;margin-top:-4px;padding:12px 14px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);box-shadow:0 18px 50px rgba(0,0,0,.55)}
+#board{position:relative}
+.bh{display:flex;align-items:center;gap:4px;margin-bottom:6px}.bh .sp{flex:1}
+.hlist{list-style:none;margin:0;padding:0}
+.hrow{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:start;padding:9px 0 9px 10px;border-top:1px solid var(--line);border-left:3px solid var(--flat);margin-left:-2px}
+.hrow.up{border-left-color:var(--up)}.hrow.down{border-left-color:var(--down)}.hrow.warn{border-left-color:var(--warn)}
+.hrow b{font:600 .9rem/1.25 var(--font)}.hrow p{margin:2px 0 0;color:var(--muted);font-size:.84rem}
+.hcoin{font:800 .74rem/1.6 var(--font);color:var(--muted);min-width:34px}.hage{color:var(--faint);font-size:.76rem;white-space:nowrap}
+.toasts{position:fixed;z-index:60;right:16px;bottom:16px;display:grid;gap:8px;width:min(360px,calc(100vw - 24px));pointer-events:none}
+@media(max-width:640px){.toasts{left:12px;right:12px;bottom:auto;top:calc(10px + env(safe-area-inset-top,0px));width:auto}}
+.toast{pointer-events:auto;padding:11px 12px 11px 14px;border-radius:10px;border:1px solid var(--line2);border-left:4px solid var(--flat);background:var(--raise);box-shadow:0 12px 36px rgba(0,0,0,.5);animation:tin .22s ease-out}
+.toast.up{border-left-color:var(--up)}.toast.down{border-left-color:var(--down)}.toast.warn{border-left-color:var(--warn);background:#2A2416}
+.toast.out{opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s}
+.tt{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}.tt b{font:700 .93rem/1.25 var(--font)}
+.toast p{margin:4px 0 0;color:var(--muted);font-size:.86rem}
+.tx{appearance:none;border:0;background:none;color:var(--muted);font:400 1.3rem/1 var(--font);cursor:pointer;padding:0 2px;min-height:24px}
+.tgo{appearance:none;cursor:pointer;margin-top:8px;min-height:32px;padding:0 10px;border-radius:6px;border:1px solid var(--line2);background:var(--panel);color:var(--ink);font:600 .82rem/1 var(--font)}
+@keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.toast{animation:none}.toast.out{transition:none}.fcbadge.fc-flip{animation:none}}
+.mstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px;margin:10px 0 2px}
+.mstats>div{padding:9px 10px;border-radius:8px;background:var(--raise);border:1px solid var(--line);min-width:0}
+.mstats span{display:block;font:500 .76rem/1.2 var(--font);color:var(--muted)}.mstats b{display:block;margin-top:3px;font:700 1.15rem/1.1 var(--font)}.mstats small{display:block;margin-top:3px;color:var(--muted);font-size:.74rem}
+.plist,.hand{list-style:none;margin:6px 0 0;padding:0}
+.plist li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:8px 0;border-top:1px solid var(--line)}
+.plist li>.sm{flex:1 1 auto;min-width:0}
+.hand li{padding:10px 0;border-top:1px solid var(--line)}
+.hh{display:flex;align-items:center;gap:10px}.hh .sm{flex:1}.hpn{font:700 1.05rem/1 var(--font)}
+.hs{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap;margin-top:6px}.hs .at-btn{margin-left:auto}
+.mykal .guard{margin-top:10px}
+.pickbox .at-row{margin-top:8px}.pickrow{display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;margin-top:8px}
+.pickrow .at-in{width:86px;min-height:40px}.pickrow .dol{color:var(--muted);margin-right:-4px}
+.at-btn.up-b{border-color:rgba(52,199,123,.6);color:var(--up);background:var(--upbg)}.at-btn.dn-b{border-color:rgba(240,96,93,.6);color:var(--down);background:var(--downbg)}
+.picked{margin-top:8px;font-size:.9rem}
+.fcbadge{margin-left:8px;padding:2px 8px;border-radius:999px;font:700 .74rem/1.4 var(--font);background:var(--flatbg);color:var(--flat);white-space:nowrap}
+.fcbadge.fc-watch{background:var(--warnbg);color:var(--warn)}
+.fcbadge.fc-flip{background:var(--brand);color:#121416;animation:fcp 1.6s ease-in-out infinite}
+@keyframes fcp{50%{box-shadow:0 0 0 5px rgba(240,140,58,.0),0 0 0 3px rgba(240,140,58,.35)}}
+.s-flip .lab{display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+.meter .fcbase{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:var(--ink);opacity:.7;border-radius:1px}
+.fcwhy{color:var(--ink)}.fcrec{color:var(--faint)}
+.coinbtn{display:inline-flex;align-items:center;justify-content:center}
+.ccall{margin-left:5px;font:800 .72rem/1 var(--font)}
+@media(max-width:520px){.coinbtn{flex-direction:column;gap:3px}.coinbtn .ccall{margin:0;font-size:.64rem}}.ccall.up{color:var(--up)}.ccall.down{color:var(--down)}.ccall.flat{color:var(--flat)}
+.ccall.fl{padding:1px 4px;border-radius:4px;background:var(--brand);color:#121416}
+body.tabs-pills .coins{border-bottom:0;gap:6px}
+body.tabs-pills .coinbtn{border:1px solid var(--line2);border-radius:999px;margin:0;min-height:40px;background:var(--panel)}
+body.tabs-pills .coinbtn[aria-pressed=true]{background:var(--brand);border-color:var(--brand);color:#121416}
+body.tabs-pills .coinbtn[aria-pressed=true] .ccall{color:#121416}
+body.tabs-boxes .coins{border-bottom:0;gap:4px;display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr))}
+body.tabs-boxes .coinbtn{border:1px solid var(--line2);border-radius:8px;margin:0;min-height:52px;background:var(--panel);flex-direction:column;display:flex;align-items:center;justify-content:center;gap:4px}
+body.tabs-boxes .coinbtn .ccall{margin:0}
+body.tabs-boxes .coinbtn[aria-pressed=true]{border-color:var(--brand);box-shadow:inset 0 -3px 0 var(--brand);color:var(--ink)}
+body.compact .board{gap:10px}body.compact .colL,body.compact .colR{gap:10px}body.compact .plain{padding:10px 12px}body.compact .strip{padding:14px 16px}body.compact .signals{padding:10px 12px}
+/* Customize */
+.mesheet{position:fixed;inset:0;z-index:70}
+body.sheet-open{overflow:hidden}
+.mback{position:absolute;inset:0;background:rgba(5,6,7,.62)}
+.mpanel2{position:absolute;top:0;right:0;bottom:0;width:min(460px,100vw);display:flex;flex-direction:column;background:var(--panel);border-left:1px solid var(--line2);box-shadow:-20px 0 60px rgba(0,0,0,.5)}
+.mtop{flex:none;display:flex;align-items:center;gap:10px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 10px}.mtop h2{font:800 1.25rem/1 var(--font);font-stretch:110%}.mtop .sm{flex:1}
+.mclose{appearance:none;cursor:pointer;width:40px;height:40px;border-radius:8px;border:1px solid var(--line2);background:var(--raise);color:var(--ink);font:400 1.4rem/1 var(--font)}
+.mtabs{flex:none;display:flex;gap:2px;padding:0 12px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.mtabs button{appearance:none;cursor:pointer;flex:1 0 auto;min-height:42px;padding:0 10px;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;color:var(--muted);font:600 .9rem/1 var(--font)}
+.mtabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--brand)}
+.mbody,.mlook{padding:14px 16px;overflow:auto}.mbody{flex:1 1 auto}.mlook{flex:0 1 auto;border-top:1px solid var(--line)}
+.mbody h4,.mlook h4{font:700 .82rem/1.2 var(--font);color:var(--muted);margin:18px 0 8px;text-transform:none}
+.mbody h4:first-child{margin-top:4px}
+.mbody .at-switch{padding:8px 0}
+.seg.mes{display:flex}.seg.mes button{flex:1 1 auto}
+.mchips{margin:8px 0 4px}.mchips .at-chip{min-height:38px;min-width:46px}
+.at-chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#121416}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px}
+.swatch{appearance:none;cursor:pointer;display:flex;align-items:center;gap:8px;min-height:40px;padding:0 10px;border-radius:8px;border:1px solid var(--line2);background:var(--raise);color:var(--muted);font:600 .84rem/1 var(--font)}
+.swatch i{width:14px;height:14px;border-radius:50%;background:var(--sw)}
+.swatch[aria-pressed=true]{border-color:var(--sw);color:var(--ink);box-shadow:inset 0 0 0 1px var(--sw)}
+.corder{list-style:none;margin:0;padding:0}
+.corder li{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}.corder li b{min-width:44px}.corder li .sm{flex:1}
+.corder .at-btn.sm{min-height:34px;padding:0 10px}
+.corder [data-chide][aria-pressed=false]{color:var(--faint)}
+@media(max-width:640px){.mpanel2{top:auto;left:0;width:auto;max-height:92vh;border-left:0;border-top:1px solid var(--line2);border-radius:14px 14px 0 0}}
+/* the Auto-trader's maintenance sign */
+.at-maint{border-color:rgba(227,169,59,.5);background:linear-gradient(180deg,rgba(227,169,59,.10),rgba(227,169,59,.02))}
+.mt-sign{display:inline-block;margin:0 0 12px;padding:6px 12px;border:2px solid var(--warn);border-radius:6px;color:var(--warn);font:800 1.05rem/1 var(--font);font-stretch:120%;letter-spacing:.08em;text-transform:uppercase;background:repeating-linear-gradient(-45deg,rgba(227,169,59,.16) 0 10px,transparent 10px 20px)}
+.at-maint h2{font:800 1.35rem/1.15 var(--font);margin:0 0 8px}.at-maint p{margin:0 0 8px}
+.autowrap.maint>.at-card[data-k=head],.autowrap.maint .at-tab[data-tab=trade],.autowrap.maint .at-tab[data-tab=settings],.autowrap.maint .at-pane[data-pane=trade],.autowrap.maint .at-pane[data-pane=settings]{display:none!important}
 </style>
 </head>
 <body>
@@ -579,8 +676,11 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     <div class="status" id="status">
       <span class="dot" id="dot"></span><span id="statusTxt" aria-live="polite">Connecting...</span><span class="pill" id="ownerPill" hidden>Owner</span><span class="sp"></span>
       <a class="link" id="recLink" href="#recWrap" hidden>Bot record</a>
+      <button type="button" class="tbtn" id="bellBtn" aria-expanded="false" aria-controls="bellBox" title="Your alerts"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 3a6 6 0 0 0-6 6v3.6L4.3 15.4A1 1 0 0 0 5.2 17h13.6a1 1 0 0 0 .9-1.6L18 12.6V9a6 6 0 0 0-6-6zm0 19a3 3 0 0 0 2.8-2H9.2A3 3 0 0 0 12 22z" fill="currentColor"/></svg><span>Alerts</span><b class="bellnum" id="bellNum" hidden>0</b></button>
+      <button type="button" class="tbtn" id="custBtn" aria-expanded="false" aria-controls="meSheet"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="16" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="10" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Customize</span></button>
       <button type="button" class="link" id="signout">Sign out</button>
     </div>
+    <div class="bellbox" id="bellBox" hidden role="dialog" aria-label="Your alerts"></div>
     <div class="trialbar" id="trialBar" hidden role="status"><span id="trialTxt"></span><a href="./#get">Get full access</a></div>
     <div id="banner" class="banner" hidden role="status"></div>
     <details class="card owner" id="owner" hidden>
@@ -603,7 +703,8 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
         <div id="ownerBlocked"><p class="empty">Nobody is blocked.</p></div>
         <h4>Auto-trader</h4>
         <p class="hint" id="ownerAutoNote">Trades real money for people who paid the $15. The switch below pauses real-money trading for everyone at once (practice trading keeps going).</p>
-        <div class="ownertools"><button type="button" id="autoKill" aria-pressed="false">Pause real-money trading</button></div>
+        <div class="ownertools"><button type="button" id="autoMaint" aria-pressed="true">Open the Auto-trader</button><button type="button" id="autoKill" aria-pressed="false">Pause real-money trading</button></div>
+        <p class="hint">Closed for maintenance: nobody can start it and it starts no new trades; trades it already has open are finished by their rules. The stop loss on the Live board keeps working either way.</p>
         <p class="hint">Payment link for the $15 (the Stripe link people tap to pay). The built-in link already works. Only paste a different one here if you change it; leave it empty to use the built-in link.</p>
         <form id="payForm" class="grant" autocomplete="off" novalidate>
           <input type="text" id="payUrl" maxlength="300" placeholder="https://buy.stripe.com/..." inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Payment link for the Auto-trader">
@@ -618,6 +719,8 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       <div id="view"></div>
     </div>
     <div id="recWrap" hidden></div>
+    <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+    <div class="mesheet" id="meSheet" hidden role="dialog" aria-modal="true" aria-labelledby="meTitle"></div>
     <p class="foot">Not financial advice. These are estimates from the bot&rsquo;s own model and can be wrong. Prices move fast, so check Kalshi before you act. UP = Yes, DOWN = No.</p>
   </section>
 </main>
@@ -689,7 +792,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
 
   /* ---------- view switching ---------- */
   function showGate(msg, kind) {
-    stopPolling(); musicHide();
+    stopPolling(); musicHide(); meStop();
     S.token = null; store("kh_live_tok", null); S.trialAt = 0; updateTrial();
     $("board").hidden = true;
     $("gate").hidden = false;
@@ -712,8 +815,10 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     buildCoinButtons();
     buildBoard();
     startPolling();
+    fxAccess(true);                                                   // the background, the stars and the music are free for everyone signed in
     autoStart();
     musicShow();
+    meStart();
   }
   function setMsg(t, kind) { var m = $("gateMsg"); m.textContent = t; m.className = "msg" + (kind ? " " + kind : ""); }
 
@@ -803,6 +908,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       if (now - S.lastTitle >= 1000) { S.lastTitle = now; updateTitle(v); }
     }
     if (S.trialAt && now - S.lastTrial >= 1000) { S.lastTrial = now; updateTrial(); }
+    meTick(now);
     if (!S.busy && !S.idle && now >= S.nextAt) poll();
   }
   function trialText(s) { var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60; return h ? h + "h " + m + "m" : m ? m + "m " + (x < 10 ? "0" : "") + x + "s" : x + "s"; }
@@ -883,11 +989,14 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
   }
   function setFav(color, glyph) { var l = $("fav"), h = favHref(color, glyph); if (l && h) l.href = h; }
   function updateTitle(v) {
-    var d = v.data, c = d.call, left = leftNow(v), toss = c.conf === "TOSS-UP";
+    var d = v.data, c = d.call, left = leftNow(v), toss = c.conf === "TOSS-UP", how = meTitleMode();
+    if (meFlashing()) return;                                         // a new alert is blinking in the tab title
     var head = toss ? "Skip" : (c.side === "UP" ? "▲ UP " : "▼ DOWN ") + Math.round(c.prob * 100) + "%";
-    var t = head + " " + d.coin + " " + (left > 0 ? mmss(left) : "0:00") + " | Kiros live";
+    var t = how === "plain" ? BASE_TITLE : how === "price" ? d.coin + " " + money(d.spot) + " " + (left > 0 ? mmss(left) : "0:00") + " | Kiros live"
+          : head + " " + d.coin + " " + (left > 0 ? mmss(left) : "0:00") + " | Kiros live";
     if (document.title !== t) document.title = t;
-    var key = toss ? "flat" : c.side;
+    var key = !meFavOn() ? "plain" : toss ? "flat" : c.side;
+    if (key === "plain") { if (S.favKey !== "plain") { S.favKey = "plain"; setFav("#F08C3A", ""); } return; }
     if (key !== S.favKey) { S.favKey = key; setFav(toss ? "#8A9097" : c.side === "UP" ? "#34C77B" : "#F0605D", toss ? "" : c.side === "UP" ? "up" : "down"); }
   }
 
@@ -901,7 +1010,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     rpc("live_get_record", { p_token: S.token, p_have: S.rec ? S.rec.ts : 0 }).then(function (r) {
       if (!S.token) return;
       S.recFail = 0;
-      if (r && r.ok && r.data) { S.rec = { ts: Number(r.ts) || 0, data: r.data }; renderRecord(); }
+      if (r && r.ok && r.data) { S.rec = { ts: Number(r.ts) || 0, data: r.data }; renderRecord(); mePaintFc(); mePicksSoon(); }
       else if (r && r.ok && r.none && !S.rec) { S.rec = { ts: 0, data: null }; renderRecord(); }
       recSchedule(REC_POLL_MS);
     }, function (e) {
@@ -1087,9 +1196,11 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
   function buildCoinButtons() {
     var box = $("coins");
     if (box.children.length) { refreshCoinButtons(); return; }
-    COINS.forEach(function (c) {
+    meCoinOrder().forEach(function (c) {
       var b = document.createElement("button");
-      b.type = "button"; b.className = "coinbtn"; b.dataset.coin = c[0]; b.textContent = c[0]; b.title = c[1];
+      b.type = "button"; b.className = "coinbtn"; b.dataset.coin = c[0]; b.title = c[1];
+      var nm = document.createElement("span"); nm.className = "cname"; nm.textContent = c[0]; b.appendChild(nm);
+      var cb = document.createElement("span"); cb.className = "ccall"; cb.hidden = true; cb.setAttribute("aria-hidden", "true"); b.appendChild(cb);
       var wb = document.createElement("span"); wb.className = "wbadge"; wb.hidden = true; wb.setAttribute("aria-hidden", "true"); wb.textContent = "\uD83D\uDC0B"; b.appendChild(wb);
       b.addEventListener("click", function () {
         if (S.coin === c[0]) return;
@@ -1100,8 +1211,10 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       });
       box.appendChild(b);
     });
-    var saved = store("kh_live_coin"); if (saved && COINS.some(function (c) { return c[0] === saved; })) S.coin = saved;
-    refreshCoinButtons();
+    var saved = store("kh_live_coin"), shown = meCoinOrder();
+    if (saved && shown.some(function (c) { return c[0] === saved; })) S.coin = saved;
+    else if (shown.length && !shown.some(function (c) { return c[0] === S.coin; })) S.coin = shown[0][0];
+    refreshCoinButtons(); meTabsApply();
   }
   function refreshCoinButtons() { Array.prototype.forEach.call($("coins").children, function (b) { b.setAttribute("aria-pressed", b.dataset.coin === S.coin ? "true" : "false"); }); }
 
@@ -1119,10 +1232,10 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
           "<div class='big'><span class='side flat' data-k='side'>-</span><span class='pct' data-k='pct'></span><span class='pctlab' data-k='pctlab'>chance</span><span class='conf' data-k='conf'></span></div>" +
           "<p class='calltext' data-k='calltext'></p>" +
           "<div class='split' role='img' data-k='split'><i data-k='splitFill'></i></div><div class='splitlab'><span data-k='splitUp'></span><span data-k='splitDn'></span></div></div>" +
-        "<div class='s-flip'><div class='lab'>Chance it flips</div>" +
+        "<div class='s-flip' data-panel='flip'><div class='lab'><span data-k='flipHead'>Chance it flips</span><span class='fcbadge' data-k='fcBadge' hidden></span></div>" +
           "<div class='flipnum'><b data-k='flipPct'>-</b><span class='lvl' data-k='flipLvl'></span></div>" +
-          "<div class='meter' role='img' data-k='flipMeter'><i data-k='flipFill'></i><span style='left:24%'></span><span style='left:60%'></span></div>" +
-          "<p class='sm' data-k='flipTxt'></p><p class='sm' data-k='flipTxt2'></p></div>" +
+          "<div class='meter' role='img' data-k='flipMeter'><i data-k='flipFill'></i><span style='left:24%'></span><span style='left:60%'></span><em class='fcbase' data-k='fcBase' hidden></em></div>" +
+          "<p class='sm' data-k='flipTxt'></p><p class='sm fcwhy' data-k='fcWhy' hidden></p><p class='sm' data-k='flipTxt2'></p><p class='sm fcrec' data-k='fcRec' hidden></p></div>" +
         "<div class='s-time'><div class='lab'>Time left</div><div class='clock' data-k='cd' id='cdT'>0:00</div><p class='sm' data-k='cdSub'></p></div>" +
         "<div class='s-px'><div class='pxrow'><span class='lab'>Price now</span><b data-k='spot'></b></div>" +
           "<div class='pxrow'><span class='lab' data-k='targetLab'>Target</span><b data-k='target'></b></div>" +
@@ -1131,7 +1244,8 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
         "<div class='wban' data-k='wban' hidden><div class='wbt' role='status'><b data-k='wbanT'></b></div><span class='wage' data-k='wbanS' aria-hidden='true'></span><button type='button' class='wgo' data-k='wbanGo'>See it</button></div>" +
         "<div class='tline' aria-hidden='true'><i data-k='tline'></i></div>" +
       "</section>" +
-      "<section class='panel chartp' aria-label='Chart'>" +
+      "<div class='colL'>" +
+      "<section class='panel chartp' data-panel='chart' aria-label='Chart'>" +
         "<div class='chead'><div class='chtools'><div class='tabs' role='group' aria-label='Chart type'><button type='button' data-tab='bot' aria-pressed='true' aria-selected='true'>Candles</button><button type='button' data-tab='tv' aria-pressed='false' aria-selected='false'>TradingView</button></div>" +
           "<div class='tfs' role='group' aria-label='Candle size'><button type='button' data-tf='1' aria-pressed='true'>1m</button><button type='button' data-tf='5' aria-pressed='false'>5m</button><button type='button' data-tf='15' aria-pressed='false'>15m</button><button type='button' data-tf='60' aria-pressed='false'>1h</button></div></div>" +
           "<div class='legend' data-k='legend'><span class='lg tg'>Target</span><span class='lg px'>Price</span></div></div>" +
@@ -1141,7 +1255,14 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
         "<div data-k='tvChart' hidden><div class='tvtools'><button type='button' class='tvtg' data-k='tvTgBtn' aria-pressed='false'>Target line</button><span class='sm tvtgtx' data-k='tvTgTxt'></span></div><p class='tvmsg' data-k='tvMsg' hidden></p><div class='tvhost' data-k='tvHost'></div>" +
           "<p class='sm tvnote'>TradingView draws exchange prices, so they can sit a little away from Kalshi&rsquo;s own price. Switch Target line on to ask TradingView to draw Kalshi&rsquo;s target on its own chart. The chart reloads when a new round starts. If no line appears, switch it off; the target is always shown next to the switch and on the Candles tab. Add more indicators with the Indicators button at the top of the chart.</p></div>" +
       "</section>" +
-        "<aside class='panel signals' aria-label='Indicators'><h3>Indicators</h3><p class='verdict v-mix' data-k='verdict'></p><p class='sm' data-k='verdict2'></p>" +
+        "<section class='panel plain kal' data-panel='kal' aria-label='Kalshi price'><h3>Kalshi price</h3><div data-k='kalshi'></div></section>" +
+        "<section class='panel plain mine' data-panel='mine' aria-label='Your calls'><div class='ph'><h3>Your calls</h3><span class='sm' data-k='mineSum'></span></div><div data-k='mine'></div></section>" +
+        "<section class='panel plain fcp' data-panel='fcrec' aria-label='Flip calls'><div class='ph'><h3>Flip calls</h3><span class='sm' data-k='fcpSum'></span></div><div data-k='fcp'></div></section>" +
+        "<section class='panel plain feed' data-panel='feed' aria-label='Your alerts'><div class='ph'><h3>Your alerts</h3><button type='button' class='link sm' data-me='open' data-tab='alerts'>Choose alerts</button></div><div data-k='feed'></div></section>" +
+      "</div>" +
+      "<div class='colR'>" +
+        "<section class='panel plain mykal' data-panel='mykal' aria-label='Your Kalshi'><div class='ph'><h3>Your Kalshi</h3><span class='sm' data-k='mykalAge'></span></div><div data-k='mykal'></div></section>" +
+        "<aside class='panel signals' data-panel='ind' aria-label='Indicators'><h3>Indicators</h3><p class='verdict v-mix' data-k='verdict'></p><p class='sm' data-k='verdict2'></p>" +
           "<div class='sig'><div class='sig-h'><span>EMA 9 and 21 (1 min)</span><b class='chip' data-k='emaChip'></b></div><p class='sm' data-k='emaTxt'></p><p class='sm' data-k='emaPx'></p></div>" +
           "<div class='sig'><div class='sig-h'><span>RSI 14 (1 min)</span><b class='rsival' data-k='rsiVal'></b></div>" +
             "<div class='gwrap'><div class='gauge' aria-hidden='true'><i></i><i></i><i></i><i></i><i></i></div><span class='gmark' data-k='gmark'></span>" +
@@ -1150,15 +1271,15 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
           tfTable() +
           "<div class='sig' data-k='rnd' hidden><div class='sig-h'><span>This round</span><span class='rsince' data-k='rndSince'></span></div><p class='sm' data-k='rndRsi'></p><p class='sm' data-k='rndEma'></p></div>" +
           "<p class='fine2'>The lean count above uses EMA, RSI and MACD. The bot&rsquo;s own model reads all of these when it makes its call, along with the other charts.</p></aside>" +
-        "<section class='panel plain kal' aria-label='Kalshi price'><h3>Kalshi price</h3><div data-k='kalshi'></div></section>" +
-        "<section class='panel plain scalpp' aria-label='Scalp'><h3>Scalp</h3><div data-k='scalp'></div></section>" +
-        "<section class='panel plain walert' data-k='walerts' aria-label='Whale watch'><h3>Whale watch</h3>" +
+        "<section class='panel plain scalpp' data-panel='scalp' aria-label='Buy signal'><h3>Buy signal</h3><div data-k='scalp'></div></section>" +
+      "</div>" +
+        "<section class='panel plain walert' data-panel='whale' data-k='walerts' aria-label='Whale watch'><h3>Whale watch</h3>" +
           "<p class='sm'>Big buys on Kalshi&rsquo;s 15-minute markets, and big moves on the exchanges. Someone else&rsquo;s bet is not a call from the bot.</p>" +
           "<div class='wsec'><h4>Big buys on Kalshi</h4><button type='button' class='wlate' data-k='wlate' aria-pressed='false'>97c and up: hidden</button></div>" +
           "<div data-k='wbuys'></div>" +
           "<p class='sm wnote'>Most big buys are at 97c and up, late in a round: someone locking in a side that has all but won. They say little about where the round ends, so they stay hidden unless you switch them on. Big buyers lose too.</p>" +
           "<div class='wsec'><h4>Big moves on the exchanges</h4></div><div data-k='alerts'></div></section>" +
-            "<section class='details' data-k='details' aria-label='More detail' hidden></section>" +
+            "<section class='details' data-panel='details' data-k='details' aria-label='More detail' hidden></section>" +
     "</div>";
   }
   function bind(root) {
@@ -1202,6 +1323,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     paint(R, v, S.chart[S.coin] || {}, false);
     updateStatus(v);
     updateTitle(v);
+    meOnView(S.coin, v);
   }
   function updateStatus(v) {
     var a = ageNow(v);
@@ -1344,8 +1466,12 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
 
   /* ---------- painting the numbers ---------- */
   function cents(x) { return x != null ? x + "c" : "-"; }
+  var FC_WORD = { calm: "Calm", watch: "Flip watch", flip: "Flip call", early: "Too early", late: "Last minute" };
   function paintFlip(r, v, left) {
-    var d = v.data, f = d.flip || {}, pct = f.pct == null ? 0 : f.pct, lvl = String(f.level || "").toLowerCase();
+    var d = v.data, fc = d.fc;
+    if (fc && fc.lvl) return paintFlipCall(r, v, left, fc);
+    r.fcBadge.hidden = true; r.fcBase.hidden = true; r.fcWhy.hidden = true; setText(r.flipHead, "Chance it flips");
+    var f = d.flip || {}, pct = f.pct == null ? 0 : f.pct, lvl = String(f.level || "").toLowerCase();
     var lc = lvl === "high" ? "high" : lvl === "medium" ? "med" : "low";
     setText(r.flipPct, pct < 1 ? "<1%" : Math.round(pct) + "%");
     setText(r.flipLvl, lvl ? lvl.charAt(0).toUpperCase() + lvl.slice(1) : ""); r.flipLvl.className = "lvl lv-" + lc;
@@ -1354,6 +1480,32 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     var gap = f.gap == null ? Math.abs(d.diff) : f.gap, lead = f.leader || (d.diff >= 0 ? "UP" : "DOWN");
     setText(r.flipTxt, d.coin + " is $" + dollars(gap, d.spot) + " " + (d.diff >= 0 ? "above" : "below") + " the target. It would have to " + (lead === "UP" ? "drop" : "climb") + " $" + dollars(gap, d.spot) + " in " + leftText(left) + " to flip.");
     setText(r.flipTxt2, f.cross != null ? "Chance it touches the target again: " + Math.round(f.cross) + "%" + (f.crossings != null ? ", crossed it " + f.crossings + "x so far." : ".") : "");
+    paintFcRec(r, d.coin);
+  }
+  function paintFlipCall(r, v, left, fc) {                 // the bot's own flip call: the price's path toward the target, not Kalshi's prices
+    var d = v.data, f = d.flip || {}, risk = Number(fc.risk) || 0, lvl = fc.lvl, lead = d.diff >= 0 ? "UP" : "DOWN", gap = Math.abs(d.diff);
+    var lc = lvl === "flip" ? "high" : lvl === "watch" ? "med" : "low";
+    setText(r.flipHead, "Flip watch");
+    r.fcBadge.hidden = false; r.fcBadge.className = "fcbadge fc-" + lvl;
+    setText(r.fcBadge, lvl === "flip" ? "Flip call: " + fc.to : lvl === "watch" ? "Watching for " + fc.to : (FC_WORD[lvl] || lvl));
+    setText(r.flipPct, risk < 1 ? "<1%" : Math.round(risk) + "%");
+    setText(r.flipLvl, lvl === "flip" ? "Likely flip" : lvl === "watch" ? "Possible" : risk >= 12 ? "Some risk" : "Low"); r.flipLvl.className = "lvl lv-" + lc;
+    r.flipFill.className = "lv-" + lc; r.flipFill.style.width = Math.min(100, Math.max(2, risk)).toFixed(0) + "%";
+    var base = fc.base != null ? Number(fc.base) : (f.pct != null ? Number(f.pct) : null);
+    r.fcBase.hidden = base == null; if (base != null) r.fcBase.style.left = Math.min(100, Math.max(0, base)).toFixed(0) + "%";
+    r.flipMeter.setAttribute("aria-label", "Flip risk " + Math.round(risk) + " percent" + (base != null ? ", " + Math.round(base) + " percent from distance alone" : ""));
+    var where = d.coin + " is $" + dollars(gap, d.spot) + " " + (d.diff >= 0 ? "above" : "below") + " the target";
+    var vel = Number(fc.vel) || 0, t;
+    if (lvl === "flip") t = "The bot calls a flip: it thinks this ends " + fc.to + ". " + where + " but moving toward it at $" + dollars(vel, d.spot) + " a minute" + (fc.eta != null ? " (it would reach the target in about " + leftText(fc.eta) + ")." : ".");
+    else if (lvl === "watch") t = where + (vel > 0 ? " and drifting toward it at $" + dollars(vel, d.spot) + " a minute." : ".") + " Not a flip call yet.";
+    else if (lvl === "early") t = where + ". Flip calls start once the first minute is over.";
+    else if (lvl === "late") t = where + ". In the last 45 seconds there is too little time left to call a flip.";
+    else t = where + (vel < -0.0001 ? ", moving away from it." : ".") + " It would have to " + (lead === "UP" ? "drop" : "climb") + " $" + dollars(gap, d.spot) + " in " + leftText(left) + " to flip.";
+    setText(r.flipTxt, t);
+    var why = (fc.why || []).filter(function (x, i) { return !(i === 0 && /^moving toward/.test(x) && lvl === "flip"); });
+    r.fcWhy.hidden = !why.length; setText(r.fcWhy, why.length ? "Also: " + why.join("; ") + "." : "");
+    setText(r.flipTxt2, base != null ? "From distance alone: " + (base < 1 ? "under 1" : Math.round(base)) + "% (the thin mark). The big number adds the price's direction and speed." : "");
+    paintFcRec(r, d.coin);
   }
   function paintClock(v) {
     var left = leftNow(v), d = v.data;
@@ -2051,10 +2203,11 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
      The Kalshi key is sealed in THIS browser (AES-GCM, with the key wrapped by the bot's vault public key) before it is sent,
      so the database only ever holds something it cannot open.
      ==================================================================================================================== */
-  var AUTO_TABS = [["trade", "Trade"], ["settings", "Settings"], ["record", "Record"], ["setup", "Key and look"]];
+  var AUTO_TABS = [["trade", "Trade"], ["settings", "Settings"], ["record", "Record"], ["setup", "Key and alerts"]];
   var AUTO_PAY = "https://buy.stripe.com/cNifZj3H0bVGdSY56RefC02";            /* the built-in $15 Stripe link; a link the owner saves in the Owner panel is used instead */
   var AUTO_DEF = { coins: [], bet: 5, mode: "paper", style: "balanced", pick: "best", daily_loss: 25, max_open: 3, streak: 3, flips: true, quick: true, catchup: false, always: false, stop_mode: "auto", stop_c: 15,
-                   tp_mode: "auto", tp_c: 20, max_money: 0, hours_on: false, hours_from: "09:00", hours_to: "17:00", tz: "", alert_ntfy: "", alert_discord: "", alert_open: true, alert_close: true, alert_warn: true };
+                   tp_mode: "auto", tp_c: 20, max_money: 0, hours_on: false, hours_from: "09:00", hours_to: "17:00", tz: "", alert_ntfy: "", alert_discord: "", alert_open: true, alert_close: true, alert_warn: true,
+                   guard_on: true, guard_act: "alert", g_stop: "auto", g_stop_c: 15, g_tp: "off", g_tp_c: 20, alert_guard: true };
   var AUTO_STYLES = [
     ["smart", "Smart", "Recommended. Reads every chart on its own (1 minute up to 1 hour, plus the other exchanges) and grades each one against how markets really ended, so it learns which time frames to trust. It buys when those learned odds beat the price after fees, in any minute of a market, so a confident market gets a trade each round. It asks for a bigger edge for as long as those learned odds haven't yet beaten Kalshi's own price on markets it hadn't seen. Sells only when the price pays more than the trade is worth, and can switch sides when the call flips. It does not bet until it has graded 40 finished markets (about 90 minutes after the bot first starts), and nothing here guarantees a profit."],
     ["proven", "Proven only", "Follows only a strategy that has made money in the bot's own live test (Edge check, on the Record tab), using that strategy's buy rule, and holds each trade to the end. Real money waits until one passes, which can take days or may never happen. Practice follows the current leader so you can watch it."],
@@ -2137,14 +2290,17 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
 
   /* ---------- asking the database ---------- */
   function autoEvery() {
-    if (document.hidden) return A.mode === "auto" ? 15000 : 30000;     // a tab in the background asks rarely (it catches up the moment it's opened again)
-    if (A.mode === "auto") return (A.st && !A.st.access) ? 5000 : 2000;
-    return (A.st && A.st.access) ? 15000 : 0;                      // locked, and not looking at it: nothing to watch
+    var has = !!(A.st && A.st.access), keyed = has && !!A.st.key, hand = keyed && meHandOpen();
+    if (document.hidden) return (hand && meWantsStop()) ? 8000 : (A.mode === "auto" ? 15000 : 30000);     // a tab in the background asks rarely, unless a stop loss alert may come
+    if (A.mode === "auto") return has ? 2000 : 5000;
+    if (!has) return 0;                                            // locked, and not looking at it: nothing to watch (the unlock form asks again after a purchase)
+    return hand ? 3000 : (keyed ? 6000 : 20000);                   // the Your Kalshi box on the board: open trades move every few seconds
   }
   function autoSchedule(ms) { clearTimeout(A.timer); A.timer = null; if (ms == null || !S.token) return; A.timer = setTimeout(autoPoll, ms); }
   function autoPoll() {
     A.timer = null;
-    if (!S.token || A.busy) return;
+    if (!S.token) return;
+    if (A.busy) { A.timer = setTimeout(autoPoll, 400); return; }             // one is already on its way: ask again right after it (a purchase or a change must not be missed)
     var tok = S.token, args = { p_token: tok };
     if (A.ver && A.st && A.st.access) args.p_seen = A.ver;
     A.busy = true;
@@ -2158,7 +2314,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       A.busy = false;
       if (!S.token || S.token !== tok) return;
       if (/expired/i.test(String((e && e.message) || ""))) return expired();
-      if (e && e.status === 404) { A.st = { access: false, missing: true }; fxAccess(false); autoRender(); return; }        // auto_setup.sql hasn't been run yet
+      if (e && e.status === 404) { A.st = { access: false, missing: true }; autoRender(); meOnAuto(A.st); return; }        // auto_setup.sql hasn't been run yet
       A.fails++;
       if (A.mode === "auto") autoSay(autoFriendly(e), "err");
       autoSchedule(Math.min(autoEvery() * Math.pow(2, A.fails), 20000));
@@ -2196,8 +2352,8 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     if (!r || r.ok === false) return;
     A.kill = !!r.kill;
     if (r.same && A.st && A.st.access) {
-      A.st.age = r.age; A.st.kill = r.kill; A.recv = performance.now();
-      autoPaintLive();
+      A.st.age = r.age; A.st.kill = r.kill; A.st.maint = r.maint; A.recv = performance.now();
+      autoPaintLive(); meOnAuto(null);
       if (!A.liveT && !A.liveBusy && liveWanted()) liveSchedule(0);
       return;
     }
@@ -2205,10 +2361,10 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       if (r.state.edge) A.edgeLast = r.state.edge; else if (A.edgeLast) r.state.edge = A.edgeLast;
     }
     A.st = r; A.recv = performance.now(); A.ver = r.ver || 0;
-    fxAccess(r.access);
     if (r.owner && r.pay_url && $("payUrl") !== document.activeElement && !$("payUrl").value) $("payUrl").value = r.pay_url;
     var d = $("modeDot"); if (d) d.hidden = !(r.access && r.running);
     if (A.mode === "auto") autoRender();
+    meOnAuto(r);
     if (!A.liveT && !A.liveBusy && liveWanted()) liveSchedule(0);
   }
   function autoNow(ms) { A.ver = 0; autoSchedule(ms || 0); }
@@ -2222,6 +2378,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     var styles = AUTO_STYLES.map(function (s) { return "<button type='button' class='at-opt' data-a='style' data-v='" + s[0] + "' aria-pressed='false'><b>" + s[1] + "</b><span>" + s[2] + "</span></button>"; }).join("");
     var picks = AUTO_PICKS.map(function (s) { return "<button type='button' class='at-opt' data-a='pick' data-v='" + s[0] + "' aria-pressed='false'><b>" + s[1] + "</b><span>" + s[2] + "</span></button>"; }).join("");
     $("autoWrap").innerHTML =
+      "<section class='at-card at-maint' data-k='maint' hidden></section>" +
       "<div class='at-card at-lock' data-k='lock' hidden></div>" +
       "<div class='autowrap' data-k='main' hidden>" +
         "<section class='at-card' data-k='head' aria-label='Auto-trader controls'>" +
@@ -2276,17 +2433,6 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
               "<div data-k='hoursF' hidden><div class='at-two' style='margin-top:10px'><div class='at-field' style='margin:0'><label for='atFrom'>From</label><input class='at-in' id='atFrom' data-k='hFrom' type='time'></div><div class='at-field' style='margin:0'><label for='atTo'>Until</label><input class='at-in' id='atTo' data-k='hTo' type='time'></div></div><p class='hint sm' data-k='hoursNote' style='margin-top:8px'></p></div></div>" +
             "<p class='at-saved' data-k='saved' role='status' aria-live='polite'></p>" +
           "</section>" +
-          "<section class='at-card'><h3>Alerts</h3><p class='sm'>Get a message when the bot buys, sells, takes a break or has a problem.</p>" +
-            "<div class='at-field' data-k='ntfyBox'></div>" +
-            "<div class='at-field'><label for='atDis'>Discord link (optional)</label><input class='at-in code' id='atDis' data-k='dis' type='url' inputmode='url' autocomplete='off' autocapitalize='off' autocorrect='off' spellcheck='false' maxlength='200' placeholder='https://discord.com/api/webhooks/...'><p class='hint sm' data-k='disHint'>In Discord: Server Settings, Integrations, Webhooks, New Webhook, then Copy Webhook URL. Paste it here.</p></div>" +
-            "<div class='at-field'><span class='lbl'>Tell me when</span>" +
-              "<label class='at-switch'><input type='checkbox' data-k='aOpen' data-a='alertopt' data-o='alert_open'><span><b>A trade opens</b></span></label>" +
-              "<label class='at-switch'><input type='checkbox' data-k='aClose' data-a='alertopt' data-o='alert_close'><span><b>A trade closes</b><small>With the profit or loss.</small></span></label>" +
-              "<label class='at-switch'><input type='checkbox' data-k='aWarn' data-a='alertopt' data-o='alert_warn'><span><b>Something needs me</b><small>A break after losses, the daily loss limit, or a Kalshi key problem.</small></span></label></div>" +
-            "<div class='at-row'><button type='button' class='at-btn sm' data-a='alerttest' data-k='alertTest'>Send a test alert</button></div>" +
-            "<p class='at-msg' data-k='alertMsg' role='status' aria-live='polite'></p>" +
-            "<p class='at-saved' data-k='saved2' role='status' aria-live='polite'></p>" +
-          "</section>" +
         "</div>" +
         "<div class='at-pane' data-pane='record' hidden>" +
           "<section class='at-card'><div class='at-top'><h3>Win and loss record</h3><div class='seg' role='group' aria-label='Which record'><button type='button' data-a='rec' data-m='paper' aria-pressed='true'>Practice</button><button type='button' data-a='rec' data-m='live' aria-pressed='false'>Real money</button></div></div>" +
@@ -2300,7 +2446,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
             "<div class='at-row' data-k='resetRow'><button type='button' class='at-btn sm danger' data-a='resetpaper' data-k='resetBtn'>Reset practice account</button></div></section>" +
         "</div>" +
         "<div class='at-pane' data-pane='setup' hidden>" +
-          "<section class='at-card'><h3>Your Kalshi key</h3><p class='sm'>Only needed for real money. Practice trading needs no key.</p><div data-k='keyBox'></div>" +
+          "<section class='at-card'><h3>Your Kalshi key</h3><p class='sm'>Needed for Your Kalshi on the Live board (your balance, your trades, the stop loss) and for real-money trading. Practice trading needs no key.</p><div data-k='keyBox'></div>" +
             "<details class='at-how'><summary>How to get a Kalshi key</summary><ol>" +
               "<li>Log in at kalshi.com. Tap your profile picture, then Account settings. You can also open kalshi.com/account/profile.</li>" +
               "<li>Find <b>API Keys</b> and tap <b>Create New API Key</b>. Give it a name. The key type that is already picked is fine.</li>" +
@@ -2321,24 +2467,18 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
             "<p class='at-vault' data-k='vaultId'></p>" +
             "<div class='at-row'><button type='button' class='at-btn sm' data-a='chkshow' data-k='chkShow' hidden>Show the getting-started list again</button></div>" +
           "</section>" +
-          "<section class='at-card'><h3>Your background</h3><p class='sm'>Put a picture or GIF behind the Live board and the Auto-trader. It stays on this device only.</p>" +
-            "<div class='at-thumb' data-k='bgThumb' hidden></div>" +
-            "<div class='at-row'><label class='at-btn sm' style='display:inline-flex;align-items:center;cursor:pointer'>Choose a picture or GIF<input type='file' data-k='bgFile' accept='image/*' hidden></label><button type='button' class='at-btn sm' data-a='bgclear' data-k='bgClear' hidden>Remove</button></div>" +
-            "<div class='at-field' style='margin-top:12px'><label for='atBgUrl'>Or paste a picture link</label><div class='at-bet'><input class='at-in' id='atBgUrl' data-k='bgUrl' type='url' inputmode='url' autocomplete='off' autocapitalize='off' spellcheck='false' placeholder='https://...'><button type='button' class='at-btn sm' data-a='bgurl'>Use it</button></div></div>" +
-            "<div class='at-field'><label for='atDim'>Darken the picture: <span data-k='dimVal'>55</span>%</label><input class='at-range' id='atDim' data-k='dim' type='range' min='0' max='85' step='5'></div>" +
-            "<div class='at-desk'><h4 style='margin-top:12px'>Starry sky</h4>" +
-            "<p class='sm'>Twinkling stars and shooting stars over your background. They also work with no picture at all.</p>" +
-            "<label class='at-switch' style='margin-top:10px'><input type='checkbox' data-k='starOn'><span><b>Show the starry sky</b></span></label>" +
-            "<div class='at-sky' data-k='starBox' hidden>" +
-              "<div class='at-field'><label for='atStarTw'>Twinkle speed: <span data-k='twVal'>Medium</span></label><input class='at-range' id='atStarTw' data-k='starTw' type='range' min='1' max='10' step='1'><div class='at-ends'><span>Slow</span><span>Fast</span></div></div>" +
-              "<div class='at-field'><label for='atStarSs'>Shooting star speed: <span data-k='ssVal'>Medium</span></label><input class='at-range' id='atStarSs' data-k='starSs' type='range' min='1' max='10' step='1'><div class='at-ends'><span>Slow</span><span>Fast</span></div></div>" +
-              "<div class='at-field'><label for='atStarSf'>Shooting stars: <span data-k='sfVal'>Now and then</span></label><input class='at-range' id='atStarSf' data-k='starSf' type='range' min='0' max='10' step='1'><div class='at-ends'><span>Never</span><span>All the time</span></div></div>" +
-              "<div class='at-field'><label for='atStarN'>How many stars: <span data-k='nVal'>Plenty</span></label><input class='at-range' id='atStarN' data-k='starN' type='range' min='1' max='10' step='1'><div class='at-ends'><span>A few</span><span>Packed</span></div></div>" +
-              "<p class='sm' data-k='starRm' hidden>Your computer is set to reduce motion, so the stars stay still.</p>" +
-            "</div>" +
-          "</div>" +
-          "<p class='at-msg' data-k='bgMsg' role='status' aria-live='polite'></p>" +
+          "<section class='at-card'><h3>Alerts</h3><p class='sm'>Get a message on your phone or in Discord: when your stop loss is hit or sells, and when the bot buys, sells, takes a break or has a problem.</p>" +
+            "<div class='at-field' data-k='ntfyBox'></div>" +
+            "<div class='at-field'><label for='atDis'>Discord link (optional)</label><input class='at-in code' id='atDis' data-k='dis' type='url' inputmode='url' autocomplete='off' autocapitalize='off' autocorrect='off' spellcheck='false' maxlength='200' placeholder='https://discord.com/api/webhooks/...'><p class='hint sm' data-k='disHint'>In Discord: Server Settings, Integrations, Webhooks, New Webhook, then Copy Webhook URL. Paste it here.</p></div>" +
+            "<div class='at-field'><span class='lbl'>Tell me when</span>" +
+              "<label class='at-switch'><input type='checkbox' data-k='aOpen' data-a='alertopt' data-o='alert_open'><span><b>A trade opens</b></span></label>" +
+              "<label class='at-switch'><input type='checkbox' data-k='aClose' data-a='alertopt' data-o='alert_close'><span><b>A trade closes</b><small>With the profit or loss.</small></span></label>" +
+              "<label class='at-switch'><input type='checkbox' data-k='aWarn' data-a='alertopt' data-o='alert_warn'><span><b>Something needs me</b><small>A break after losses, the daily loss limit, or a Kalshi key problem.</small></span></label></div>" +
+            "<div class='at-row'><button type='button' class='at-btn sm' data-a='alerttest' data-k='alertTest'>Send a test alert</button></div>" +
+            "<p class='at-msg' data-k='alertMsg' role='status' aria-live='polite'></p>" +
+            "<p class='at-saved' data-k='saved2' role='status' aria-live='polite'></p>" +
           "</section>" +
+          "<section class='at-card'><h3>Your background</h3><p class='sm'>The background picture, the starry sky and the music player are free for everyone now. Find them under Customize on the Live board.</p></section>" +
         "</div>" +
       "</div>";
     AK = bind($("autoWrap"));
@@ -2363,11 +2503,28 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
   (function () { var t = store("kh_auto_tab"); if (t && AUTO_TABS.some(function (x) { return x[0] === t; })) A.tab = t; })();
 
   /* ---------- painting ---------- */
+  function autoMaint() { return !!A.st && A.st.maint !== false; }          // (an older database doesn't say: closed)
+  function autoPaintMaint() {
+    var on = autoMaint(), st = A.st || {};
+    AK.maint.hidden = !on;
+    if (AK.main) AK.main.classList.toggle("maint", on);
+    if (!on) return;
+    var sig = "m|" + (st.access ? 1 : 0) + "|" + (st.key ? 1 : 0) + "|" + (st.trial ? 1 : 0);
+    if (AK.maint.dataset.sig === sig) return;
+    AK.maint.dataset.sig = sig;
+    AK.maint.innerHTML = "<p class='mt-sign' role='status'>Under maintenance</p><h2>The Auto-trader is closed for now</h2>" +
+      "<p>It doesn't start new trades while it's being worked on. Any trade it already had open is still watched and sold by its rules until it ends.</p>" +
+      "<p>Your Kalshi tools moved to the Live board: your balance, your win and loss record, and a stop loss that watches the trades you place on Kalshi yourself." +
+      (st.access ? " You already have them, because you paid for the Auto-trader." : " They come with the $15 unlock.") + "</p>" +
+      "<div class='at-row'><button type='button' class='at-btn go' data-a='toboard'>Go to the Live board</button>" + (st.access ? "<button type='button' class='at-btn' data-a='tab' data-tab='setup'>Your key and alerts</button>" : "") + "</div>";
+  }
   function autoRender() {
     if (!A.built || !A.st) return;
     var st = A.st;
+    autoPaintMaint();
     if (!st.access) return autoPaintLock();
     AK.lock.hidden = true; AK.main.hidden = false;
+    if (autoMaint() && (A.tab === "trade" || A.tab === "settings")) autoTab("setup", true);
     if (!A.set || (Date.now() - A.editAt > 3000 && !A.saveT && !A.saving)) A.set = Object.assign({}, AUTO_DEF, st.settings || {});
     if (!A.rec) A.rec = autoMoney();
     autoPaintHead(); autoPaintTrade(); autoPaintSettings(); autoPaintRecord(); autoPaintSetup(); autoPaintChecklist();
@@ -2392,6 +2549,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     return "<span class='at-side " + (up ? "up" : "down") + "'>" + (up ? "&#9650; " : "&#9660; ") + esc(word || "") + esc(side) + "</span>";
   }
   function autoPaintBets() {
+    if (!A.built || !AK.main) return;
     var st = A.st, s = st.state || {}, pos = s.pos ? Object.keys(s.pos).sort() : [];
     if (pos.length) setHTML(AK.bets, "<span class='lab'>Betting on now:</span>" + pos.map(function (c) { var p = s.pos[c]; return "<span class='at-side " + (p.s === "UP" ? "up" : "down") + "'><b>" + esc(c) + "</b> " + (p.s === "UP" ? "&#9650; UP" : "&#9660; DOWN") + "</span>"; }).join(""));
     else if (st.running) setHTML(AK.bets, "<span class='lab'>Not betting on anything right now. UP means the price ends above the target, DOWN means below.</span>");
@@ -2399,6 +2557,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     AK.bets.hidden = !AK.bets.innerHTML;
   }
   function autoPaintHead() {
+    if (!A.built || !AK.main) return;
     var st = A.st, s = st.state || {}, mode = autoMoney(), live = mode === "live", S_ = (s.stats && s.stats[mode]) || { w: 0, l: 0, net: 0 };
     var pill = autoPill(); AK.pill.className = "at-pill " + pill[0]; setText(AK.pill, pill[1]);
     var today = (s.days && s.days[s.day] && s.days[s.day][mode]) || 0;
@@ -2474,6 +2633,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     setText(l, x.left > 0 ? "Market closes at " + clockTime(p.cl) + ", in " + leftText(x.left) + "." : "Market closed. Waiting for Kalshi to settle it.");
   }
   function autoPaintTrade() {
+    if (!A.built || !AK.main) return;
     var st = A.st, s = st.state || {}, pos = s.pos ? Object.keys(s.pos).sort() : [];
     Object.keys(A.sold).forEach(function (c) { if (!(s.pos && s.pos[c])) delete A.sold[c]; });
     var ords = s.orders ? Object.keys(s.orders).sort() : [];
@@ -2504,6 +2664,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
   function setActive(group, attr, val) { Array.prototype.forEach.call(group.querySelectorAll("button"), function (b) { b.setAttribute("aria-pressed", b.getAttribute(attr) === String(val) ? "true" : "false"); }); }
   function setIfIdle(el, v) { if (el !== document.activeElement && String(el.value) !== String(v)) el.value = v; }
   function autoPaintSettings() {
+    if (!A.built || !AK.main) return;
     var s = A.set; if (!s) return;
     Array.prototype.forEach.call(AK.coins.children, function (b) { b.setAttribute("aria-pressed", s.coins.indexOf(b.dataset.coin) >= 0 ? "true" : "false"); });
     setIfIdle(AK.bet, s.bet); setActive(AK.betchips, "data-bet", s.bet);
@@ -2565,6 +2726,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     setHTML(AK.gateBox, h);
   }
   function autoPaintRecord() {
+    if (!A.built || !AK.main) return;
     var d = recData(), S_ = d.S, acc = pctOf(S_.w || 0, S_.l || 0), n = (S_.w || 0) + (S_.l || 0) + (S_.e || 0);
     Array.prototype.forEach.call($("autoWrap").querySelectorAll("[data-a=rec]"), function (b) { b.setAttribute("aria-pressed", b.dataset.m === d.mode ? "true" : "false"); });
     var today = (d.s.days && d.s.days[d.s.day] && d.s.days[d.s.day][d.mode]) || 0;
@@ -2696,14 +2858,11 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       "<div class='at-row' style='margin-top:4px'><button type='button' class='at-btn sm' data-a='keycheck'>Check again</button><button type='button' class='at-btn sm danger' data-a='keydel'>Remove the key</button></div></div>";
   }
   function autoPaintSetup() {
+    if (!A.built || !AK.main) return;
     var st = A.st, v = st.vault || {};
     setHTML(AK.keyBox, keyBoxHTML(st.key, !!(v.pub && v.fp)));
     setText(AK.vaultId, v.fp ? "Vault ID " + v.fp + ". The owner can match this with the ID the bot printed when it started." : "");
     AK.keySave.disabled = !(v.pub && v.fp) || A.sealing;
-    setText(AK.dimVal, String(A.dim)); if (AK.dim !== document.activeElement) AK.dim.value = A.dim;
-    AK.bgThumb.hidden = !A.bg; AK.bgClear.hidden = !A.bg;
-    if (A.bg) AK.bgThumb.style.backgroundImage = "url(\"" + (A.bg.type === "file" ? A.bgObj : A.bg.url) + "\")";
-    starsPaint();
   }
   function autoPaintLock() {
     var st = A.st, pay = st.pay_url || AUTO_PAY;
@@ -2715,10 +2874,14 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       (pay ? "<a class='at-btn go' style='display:inline-flex;align-items:center;justify-content:center;text-decoration:none' href='" + esc(pay) + "' target='_blank' rel='noopener noreferrer'>Pay $15 once</a><p class='sm'>After you pay, Stripe emails you a receipt. Type the receipt number below.</p>" : "<p class='at-warn'>The payment link isn't set up yet. Check back soon.</p>") +
       "<form data-k='buyForm' autocomplete='off' novalidate><label class='sm' for='atRcpt'>Receipt number from your Stripe email</label><div class='at-bet' style='margin-top:6px'><input class='at-in code' id='atRcpt' data-k='rcpt' type='text' autocapitalize='characters' autocorrect='off' spellcheck='false' maxlength='60' placeholder='1234-5678' style='max-width:none'><button type='submit' class='at-btn go sm' data-k='buyGo'>Unlock</button></div></form>" +
       "<p class='at-msg' data-k='buyMsg' role='status' aria-live='polite'></p></div>";
-    var sig = "lock|" + (st.trial ? 1 : 0) + "|" + (pay || "") + "|" + (st.missing ? 1 : 0);
+    var sig = "lock|" + (st.trial ? 1 : 0) + "|" + (pay || "") + "|" + (st.missing ? 1 : 0) + "|" + (autoMaint() ? 1 : 0);
     if (AK.lock.dataset.sig === sig) return;
     AK.lock.dataset.sig = sig;
-    AK.lock.innerHTML = "<div class='at-lock'><h2>Let the bot trade for you</h2>" +
+    if (autoMaint()) AK.lock.innerHTML = "<div class='at-lock'><h2>Your Kalshi tools, $15 once</h2>" +
+      "<p>Connect your Kalshi account to the Live board. The bot watches the trades you place on Kalshi and can sell them at your stop loss, or just alert you.</p>" +
+      "<ul><li>Your Kalshi balance and open trades, live</li><li>A stop loss: your own number, or an automatic one</li><li>Your real win and loss record from Kalshi</li><li>The Auto-trader too, when it reopens</li></ul>" +
+      "<p class='sm'>$15, paid once. Discount codes don't work on this one. Trading can lose money and no result is promised.</p>" + buy + "</div>";
+    else AK.lock.innerHTML = "<div class='at-lock'><h2>Let the bot trade for you</h2>" +
       "<p>Pick your coins and how much to spend on each trade. The bot places the trades by itself, sells right away when a call flips, and keeps your win and loss record. It reads the same live calls you see on the board, every second.</p>" +
       "<ul><li>Practice money to try it first, then real money when you are ready</li><li>Your own Kalshi account, with your key sealed so nobody can read it</li><li>A results card you can share</li></ul>" +
       "<p class='sm'>$15, paid once. Discount codes don't work on this one. Trading can lose money and no result is promised. Start with practice money.</p>" + buy + "</div>";
@@ -2731,6 +2894,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     var b = ev.target.closest && ev.target.closest("[data-a]"); if (!b || !$("autoWrap").contains(b)) return;
     var a = b.dataset.a;
     if (a === "tab") return autoTab(b.dataset.tab);
+    if (a === "toboard") { setMode("board"); try { window.scrollTo(0, 0); } catch (e) {} return; }
     if (a === "money") return autoSetMoney(b.dataset.m);
     if (a === "go") return autoGo();
     if (a === "flat") return armOrRun(b, autoFlat);
@@ -2759,8 +2923,6 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     if (a === "resetpaper") return armOrRun(b, function () { autoCmd("reset_paper", "Practice account reset."); });
     if (a === "keycheck") return autoCmd("check_key", "Checking the key...");
     if (a === "keydel") return armOrRun(b, autoKeyDelete);
-    if (a === "bgclear") return autoBgClear();
-    if (a === "bgurl") return autoBgUrl(AK.bgUrl.value);
   }
   function coinIndex(c) { for (var i = 0; i < COINS.length; i++) if (COINS[i][0] === c) return i; return 99; }
   function numIn(el, lo, hi, dflt) { var v = parseFloat(String(el.value).replace(",", ".")); return isFinite(v) ? Math.min(Math.max(v, lo), hi) : dflt; }
@@ -2774,8 +2936,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     else if (t === AK.tpc) { var tv = parseInt(t.value, 10); if (isFinite(tv) && tv >= 5) autoEdit({ tp_mode: "manual", tp_c: Math.min(tv, 90) }, true); }
     else if (t === AK.cap) { var cv2 = parseFloat(t.value); if (isFinite(cv2) && cv2 >= 0) autoEdit({ max_money: Math.min(cv2, 100000) }, true); }
     else if (t === AK.dis) { alertDiscord(t.value); }
-    else if (t === AK.dim) { A.dim = Number(t.value) || 0; store("kh_auto_dim", String(A.dim)); setText(AK.dimVal, String(A.dim)); autoBgApply(); }
-    else starsInput(t);
+
   }
   function autoChange(ev) {
     var t = ev.target;
@@ -2784,8 +2945,6 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     if (t === AK.catchup) return autoEdit({ catchup: !!t.checked });
     if (t === AK.always) return autoEdit({ always: !!t.checked });
     if (t === AK.pemFile && t.files && t.files[0]) return autoReadPem(t.files[0]);
-    if (t === AK.bgFile && t.files && t.files[0]) return autoBgFile(t.files[0]);
-    if (t === AK.starOn) return starsToggle(t.checked);
     if (t === AK.stopc) { var cv = Math.round(numIn(t, 5, 90, 15)); t.value = cv; return autoEdit({ stop_mode: "manual", stop_c: cv }); }
     if (t === AK.tpc) { var tcv = Math.round(numIn(t, 5, 90, 20)); t.value = tcv; return autoEdit({ tp_mode: "manual", tp_c: tcv }); }
     if (t === AK.hoursOn) return autoEdit(withTz({ hours_on: !!t.checked }));
@@ -2818,7 +2977,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       autoPaintSettings(); autoPaintHead(); autoNow(150);
     }, function (e) { A.saving = false; savedSay( ""); autoSay(autoFriendly(e), "err"); if (/expired/i.test(String((e && e.message) || ""))) expired(); });
   }
-  function savedSay(t) { setText(AK.saved, t); setText(AK.saved2, t); }
+  function savedSay(t) { setText(AK.saved, t); setText(AK.saved2, t); meSaved(t); }
   function autoSaveNow() { if (A.saveT) { clearTimeout(A.saveT); return autoSave(); } return Promise.resolve(); }
 
   /* ---------- practice or real money ---------- */
@@ -2930,6 +3089,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     AK.alertMsg.className = "at-msg " + k; setText(AK.alertMsg, m);
   }
   function autoPaintAlerts() {
+    if (!A.built || !AK.main) return;
     var s = A.set; if (!s || !AK.ntfyBox) return;
     var t = s.alert_ntfy;
     setHTML(AK.ntfyBox, t
@@ -2978,6 +3138,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
 
   /* ---------- the getting-started list ---------- */
   function autoPaintChecklist() {
+    if (!A.built || !AK.main) return;
     if (!AK.chk) return;
     var st = A.st, s = st.state || {}, set = A.set || AUTO_DEF, P = (s.stats && s.stats.paper) || {}, np = (P.w || 0) + (P.l || 0) + (P.e || 0), k = st.key, kok = !!(k && k.status && k.status.ok);
     AK.chkShow.hidden = store("kh_auto_chk") !== "1";
@@ -3104,7 +3265,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     var raw = store("kh_auto_bg"), o = null; try { o = raw ? JSON.parse(raw) : null; } catch (e) {}
     if (o && o.type === "url" && /^https?:\/\//i.test(o.url || "")) { A.bg = { type: "url", url: o.url }; autoBgApply(); return; }
     if (o && o.type === "file") {
-      bgGet("bg").then(function (blob) { if (blob) { A.bg = { type: "file" }; if (A.bgObj) URL.revokeObjectURL(A.bgObj); A.bgObj = URL.createObjectURL(blob); A.bgBlob = blob; autoBgApply(); if (A.built && A.st && A.st.access) autoPaintSetup(); } }, function () {});
+      bgGet("bg").then(function (blob) { if (blob) { A.bg = { type: "file" }; if (A.bgObj) URL.revokeObjectURL(A.bgObj); A.bgObj = URL.createObjectURL(blob); A.bgBlob = blob; autoBgApply(); lookPaint(); } }, function () {});
     }
   }
   function autoBgApply() {
@@ -3119,16 +3280,16 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     }
     starsSync();
   }
-  function bgSay(t, kind) { if (AK.bgMsg) { AK.bgMsg.className = "at-msg " + (kind || ""); AK.bgMsg.textContent = t; } }
+  function bgSay(t, kind) { if (LKH.bgMsg) { LKH.bgMsg.className = "at-msg " + (kind || ""); LKH.bgMsg.textContent = t; } }
   function autoBgFile(f) {
-    AK.bgFile.value = "";
+    if (LKH.bgFile) LKH.bgFile.value = "";
     if (!/^image\//.test(f.type)) return bgSay("That isn't a picture. Choose a JPG, PNG, GIF or WebP.", "err");
     if (f.size > BG_MAX) return bgSay("That file is over 10 MB. Choose a smaller one.", "err");
     bgPut("bg", f).then(function () {
       store("kh_auto_bg", JSON.stringify({ type: "file", name: String(f.name || "").slice(0, 60) }));
       if (A.bgObj) URL.revokeObjectURL(A.bgObj);
       A.bgObj = URL.createObjectURL(f); A.bgBlob = f; A.bg = { type: "file" };
-      autoBgApply(); autoPaintSetup(); bgSay("Background set.", "ok");
+      autoBgApply(); lookPaint(); bgSay("Background set.", "ok");
     }, function () { bgSay("This browser wouldn't save the picture. Try a smaller one, or paste a link instead.", "err"); });
   }
   function autoBgUrl(u) {
@@ -3137,12 +3298,12 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     if (!p || !/^https?:$/.test(p.protocol)) return bgSay("Paste a full picture link that starts with https://", "err");
     A.bg = { type: "url", url: p.href }; A.bgBlob = null;
     store("kh_auto_bg", JSON.stringify({ type: "url", url: p.href })); bgPut("bg", null).then(function () {}, function () {});
-    autoBgApply(); autoPaintSetup(); bgSay("Background set. If it doesn't show, that website may not allow its pictures to be used. Try uploading the file instead.", "ok");
+    autoBgApply(); lookPaint(); bgSay("Background set. If it doesn't show, that website may not allow its pictures to be used. Try uploading the file instead.", "ok");
   }
   function autoBgClear() {
     A.bg = null; A.bgBlob = null; if (A.bgObj) { URL.revokeObjectURL(A.bgObj); A.bgObj = ""; }
     store("kh_auto_bg", null); bgPut("bg", null).then(function () {}, function () {});
-    autoBgApply(); autoPaintSetup(); bgSay("Background removed.", "ok");
+    autoBgApply(); lookPaint(); bgSay("Background removed.", "ok");
   }
 
   /* ---------- the results card (a picture you can save or share) ---------- */
@@ -3271,6 +3432,9 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
   function autoOwnerRender(r) {
     if (!r) return;
     A.kill = !!r.auto_kill;
+    A.maintOwner = r.auto_maint !== false;
+    var mb = $("autoMaint"); mb.setAttribute("aria-pressed", A.maintOwner ? "true" : "false");
+    if (!mb.dataset.armed) setText(mb, A.maintOwner ? "Open the Auto-trader" : "Close the Auto-trader for maintenance");
     var b = $("autoKill"); b.setAttribute("aria-pressed", A.kill ? "true" : "false");
     if (!b.dataset.armed) setText(b, A.kill ? "Resume real-money trading" : "Pause real-money trading");
     setHTML($("ownerAutoNote"), A.kill ? "<b>Real-money trading is paused for everyone.</b> Practice trading keeps going. Open real trades are still watched and sold normally." : "Trades real money for people who paid the $15. The switch below pauses real-money trading for everyone at once (practice trading keeps going).");
@@ -3290,6 +3454,11 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       }, ownerFail);
     });
   }
+  $("autoMaint").addEventListener("click", function () {
+    var b = this, on = !A.maintOwner;
+    function go() { rpc("auto_admin_maint", { p_token: S.token, p_on: on }).then(function () { ownerSay(on ? "The Auto-trader is closed for maintenance. Open trades are still finished." : "The Auto-trader is open again.", true); ownerLoad(true); autoNow(0); }, ownerFail); }
+    armOrRun(b, go);
+  });
   $("autoKill").addEventListener("click", function () {
     var b = this, on = !A.kill;
     function go() { rpc("auto_admin_kill", { p_token: S.token, p_on: on }).then(function () { ownerSay(on ? "Real-money trading is paused for everyone." : "Real-money trading is back on.", true); ownerLoad(true); autoNow(0); }, ownerFail); }
@@ -3311,7 +3480,8 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
   function calmMotion() { return !!MOTION && MOTION.matches; }
   function onMedia(mq, fn) { if (!mq) return; try { mq.addEventListener("change", fn); } catch (e) { try { mq.addListener(fn); } catch (e2) {} } }
   function pin(v, lo, hi, d) { v = parseInt(v, 10); return isFinite(v) ? Math.min(Math.max(v, lo), hi) : d; }
-  var FXACC = false;                                                   // does this person have the Auto-trader? The background, the sky and the music belong to it, on both sides of the page
+  var FXACC = false;                                                   // signed in? The background, the sky and the music are free for everyone who is
+  var LKH = {};                                                        // handles to the look controls (in Customize)
   function fxAccess(on) { on = !!on; if (on === FXACC) return; FXACC = on; autoBgApply(); musicSync(); }
 
   /* ---------- the sky ---------- */
@@ -3436,29 +3606,29 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
 
   /* the controls in the Your background card */
   function starsPaint() {
-    if (!AK || !AK.starOn) return;
-    AK.starOn.checked = STAR.on;
-    AK.starBox.hidden = !STAR.on;
+    if (!LKH || !LKH.starOn) return;
+    LKH.starOn.checked = STAR.on;
+    LKH.starBox.hidden = !STAR.on;
     var sl = [["starTw", "tw", "twVal"], ["starSs", "ss", "ssVal"], ["starSf", "sf", "sfVal"], ["starN", "n", "nVal"]];
     for (var i = 0; i < sl.length; i++) {
-      var el = AK[sl[i][0]]; if (!el) continue;
+      var el = LKH[sl[i][0]]; if (!el) continue;
       if (el !== document.activeElement) el.value = STAR[sl[i][1]];
-      setText(AK[sl[i][2]], WORDS[sl[i][1]][STAR[sl[i][1]]]);
+      setText(LKH[sl[i][2]], WORDS[sl[i][1]][STAR[sl[i][1]]]);
     }
-    if (AK.starRm) AK.starRm.hidden = !calmMotion();
+    if (LKH.starRm) LKH.starRm.hidden = !calmMotion();
   }
   function starsPreview() {                                                      // move a slider, see a shooting star straight away
     if (!starsWanted() || !SKY.running || STAR.sf === 0) return;
     var now = Date.now(); if (now - SKY.pv < 700) return; SKY.pv = now; skyShoot(true);
   }
   function starsInput(t) {
-    if (t === AK.starTw) STAR.tw = pin(t.value, 1, 10, 5);
-    else if (t === AK.starSs) STAR.ss = pin(t.value, 1, 10, 5);
-    else if (t === AK.starSf) { STAR.sf = pin(t.value, 0, 10, 4); SKY.next = SKY.clock + 0.3; }
-    else if (t === AK.starN) { STAR.n = pin(t.value, 1, 10, 6); if (SKY.ctx) { skySize(); if (!SKY.running) skyDraw(0, true); } }
+    if (t === LKH.starTw) STAR.tw = pin(t.value, 1, 10, 5);
+    else if (t === LKH.starSs) STAR.ss = pin(t.value, 1, 10, 5);
+    else if (t === LKH.starSf) { STAR.sf = pin(t.value, 0, 10, 4); SKY.next = SKY.clock + 0.3; }
+    else if (t === LKH.starN) { STAR.n = pin(t.value, 1, 10, 6); if (SKY.ctx) { skySize(); if (!SKY.running) skyDraw(0, true); } }
     else return false;
     starsSave(); starsPaint();
-    if (t === AK.starSs || t === AK.starSf) starsPreview();
+    if (t === LKH.starSs || t === LKH.starSf) starsPreview();
     return true;
   }
   function starsToggle(on) { STAR.on = !!on; starsSave(); starsPaint(); autoBgApply(); }
@@ -3541,7 +3711,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
   }
   function musicSync() {                                                         // shown only on a desktop, only while signed in, only with the Auto-trader
     var d = $("mDock"); if (!d) return;
-    if (MUSIC.ready && isDesk() && FXACC) {
+    if (MUSIC.ready && isDesk() && FXACC && mePrefMusic()) {
       d.hidden = false;
       if (!MUSIC.loaded) { MUSIC.loaded = true; musicRestore(); }
     } else {
@@ -3566,6 +3736,775 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
     $("mClear").addEventListener("click", function () { musicClearFrame(); MUSIC.link = ""; $("mUrl").value = ""; musicSave(); musicSay("Removed. Paste another link any time.", ""); });
     d.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && MUSIC.open) { musicOpen(false); $("mTab").focus(); } });
   })();
+  /* ================= the Live board's own tools: alerts, your calls, your Kalshi, flip calls, and Customize =================
+     Everything here is per device (saved in this browser), except your calls and the Kalshi stop loss, which are saved with your sign-in. */
+  var ACCENTS = [["orange", "#F08C3A", "Orange"], ["blue", "#4FB7E8", "Blue"], ["teal", "#2BB5A0", "Teal"], ["purple", "#B58CF0", "Purple"], ["pink", "#E58FB4", "Pink"], ["gold", "#E7C14B", "Gold"], ["white", "#ECE9E4", "White"]];
+  var PANELS = [["flip", "Flip watch", "The flip chance and the bot's flip call, next to the call."], ["chart", "Chart", "Candles or TradingView."], ["ind", "Indicators", "EMA, RSI and the other signals."],
+    ["kal", "Kalshi price", "What Yes and No cost right now."], ["scalp", "Buy signal", "When the bot says buy now, with a profit and a get-out price."], ["mine", "Your calls", "Mark the calls you took and see your record."],
+    ["mykal", "Your Kalshi", "Balance, open trades and the stop loss ($15 unlock)."], ["fcrec", "Flip calls", "How the bot's flip calls turned out."], ["feed", "Your alerts", "The last alerts on this device."],
+    ["whale", "Whale watch", "Big buys on Kalshi and big moves on the exchanges."], ["details", "More detail", "Why this call and the chart votes."], ["record", "Bot record", "How every call was graded."]];
+  var ALERT_TYPES = [["nCall", "The call changes side", "UP turns to DOWN, or back."], ["nBet", "The bot says bet", "A coin goes from Skip to a side."],
+    ["nBuy", "Buy signal", "Buy now, with where to take profit and where to get out."], ["nFlip", "Flip call", "The bot calls a flip before it happens."],
+    ["nWatch", "Flip watch", "An early warning that a flip might be coming."], ["nCross", "The price crosses the target", "The other side is winning right now."],
+    ["nWhale", "Whale buy", "Someone bets $1,000 or more (the coin you're looking at)."], ["nEnd", "A market is about to end", "With the bot's call at that moment."],
+    ["nNew", "A new market opens", "With the bot's first call."], ["nStop", "Your Kalshi trades", "Your stop loss is hit, a trade is sold, a new trade is watched ($15 unlock)."]];
+  var LOOK_HTML =
+"<h4>Background</h4><p class='sm'>A picture or GIF behind the whole page. It stays on this device only.</p>" +
+            "<div class='at-thumb' data-k='bgThumb' hidden></div>" +
+            "<div class='at-row'><label class='at-btn sm' style='display:inline-flex;align-items:center;cursor:pointer'>Choose a picture or GIF<input type='file' data-k='bgFile' accept='image/*' hidden></label><button type='button' class='at-btn sm' data-a='bgclear' data-k='bgClear' hidden>Remove</button></div>" +
+            "<div class='at-field' style='margin-top:12px'><label for='atBgUrl'>Or paste a picture link</label><div class='at-bet'><input class='at-in' id='atBgUrl' data-k='bgUrl' type='url' inputmode='url' autocomplete='off' autocapitalize='off' spellcheck='false' placeholder='https://...'><button type='button' class='at-btn sm' data-a='bgurl'>Use it</button></div></div>" +
+            "<div class='at-field'><label for='atDim'>Darken the picture: <span data-k='dimVal'>55</span>%</label><input class='at-range' id='atDim' data-k='dim' type='range' min='0' max='85' step='5'></div>" +
+            "<div class='at-desk'><h4>Starry sky</h4>" +
+            "<p class='sm'>Twinkling stars and shooting stars over your background. They also work with no picture at all.</p>" +
+            "<label class='at-switch' style='margin-top:10px'><input type='checkbox' data-k='starOn'><span><b>Show the starry sky</b></span></label>" +
+            "<div class='at-sky' data-k='starBox' hidden>" +
+              "<div class='at-field'><label for='atStarTw'>Twinkle speed: <span data-k='twVal'>Medium</span></label><input class='at-range' id='atStarTw' data-k='starTw' type='range' min='1' max='10' step='1'><div class='at-ends'><span>Slow</span><span>Fast</span></div></div>" +
+              "<div class='at-field'><label for='atStarSs'>Shooting star speed: <span data-k='ssVal'>Medium</span></label><input class='at-range' id='atStarSs' data-k='starSs' type='range' min='1' max='10' step='1'><div class='at-ends'><span>Slow</span><span>Fast</span></div></div>" +
+              "<div class='at-field'><label for='atStarSf'>Shooting stars: <span data-k='sfVal'>Now and then</span></label><input class='at-range' id='atStarSf' data-k='starSf' type='range' min='0' max='10' step='1'><div class='at-ends'><span>Never</span><span>All the time</span></div></div>" +
+              "<div class='at-field'><label for='atStarN'>How many stars: <span data-k='nVal'>Plenty</span></label><input class='at-range' id='atStarN' data-k='starN' type='range' min='1' max='10' step='1'><div class='at-ends'><span>A few</span><span>Packed</span></div></div>" +
+              "<p class='sm' data-k='starRm' hidden>Your computer is set to reduce motion, so the stars stay still.</p>" +
+            "</div>" +
+          "</div>" +
+          "<p class='at-msg' data-k='bgMsg' role='status' aria-live='polite'></p>";
+  var PREF_DEF = { nOn: true, nCoins: "view", nList: [], nCall: true, nBet: true, nBuy: true, nFlip: true, nWatch: false, nCross: false, nWhale: false, nEnd: false, nEndS: 60, nNew: false, nStop: true,
+    nConf: "any", nSound: "chime", nVol: 60, nVib: true, nSys: false, nFlash: true, nQuiet: false, nQFrom: "23:00", nQTo: "07:00",
+    hide: {}, compact: false, text: "m", amt: 5,
+    tStyle: "line", tShow: "call", tOrder: [], tHide: {}, tAuto: true, title: "call", fav: true,
+    accent: "orange", cb: false, music: true };
+  var CONF_RANK = { "TOSS-UP": 0, "LEAN": 1, "STRONG": 2, "VERY STRONG": 3 }, CONF_MIN = { any: 0, lean: 1, strong: 2, very: 3 };
+  var ME = { on: false, pmem: {}, pulse: {}, pAt: 0, pBusy: false, pFail: 0, pOff: false, picks: null, pkVer: 0, pkAt: 0, pkBusy: false, pkOff: false, pkNext: 0, hist: [], unread: 0,
+    audio: null, flashT: null, flashOn: false, sheet: false, tab: "alerts", gseq: null, gseqRk: "", cool: {}, whaleT: {}, sw: null, saveT: null, buying: false, msg: {} };
+  var P = (function () { var o = null; try { o = JSON.parse(store("kh_prefs") || "null"); } catch (e) {} return Object.assign({}, PREF_DEF, (o && typeof o === "object") ? o : {}); })();
+  function prefSave() { store("kh_prefs", JSON.stringify(P)); }
+  function prefSet(k, v) { P[k] = v; prefSave(); }
+  (function () { try { var h = JSON.parse(store("kh_alerts") || "[]"); if (Array.isArray(h)) ME.hist = h.slice(0, 40); } catch (e) {} ME.unread = Number(store("kh_alerts_unread")) || 0; })();
+  function histSave() { store("kh_alerts", JSON.stringify(ME.hist.slice(0, 40))); store("kh_alerts_unread", String(ME.unread)); }
+
+  /* ---------- small things other parts ask */
+  function meTitleMode() { return P.title; }
+  function meFavOn() { return P.fav !== false; }
+  function meFlashing() { return ME.flashOn; }
+  function mePrefMusic() { return P.music !== false; }
+  function meHandOpen() { var s = A.st && A.st.state, h = s && s.hand; if (!h) return false; for (var k in h) if (!h[k].done && h[k].n > 0) return true; return false; }
+  function meWantsStop() { return !!(P.nOn && P.nStop); }
+  function meCoinOrder() {
+    var seen = {}, out = [];
+    (P.tOrder || []).forEach(function (c) { var x = COINS.filter(function (y) { return y[0] === c; })[0]; if (x && !seen[c]) { seen[c] = 1; out.push(x); } });
+    COINS.forEach(function (x) { if (!seen[x[0]]) out.push(x); });
+    var shown = out.filter(function (x) { return !(P.tHide || {})[x[0]]; });
+    return shown.length ? shown : out;
+  }
+  function mePicksSoon() { ME.pkNext = Math.min(ME.pkNext || Infinity, Date.now() + 500); ME.pkAgain = true; }
+
+  /* ---------- start and stop (sign in / sign out) */
+  function meStart() {
+    ME.on = true; ME.pmem = {}; ME.pulse = {}; ME.pAt = 0; ME.pFail = 0; ME.picks = null; ME.pkVer = 0; ME.pkNext = Date.now() + 800; ME.gseq = null; ME.whaleT = {};
+    mePrefsApply(); meTabsApply(); mePaintFeed(); meBell(); mePaintMine(); mePaintKal(); mePaintFc();
+    if (P.nSys) meSwReady();
+  }
+  function meStop() {
+    ME.on = false; meFlashStop(); meSheet(false); meBellOpen(false);
+    var t = $("toasts"); if (t) t.innerHTML = "";
+  }
+  function meTick(now) {                                    // runs with the board's 4-a-second clock
+    if (!ME.on || !S.token) return;
+    var hid = document.hidden;
+    if (!ME.pBusy && !ME.pOff && now >= ME.pAt) mePulse(hid);
+    if (!hid && !ME.pkBusy && !ME.pkOff && now >= ME.pkNext) mePicks();
+    if (!hid && now - (ME.paintAt || 0) >= 1000) { ME.paintAt = now; mePaintKalLive(); mePaintFeedAges(); }
+  }
+
+  /* ---------- the pulse: a few hundred bytes per coin, for alerts on coins you aren't looking at and the calls on the coin tabs */
+  function alertCoins() {
+    if (!P.nOn) return [];
+    var shown = meCoinOrder().map(function (x) { return x[0]; });
+    return (P.nCoins === "all" ? shown : P.nCoins === "pick" ? (P.nList || []) : []).filter(function (c) { return c !== S.coin && COINS.some(function (x) { return x[0] === c; }); });
+  }
+  function pulseCoins() {
+    var want = {}, shown = meCoinOrder().map(function (x) { return x[0]; });
+    alertCoins().forEach(function (c) { want[c] = 1; });
+    if (P.tShow !== "none" && !document.hidden) shown.forEach(function (c) { want[c] = 1; });
+    delete want[S.coin];                                    // the coin on screen comes with the board's own reads
+    return Object.keys(want).filter(function (c) { return COINS.some(function (x) { return x[0] === c; }); });
+  }
+  function mePulse(hid) {
+    var coins = pulseCoins();
+    if (!coins.length) { ME.pAt = Date.now() + 2000; return; }
+    var alertsOther = P.nOn && P.nCoins !== "view";
+    if (hid && !alertsOther) { ME.pAt = Date.now() + 5000; return; }
+    ME.pBusy = true;
+    var tok = S.token;
+    rpc("live_pulse", { p_token: tok, p_coins: coins, p_watch: alertCoins() }).then(function (r) {          // only the coins with alerts keep the bot working them out every second
+      ME.pBusy = false; ME.pFail = 0;
+      if (!ME.on || S.token !== tok) return;
+      if (r && r.ok && r.coins) {
+        var now = Date.now();
+        Object.keys(r.coins).forEach(function (c) {
+          var x = r.coins[c], age = Number(x.age) || 0;
+          var snap = { tk: x.tk, cl: x.cl, left: (Number(x.left) || 0) - age, spot: x.spot, target: x.target, side: x.side, prob: x.prob, conf: x.conf, bet: !!x.bet, price: x.price, scalp: x.scalp, fc: x.fc, at: now, age: age };
+          ME.pulse[c] = snap;
+          if (age < 60) meDetect(c, snap, null);
+        });
+        mePaintTabCalls();
+      }
+      ME.pAt = Date.now() + (document.hidden ? 4000 : 3000);
+    }, function (e) {
+      ME.pBusy = false; ME.pFail++;
+      if (e && e.status === 404) { ME.pOff = true; return; }          // the database update for this hasn't been run yet
+      ME.pAt = Date.now() + Math.min(3000 * Math.pow(2, ME.pFail), 60000);
+    });
+  }
+  function snapFromView(v) {
+    var d = v.data, c = d.call || {}, age = ageNow(v), s = d.scalp || {};
+    return { tk: d.ticker, cl: d.close_ts, left: d.left_s - age, spot: d.spot, target: d.target, side: c.side, prob: c.prob, conf: c.conf, bet: /^BET /.test(c.text || ""), price: c.price,
+             scalp: s.on ? { side: s.side, entry: s.entry, tp: s.tp, sl: s.sl } : null, fc: d.fc || null, at: Date.now() };
+  }
+  function meOnView(coin, v) {
+    if (!ME.on || !v || !v.data) return;
+    if (ageNow(v) < 60) {
+      var snap = snapFromView(v);
+      ME.pulse[coin] = snap;
+      meDetect(coin, snap, v);
+    }
+    mePaintTabCalls(); mePaintMine(); mePaintFc();
+  }
+
+  /* ---------- turning changes into alerts */
+  function callWords(b) { return b.bet ? b.side + " " + Math.round((b.prob || 0) * 100) + "% (" + (CONF[b.conf] || b.conf || "") + ")" : "Skip (too close to call)"; }
+  function coinWatched(c) { if (!P.nOn) return false; if (P.nCoins === "all") return true; if (P.nCoins === "pick") return (P.nList || []).indexOf(c) >= 0; return c === S.coin; }
+  function confOk(conf) { return (CONF_RANK[conf] || 0) >= (CONF_MIN[P.nConf] || 0); }
+  function meDetect(coin, b, v) {
+    var now = Date.now(), m = ME.pmem[coin], lead = b.spot >= b.target ? "UP" : "DOWN", cur = b.bet ? b.side : null, lvl = b.fc && b.fc.lvl;
+    if (!m || m.tk !== b.tk) {
+      var fresh = !m;
+      ME.pmem[coin] = m = { tk: b.tk, said: cur, cand: null, buy: !!b.scalp, lvl: lvl || null, lead: lead, end: b.left <= P.nEndS };
+      if (!fresh && b.tk && P.nNew && coinWatched(coin)) emit("nNew", coin, "New " + coin + " market", "The bot says " + callWords(b) + ".", cur, b.tk);
+      return;
+    }
+    if (!coinWatched(coin)) { m.said = cur; m.cand = null; m.buy = !!b.scalp; m.lvl = lvl || null; m.lead = lead; m.end = m.end || b.left <= P.nEndS; return; }
+    // the call: only once it has held for a couple of seconds (a call right on the line can blink)
+    if (cur !== m.said) {
+      if (m.cand && m.cand.v === cur && now - m.cand.t >= 2500) {
+        var was = m.said; m.said = cur; m.cand = null;
+        if (cur && confOk(b.conf)) {
+          if (was) emit("nCall", coin, coin + " call flipped to " + cur, "Was " + was + ". Now " + callWords(b) + (b.price != null ? ". Kalshi price " + Math.round(b.price) + "c." : "."), cur, b.tk + ":" + cur);
+          else emit("nBet", coin, coin + ": the bot says BET " + cur, callWords(b) + (b.price != null ? ". Kalshi price " + Math.round(b.price) + "c." : "."), cur, b.tk + ":" + cur);
+        }
+      } else if (!m.cand || m.cand.v !== cur) m.cand = { v: cur, t: now };
+    } else m.cand = null;
+    if (b.scalp && !m.buy) emit("nBuy", coin, coin + " buy signal: " + b.scalp.side + " at about " + Math.round(b.scalp.entry) + "c",
+      "Take profit near " + Math.round(b.scalp.tp) + "c, get out if it falls to " + Math.round(b.scalp.sl) + "c. On Kalshi buy " + (b.scalp.side === "UP" ? "Yes (Up)" : "No (Down)") + ".", b.scalp.side, b.tk + ":" + b.scalp.side);
+    m.buy = !!b.scalp;
+    if (lvl === "flip" && m.lvl !== "flip") emit("nFlip", coin, coin + " flip call: " + b.fc.to, "The bot thinks this ends " + b.fc.to + ". Flip risk " + Math.round(b.fc.risk) + "%" + (b.left > 0 ? ", " + leftText(b.left) + " left." : "."), b.fc.to, b.tk + ":" + b.fc.to);
+    else if (lvl === "watch" && (m.lvl === "calm" || m.lvl === "early")) emit("nWatch", coin, coin + " flip watch: " + b.fc.to, "The price is drifting toward the target. Flip risk " + Math.round(b.fc.risk) + "%.", b.fc.to, b.tk + ":" + b.fc.to);
+    if (lvl) m.lvl = lvl;
+    if (lead !== m.lead && Math.abs(b.spot - b.target) / Math.max(b.target, 1e-9) > 0.00002) {
+      emit("nCross", coin, coin + " crossed the target: " + lead + " is winning", "Price " + money(b.spot) + ", target " + money(b.target) + (b.left > 0 ? ", " + leftText(b.left) + " left." : "."), lead, b.tk + ":" + lead + ":" + Math.floor(now / 20000));
+      m.lead = lead;
+    }
+    if (!m.end && b.left <= P.nEndS && b.left > 1) { m.end = true; emit("nEnd", coin, coin + " ends in " + Math.max(1, Math.round(b.left)) + "s", "The bot says " + callWords(b) + ".", cur, b.tk); }
+    if (v && v.data && v.data.whale && Array.isArray(v.data.whale.buys)) {
+      var big = v.data.whale.alert || 1000, last = ME.whaleT[coin];
+      var fresh2 = v.data.whale.buys.filter(function (x) { return x && !x.late && x.usd >= big && typeof x.t === "number"; }).sort(function (x, y) { return x.t - y.t; });
+      if (last == null) ME.whaleT[coin] = fresh2.length ? fresh2[fresh2.length - 1].t : 0;
+      else fresh2.forEach(function (x) { if (x.t > ME.whaleT[coin]) { ME.whaleT[coin] = x.t; emit("nWhale", coin, coin + " whale: $" + Math.round(x.usd).toLocaleString("en-US") + " on " + x.side, "Paid " + Math.round(x.px) + "c each. Someone else's bet, not a call from the bot.", x.side, String(x.t)); } });
+    }
+  }
+  function meOnAuto(r) {                                    // the Your Kalshi box, and alerts for your hand trades
+    if (!ME.on) return;
+    mePaintKal();
+    var st = A.st, s = st && st.state;
+    if (!s || !st.access || !Array.isArray(s.gev)) return;
+    var rk = st.rk || "", key = "kh_gseq_" + rk.replace(/[^A-Za-z0-9-]/g, "").slice(0, 40);
+    if (ME.gseq == null || ME.gseqRk !== rk) { ME.gseqRk = rk; var saved = Number(store(key)); ME.gseq = isFinite(saved) && saved > 0 ? saved : Number(s.gseq) || 0; store(key, String(ME.gseq)); if (!(saved > 0)) return; }
+    s.gev.filter(function (e) { return e && e.i > ME.gseq; }).sort(function (a2, b2) { return a2.i - b2.i; }).forEach(function (e) {
+      ME.gseq = Math.max(ME.gseq, e.i);
+      var px = e.px != null ? Math.round(e.px) + "c" : "", paid = "you paid " + Math.round(e.e) + "c", net = e.net != null ? (e.net >= 0 ? "+" : "-") + "$" + Math.abs(e.net).toFixed(2) : "";
+      var head = { STOP: "Stop loss hit", TARGET: "Profit target hit", CUT: "Automatic stop", FLIP: "Automatic stop: the call turned", TP: "Automatic profit", SELL: "Sold" }[e.k];
+      if (e.k === "new") emit("nStop", e.c, "Watching your " + e.c + " " + e.s, e.n + " at " + Math.round(e.e) + "c. Your stop loss is on it.", e.s, "g" + e.i);
+      else if (e.k === "gone") emit("nStop", e.c, "Your " + e.c + " " + e.s + " closed", "It isn't on your Kalshi account any more (sold, or the market ended).", e.s, "g" + e.i);
+      else if (e.a === "sold") emit("nStop", e.c, (head || "Sold") + ": " + e.c + " " + e.s + " sold " + net, "Sold at about " + px + ", " + paid + ". After fees.", e.s, "g" + e.i, "stop");
+      else emit("nStop", e.c, (head || "Line hit") + ": " + e.c + " " + e.s + " at " + px, paid + (net ? ", " + net + " if you sell now" : "") + ". Sell it on Kalshi if you agree.", e.s, "g" + e.i, "stop");
+    });
+    store(key, String(ME.gseq));
+  }
+
+  /* ---------- delivering one alert: the list, a pop-up, a sound, a buzz, a system notification, the tab title */
+  var COOL = { nCall: 20000, nBet: 20000, nBuy: 90000, nFlip: 60000, nWatch: 90000, nCross: 30000, nWhale: 0, nEnd: 0, nNew: 0, nStop: 0 };
+  function quietNow() {
+    if (!P.nQuiet) return false;
+    var d = new Date(), m = d.getHours() * 60 + d.getMinutes();
+    var f = /^(\d\d):(\d\d)$/.exec(P.nQFrom || ""), t = /^(\d\d):(\d\d)$/.exec(P.nQTo || ""); if (!f || !t) return false;
+    var a = +f[1] * 60 + +f[2], b = +t[1] * 60 + +t[2];
+    return a <= b ? (m >= a && m < b) : (m >= a || m < b);
+  }
+  function emit(kind, coin, title, body, side, key, tone) {
+    if (!P.nOn || !P[kind]) return;
+    var now = Date.now(), ck = kind + ":" + coin + ":" + (key || "");
+    if (ME.cool[ck] && now - ME.cool[ck] < Math.max(COOL[kind] || 0, 4000)) return;
+    ME.cool[ck] = now;
+    var ev = { k: kind, c: coin, t: now, h: title, b: body, s: side || "", tone: tone || "" };
+    ME.hist.unshift(ev); ME.hist = ME.hist.slice(0, 40);
+    if (!ME.bellOpen) ME.unread++;
+    histSave(); meBell(); mePaintFeed();
+    var quiet = quietNow();
+    meToast(ev);
+    if (!quiet && ME.touched) { meSound(ev); if (P.nVib && navigator.vibrate) { try { navigator.vibrate(tone === "stop" ? [200, 80, 200, 80, 200] : [120, 60, 120]); } catch (e) {} } }
+    meSystem(ev, quiet);
+    if (document.hidden && P.nFlash) meFlash(ev);
+  }
+  function meTest() {
+    var was = P.nOn; P.nOn = true; var k = P.nCall; P.nCall = true;
+    emit("nCall", S.coin, "Test alert: " + S.coin + " call flipped to UP", "This is how an alert looks and sounds on this device.", "UP", "test" + Date.now());
+    P.nOn = was; P.nCall = k;
+  }
+  function toneSeq(ev) {
+    var up = ev.s === "UP", s = P.nSound;
+    if (s === "off") return [];
+    if (ev.tone === "stop") return [[880, 0, 0.14, "square"], [660, 0.17, 0.14, "square"], [880, 0.34, 0.14, "square"], [660, 0.51, 0.2, "square"]];
+    if (s === "ping") return [[up ? 1568 : 1175, 0, 0.35]];
+    if (s === "pop") return [[up ? 520 : 420, 0, 0.1, "triangle"], [up ? 780 : 300, 0.07, 0.12, "triangle"]];
+    if (s === "alarm") return [[880, 0, 0.12, "square"], [660, 0.16, 0.12, "square"], [880, 0.32, 0.12, "square"]];
+    return up ? [[784, 0, 0.25], [1175, 0.12, 0.38]] : [[1175, 0, 0.25], [784, 0.12, 0.38]];          // chime: rising for UP, falling for DOWN
+  }
+  function audioCtx() {
+    if (!ME.audio) { var C = window.AudioContext || window.webkitAudioContext; if (!C) return null; try { ME.audio = new C(); } catch (e) { return null; } }
+    if (ME.audio.state === "suspended") { try { ME.audio.resume(); } catch (e) {} }
+    return ME.audio;
+  }
+  ["pointerdown", "keydown"].forEach(function (t) { document.addEventListener(t, function () { ME.touched = true; if (P.nSound !== "off" && ME.on) audioCtx(); }, { passive: true }); });      // browsers only allow sound and buzzing after a tap or a key
+  function meSound(ev) {
+    var seq = toneSeq(ev); if (!seq.length) return;
+    var ctx = audioCtx(); if (!ctx) return;
+    var vol = Math.max(0.0002, Math.min(1, (Number(P.nVol) || 0) / 100) * 0.35), t0 = ctx.currentTime + 0.02;
+    seq.forEach(function (n) {
+      try {
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = n[3] || "sine"; o.frequency.value = n[0];
+        g.gain.setValueAtTime(0.0001, t0 + n[1]); g.gain.exponentialRampToValueAtTime(vol, t0 + n[1] + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + n[2]);
+        o.connect(g); g.connect(ctx.destination); o.start(t0 + n[1]); o.stop(t0 + n[1] + n[2] + 0.05);
+      } catch (e) {}
+    });
+  }
+  function meSwReady() {
+    if (ME.sw || !("serviceWorker" in navigator) || !/^https:$/.test(location.protocol)) return Promise.resolve(null);
+    return navigator.serviceWorker.register("kiros-sw.js").then(function () { return navigator.serviceWorker.ready; }).then(function (reg) { ME.sw = reg; return reg; }, function () { return null; });
+  }
+  function meSystem(ev, quiet) {
+    if (!P.nSys || !("Notification" in window) || Notification.permission !== "granted") return;
+    if (!document.hidden && document.hasFocus && document.hasFocus()) return;           // the page is in front: the pop-up on the page is enough
+    var opt = { body: ev.b, tag: "kiros-" + ev.k + "-" + ev.c, renotify: true, silent: quiet || P.nSound === "off" };
+    if (ME.sw && ME.sw.showNotification) { ME.sw.showNotification(ev.h, opt).catch(function () {}); return; }
+    try { var n = new Notification(ev.h, opt); n.onclick = function () { try { window.focus(); } catch (e) {} n.close(); }; }
+    catch (e) { meSwReady().then(function (reg) { if (reg) reg.showNotification(ev.h, opt).catch(function () {}); }); }     // phones only allow them through a service worker
+  }
+  function meFlash(ev) {
+    meFlashStop(); ME.flashOn = true;
+    var a = "(" + Math.max(1, ME.unread) + ") " + ev.h, b = BASE_TITLE, i = 0;
+    document.title = a;
+    ME.flashT = setInterval(function () { i++; document.title = i % 2 ? b : a; if (!document.hidden) meFlashStop(); }, 1000);
+  }
+  function meFlashStop() { if (ME.flashT) clearInterval(ME.flashT); ME.flashT = null; if (ME.flashOn) { ME.flashOn = false; S.lastTitle = 0; var v = S.view && S.view[S.coin]; if (v) updateTitle(v); else resetTitle(); } }
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) meFlashStop(); });
+  function evCls(ev) { return ev.tone === "stop" ? "warn" : ev.s === "UP" ? "up" : ev.s === "DOWN" ? "down" : "flat"; }
+  function meToast(ev) {
+    var box = $("toasts"); if (!box) return;
+    var el = document.createElement("div");
+    el.className = "toast " + evCls(ev); el.setAttribute("role", ev.tone === "stop" ? "alert" : "status");
+    el.innerHTML = "<div class='tt'><b>" + esc(ev.h) + "</b><button type='button' class='tx' aria-label='Close'>&times;</button></div><p>" + esc(ev.b) + "</p>" +
+      (ev.c && ev.c !== S.coin && COINS.some(function (x) { return x[0] === ev.c; }) ? "<button type='button' class='tgo' data-coin='" + esc(ev.c) + "'>Show " + esc(ev.c) + "</button>" : "");
+    box.insertBefore(el, box.firstChild);
+    while (box.children.length > 4) box.removeChild(box.lastChild);
+    var kill = function () { if (el.parentNode) { el.classList.add("out"); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 250); } };
+    el.querySelector(".tx").addEventListener("click", kill);
+    var go = el.querySelector(".tgo"); if (go) go.addEventListener("click", function () { var btn = $("coins").querySelector('[data-coin="' + go.dataset.coin + '"]'); if (btn) btn.click(); kill(); });
+    setTimeout(kill, ev.tone === "stop" ? 25000 : 9000);
+  }
+
+  /* ---------- the bell: every alert on this device, newest first */
+  function agoMs(t) { return agoText((Date.now() - t) / 1000); }
+  function histRow(ev) {
+    return "<li class='hrow " + evCls(ev) + "'><span class='hcoin'>" + esc(ev.c || "") + "</span><div><b>" + esc(ev.h) + "</b><p>" + esc(ev.b) + "</p></div><span class='hage' data-t='" + ev.t + "'>" + esc(agoMs(ev.t)) + "</span></li>";
+  }
+  function meBell() {
+    var n = $("bellNum"); if (!n) return;
+    n.hidden = !ME.unread; n.textContent = ME.unread > 9 ? "9+" : String(ME.unread);
+    if (ME.bellOpen) mePaintBell();
+  }
+  function mePaintBell() {
+    var box = $("bellBox");
+    box.innerHTML = "<div class='bh'><b>Your alerts</b><span class='sp'></span><button type='button' class='link' data-bell='opts'>Choose alerts</button>" + (ME.hist.length ? "<button type='button' class='link' data-bell='clear'>Clear</button>" : "") + "</div>" +
+      (P.nOn ? "" : "<p class='sm warnc'>Alerts are switched off on this device.</p>") +
+      (ME.hist.length ? "<ul class='hlist'>" + ME.hist.slice(0, 30).map(histRow).join("") + "</ul>" : "<p class='sm'>Nothing yet. Alerts show up here, as a pop-up on the page, and with a sound if you want one.</p>");
+  }
+  function meBellOpen(on) {
+    var box = $("bellBox"), btn = $("bellBtn"); if (!box || !btn) return;
+    ME.bellOpen = !!on; box.hidden = !on; btn.setAttribute("aria-expanded", on ? "true" : "false");
+    if (on) { ME.unread = 0; histSave(); meBell(); mePaintBell(); }
+  }
+  $("bellBtn").addEventListener("click", function (ev) { ev.stopPropagation(); meBellOpen(!ME.bellOpen); });
+  $("bellBox").addEventListener("click", function (ev) {
+    ev.stopPropagation();
+    var b = ev.target.closest && ev.target.closest("[data-bell]"); if (!b) return;
+    if (b.dataset.bell === "clear") { ME.hist = []; ME.unread = 0; histSave(); meBell(); mePaintBell(); mePaintFeed(); }
+    if (b.dataset.bell === "opts") { meBellOpen(false); meSheet(true, "alerts"); }
+  });
+  document.addEventListener("click", function () { if (ME.bellOpen) meBellOpen(false); });
+  function mePaintFeed() {
+    if (!R || !R.feed) return;
+    var today = ME.hist.filter(function (e) { return new Date(e.t).toDateString() === new Date().toDateString(); }).length;
+    setHTML(R.feed, (P.nOn ? "" : "<p class='sm warnc'>Alerts are off on this device. <button type='button' class='link sm' data-me='open' data-tab='alerts'>Turn them on</button></p>") +
+      (ME.hist.length ? "<ul class='hlist'>" + ME.hist.slice(0, 6).map(histRow).join("") + "</ul><p class='sm'>" + today + " today. All of them are under the Alerts button at the top.</p>"
+        : "<p class='sm'>No alerts yet. Right now you hear about " + alertSummary() + ".</p>"));
+  }
+  function mePaintFeedAges() { Array.prototype.forEach.call(document.querySelectorAll(".hage[data-t]"), function (el) { setText(el, agoMs(Number(el.dataset.t))); }); }
+  function alertSummary() {
+    var on = ALERT_TYPES.filter(function (t) { return P[t[0]]; }).map(function (t) { return t[1].toLowerCase(); });
+    var where = P.nCoins === "all" ? "every coin" : P.nCoins === "pick" ? ((P.nList || []).join(", ") || "no coins yet") : "the coin you're looking at";
+    return (on.length ? on.slice(0, 4).join(", ") + (on.length > 4 ? " and more" : "") : "nothing") + " on " + where;
+  }
+
+  /* ---------- calls on the coin tabs, tab looks, the board's look */
+  function mePaintTabCalls() {
+    var box = $("coins"); if (!box) return;
+    Array.prototype.forEach.call(box.children, function (b) {
+      var cc = b.querySelector(".ccall"); if (!cc) return;
+      var x = ME.pulse[b.dataset.coin];
+      if (P.tShow === "none" || !x || !x.side || (b.dataset.coin !== S.coin && (Date.now() - x.at > 20000 || (x.age || 0) > 30 || x.left <= 0))) { cc.hidden = true; return; }      // nobody is watching that coin right now: no old call on its tab
+      var toss = x.conf === "TOSS-UP";
+      cc.hidden = false; cc.className = "ccall " + (toss ? "flat" : x.side === "UP" ? "up" : "down");
+      cc.textContent = toss ? "\u2013" : (x.side === "UP" ? "\u25B2" : "\u25BC") + (P.tShow === "pct" ? Math.round((x.prob || 0) * 100) : "");
+      if (x.fc && x.fc.lvl === "flip") { cc.className += " fl"; cc.textContent = "FLIP " + (x.fc.to === "UP" ? "\u25B2" : "\u25BC"); }
+    });
+  }
+  function meTabsApply() {
+    var body = document.body;
+    ["line", "pills", "boxes"].forEach(function (k) { body.classList.toggle("tabs-" + k, P.tStyle === k); });
+    var mb = $("modebar"); if (mb) { var ab = mb.querySelector('[data-mode="auto"]'); if (ab) ab.hidden = !P.tAuto; mb.hidden = !P.tAuto; }
+    if (!P.tAuto && A.mode === "auto") setMode("board");
+    mePaintTabCalls();
+  }
+  function rebuildCoins() { var box = $("coins"); if (!box) return; box.innerHTML = ""; buildCoinButtons(); if (S.token) { renderView(); schedule(0); } }
+  function mePrefsApply() {
+    var root = document.documentElement, ac = ACCENTS.filter(function (a) { return a[0] === P.accent; })[0] || ACCENTS[0];
+    root.style.setProperty("--brand", ac[1]);
+    if (P.cb) { root.style.setProperty("--up", "#4C9BEF"); root.style.setProperty("--down", "#F2A23A"); root.style.setProperty("--upbg", "rgba(76,155,239,.14)"); root.style.setProperty("--downbg", "rgba(242,162,58,.14)"); }
+    else { ["--up", "--down", "--upbg", "--downbg"].forEach(function (k) { root.style.removeProperty(k); }); }
+    root.style.fontSize = P.text === "s" ? "93.75%" : P.text === "l" ? "110%" : "";
+    document.body.classList.toggle("compact", !!P.compact);
+    mePanelsApply();
+    if (typeof musicSync === "function") musicSync();
+  }
+  function mePanelsApply() {
+    var hide = P.hide || {};
+    if (R && R.board) Array.prototype.forEach.call(R.board.querySelectorAll("[data-panel]"), function (el) { el.classList.toggle("me-off", !!hide[el.dataset.panel]); });
+    var rw = $("recWrap"); if (rw) rw.classList.toggle("me-off", !!hide.record);
+  }
+
+  /* ---------- your calls: "I took this", graded when the market ends */
+  function mePicks() {
+    ME.pkBusy = true; ME.pkNext = Infinity; ME.pkAgain = false;
+    var tok = S.token;
+    rpc("board_me", { p_token: tok, p_have: ME.pkVer || 0 }).then(function (r) {
+      ME.pkBusy = false;
+      if (!ME.on || S.token !== tok) return;
+      if (r && r.ok && !r.same) { ME.picks = r; ME.pkVer = r.ver || 0; mePaintMine(); }
+      var open = ME.picks && (ME.picks.picks || []).filter(function (p) { return !p.r; }), next = 60000;
+      if (open && open.length) { var cl = Math.min.apply(null, open.map(function (p) { return p.cl; })) * 1000; next = Math.max(5000, Math.min(next, cl + 25000 - Date.now())); if (cl + 25000 < Date.now()) next = 20000; }
+      ME.pkNext = ME.pkAgain ? Date.now() : Date.now() + next;             // (something changed while this was on its way: ask again now)
+    }, function (e) {
+      ME.pkBusy = false;
+      if (e && e.status === 404) { ME.pkOff = true; mePaintMine(); return; }
+      if (/expired/i.test(String((e && e.message) || ""))) return;
+      ME.pkNext = Date.now() + 30000;
+    });
+  }
+  function pickRow(p) {
+    var res = p.r === "W" ? "<span class='chip up'>Won " + esc(usd(p.n, true)) + "</span>" : p.r === "L" ? "<span class='chip down'>Lost " + esc(usd(p.n, true)) + "</span>" : p.r === "X" ? "<span class='chip'>No result</span>" : "<span class='chip'>Open</span>";
+    return "<li><span class='at-side " + (p.s === "UP" ? "up" : "down") + "'>" + (p.s === "UP" ? "&#9650; " : "&#9660; ") + esc(p.c) + " " + esc(p.s) + "</span><span class='sm'>" + esc(clockTime(p.cl)) + " market, " + Math.round(p.p) + "c, " + esc(usd(p.a)) + "</span>" + res + "</li>";
+  }
+  function mePaintMine() {
+    if (!R || !R.mine) return;
+    if (ME.pkOff) { setHTML(R.mine, "<p class='sm'>Your calls need the newest database update. The owner runs auto_setup.sql in Supabase once.</p>"); setText(R.mineSum, ""); return; }
+    var v = S.view[S.coin], d = v && v.data, k = (d && d.kalshi) || {}, pk = ME.picks, list = (pk && pk.picks) || [];
+    var here = d ? list.filter(function (p) { return p.tk === d.ticker; }) : [];
+    var upPx = k.yes_ask != null ? Math.round(k.yes_ask) : null, dnPx = k.no_ask != null ? Math.round(k.no_ask) : null;
+    var left = v ? leftNow(v) : 0, open = d && left > 3;
+    var h = "";
+    if (open) {
+      var amt = ME.amtTyped != null ? ME.amtTyped : P.amt;
+      h += "<div class='pickbox'><p class='sm'>Took a call on Kalshi? Mark it and the bot grades it when this " + esc(d.coin) + " market ends.</p>" +
+        "<div class='pickrow'><label class='sm' for='mePickAmt'>Amount</label><span class='dol'>$</span><input class='at-in' id='mePickAmt' data-me-in='amt' type='number' inputmode='decimal' min='0.01' step='1' value='" + esc(amt) + "'>" +
+        "<label class='sm' for='mePickPx'>Paid</label><input class='at-in' id='mePickPx' data-me-in='px' type='number' inputmode='numeric' min='1' max='99' step='1' placeholder='now' title='Leave empty to use Kalshi&rsquo;s price right now' value='" + esc(ME.pxTyped || "") + "'><span class='sm'>cents (empty: the price now)</span></div>" +
+        "<div class='at-row'><button type='button' class='at-btn up-b' data-me='pick' data-side='UP'" + (upPx == null && !ME.pxTyped ? " disabled" : "") + ">I took UP" + (upPx != null ? " " + upPx + "c" : "") + "</button>" +
+        "<button type='button' class='at-btn dn-b' data-me='pick' data-side='DOWN'" + (dnPx == null && !ME.pxTyped ? " disabled" : "") + ">I took DOWN" + (dnPx != null ? " " + dnPx + "c" : "") + "</button></div></div>";
+    }
+    here.forEach(function (p) {
+      var n = Math.floor(p.a * 100 / p.p);
+      h += "<p class='picked'><span class='at-side " + (p.s === "UP" ? "up" : "down") + "'>" + (p.s === "UP" ? "&#9650; UP" : "&#9660; DOWN") + "</span> " + esc(n + " contracts at " + Math.round(p.p) + "c (" + usd(p.a) + "). Pays " + usd(n) + " if it ends " + p.s + ".") +
+        (!p.r ? " <button type='button' class='link sm' data-me='unpick' data-id='" + p.id + "'>Remove</button>" : "") + "</p>";
+    });
+    h += "<p class='at-msg' data-k='pickMsg' role='status' aria-live='polite'>" + esc(ME.msg.pick || "") + "</p>";
+    var tot = pk && pk.tot;
+    if (tot && (tot.w + tot.l)) {
+      var dayNet = 0, dw = 0, dl = 0, today = new Date().toDateString(), streak = 0, sk = null;
+      list.forEach(function (p) { if (p.r && new Date(p.cl * 1000).toDateString() === today && (p.r === "W" || p.r === "L")) { dayNet += Number(p.n) || 0; if (p.r === "W") dw++; else dl++; } });
+      list.filter(function (p) { return p.r === "W" || p.r === "L"; }).some(function (p) { if (sk == null) sk = p.r; if (p.r !== sk) return true; streak++; return false; });
+      h += "<div class='mstats'><div><span>Record</span><b>" + tot.w + "&ndash;" + tot.l + "</b><small>" + Math.round(100 * tot.w / (tot.w + tot.l)) + "% won</small></div>" +
+        "<div><span>Profit</span><b class='" + cls(tot.net) + "'>" + esc(usd(tot.net, true)) + "</b><small>on " + esc(usd(tot.put)) + " in, after fees</small></div>" +
+        "<div><span>Today</span><b class='" + cls(dayNet) + "'>" + esc(usd(dayNet, true)) + "</b><small>" + dw + " won, " + dl + " lost</small></div>" +
+        "<div><span>Streak</span><b>" + streak + "</b><small>" + (sk === "W" ? "win" : "loss") + (streak === 1 ? "" : (sk === "W" ? "s" : "es")) + " in a row</small></div></div>";
+      setText(R.mineSum, tot.open ? tot.open + " open" : "");
+    } else setText(R.mineSum, "");
+    var past = list.filter(function (p) { return !(d && p.tk === d.ticker); }).slice(0, 6);
+    if (past.length) h += "<ul class='plist'>" + past.map(pickRow).join("") + "</ul>";
+    else if (!here.length && !(tot && tot.w + tot.l)) h += "<p class='sm'>Your record starts with your first marked call. Kalshi's fee is counted. It's an estimate when you sell early, since it assumes you held to the end.</p>";
+    var foc = document.activeElement, fid = foc && foc.id;
+    setHTML(R.mine, h);
+    if (fid && (fid === "mePickAmt" || fid === "mePickPx")) { var el = $(fid); if (el) { el.focus(); try { el.setSelectionRange(el.value.length, el.value.length); } catch (e) {} } }
+  }
+  function mePick(side) {
+    var v = S.view[S.coin], d = v && v.data; if (!d) return;
+    var k = d.kalshi || {}, typed = Number(ME.pxTyped), px = typed >= 1 && typed <= 99 ? typed : (side === "UP" ? k.yes_ask : k.no_ask);
+    var amt = Number(ME.amtTyped != null ? ME.amtTyped : P.amt);
+    if (!(px >= 1 && px <= 99)) { ME.msg.pick = "No Kalshi price right now. Type what you paid in cents."; return mePaintMine(); }
+    if (!(amt >= 0.01)) { ME.msg.pick = "Type how many dollars you put in."; return mePaintMine(); }
+    if (ME.amtTyped != null) { prefSet("amt", amt); ME.amtTyped = null; }
+    ME.msg.pick = "Saving...";  mePaintMine();
+    rpc("board_pick", { p_token: S.token, p_coin: d.coin, p_ticker: d.ticker, p_close: Math.round(d.close_ts), p_side: side, p_price: Math.round(px * 100) / 100, p_amount: Math.round(amt * 100) / 100 }).then(function () {
+      ME.msg.pick = "Marked: " + side + " at " + Math.round(px) + "c. It's graded when the market ends."; ME.pxTyped = ""; ME.pkVer = 0; ME.pkNext = 0; ME.pkAgain = true; mePaintMine();
+    }, function (e) {
+      var m = String((e && e.message) || "");
+      ME.msg.pick = e && e.status === 404 ? "Your calls need the newest database update." : /slow down/i.test(m) ? "That's a lot of calls in an hour. Try again later." : /bad pick/i.test(m) ? "That market has ended. Mark the next one." : "Couldn't save that. Try again.";
+      mePaintMine();
+    });
+  }
+
+  /* ---------- your Kalshi: balance, the trades you placed by hand, the stop loss, your record from Kalshi */
+  var STOP_WORD = { auto: "automatic stop loss", manual: "", off: "no stop loss" };
+  function guardLine(st) {
+    var s = Object.assign({}, AUTO_DEF, st.settings || {}, A.set || {});
+    if (s.guard_on === false) return "Not watching your Kalshi trades (switched off).";
+    var stop = s.g_stop === "manual" ? "stop loss " + s.g_stop_c + "c under what you paid" : STOP_WORD[s.g_stop] || STOP_WORD.auto;
+    var tp = s.g_tp === "manual" ? ", profit target " + s.g_tp_c + "c over" : s.g_tp === "auto" ? ", automatic profit" : "";
+    return "Watching your trades: " + stop + tp + ". " + (s.guard_act === "sell" ? "It sells for you when a line is hit." : "It alerts you when a line is hit.");
+  }
+  function handRows(st) {
+    var s = st.state || {}, h = s.hand || {}, keys = Object.keys(h).filter(function (k) { return !h[k].done && h[k].n > 0; });
+    if (!keys.length) return "<p class='sm'>No open trades on the 15-minute crypto markets. Buy on Kalshi as usual: the bot finds the trade within a few seconds and watches it.</p>";
+    var set = Object.assign({}, AUTO_DEF, st.settings || {}, A.set || {});
+    return "<ul class='hand'>" + keys.map(function (tk) {
+      var x = h[tk], up = x.s === "UP", pn = x.pn, line = set.g_stop === "manual" ? "stop at " + Math.max(1, Math.round(x.e - set.g_stop_c)) + "c" : set.g_stop === "auto" ? "automatic stop" : "no stop";
+      return "<li data-tk='" + esc(tk) + "'><div class='hh'><span class='at-side " + (up ? "up" : "down") + "'>" + (up ? "&#9650; " : "&#9660; ") + esc(x.c) + " " + esc(x.s) + "</span><span class='sm'>" + x.n + " at " + Math.round(x.e) + "c</span>" +
+        "<b class='hpn " + cls(pn) + "' data-hpn='1'>" + (pn != null ? esc(usd(pn, true)) : "-") + "</b></div>" +
+        "<div class='hs sm'><span data-hbid='1'>" + (x.bid != null ? "sells at " + Math.round(x.bid) + "c now" : "waiting for a price") + "</span><span>" + esc(line) + "</span>" +
+        "<button type='button' class='at-btn sm danger' data-me='sell' data-coin='" + esc(x.c) + "'>Sell now</button></div></li>";
+    }).join("") + "</ul>";
+  }
+  function mePaintKal() {
+    if (!R || !R.mykal) return;
+    var st = A.st;
+    if (!st) { setHTML(R.mykal, "<p class='sm'>Loading...</p>"); setText(R.mykalAge, ""); return; }
+    if (st.missing) { setHTML(R.mykal, "<p class='sm'>Not switched on yet. The owner runs auto_setup.sql in Supabase once.</p>"); return; }
+    if (!st.access) return mePaintUnlock(st);
+    R.mykal.dataset.sig = "";
+    var s = st.state || {}, k = s.kal || null, key = st.key, h = "";
+    if (!key) {
+      h = "<p>Connect your Kalshi account to see your balance and open trades here, and to put a stop loss on the trades you place.</p>" +
+        "<div class='at-row'><button type='button' class='at-btn go' data-me='key'>Connect your Kalshi key</button></div><p class='sm'>The key is sealed in this browser before it's sent, so nobody can read it. Make it on Kalshi with trading turned on if you want the bot to sell for you.</p>";
+      setHTML(R.mykal, h); setText(R.mykalAge, ""); return;
+    }
+    if (key.status && key.status.ok === false) h += "<p class='at-warn'>Your Kalshi key isn't working: " + esc(key.status.msg || "") + " <button type='button' class='link sm' data-me='key'>Fix it</button></p>";
+    var bal = s.live && s.live.bal != null ? s.live.bal : (key.status && key.status.bal != null ? key.status.bal : null), tot = k && k.tot;
+    h += "<div class='mstats'><div><span>Balance</span><b>" + (bal != null ? esc(usd(bal)) : "-") + "</b><small>on Kalshi</small></div>" +
+      "<div><span>Today</span><b class='" + cls(tot ? tot.day : 0) + "'>" + (tot ? esc(usd(tot.day, true)) : "-") + "</b><small>" + (tot ? tot.dw + " won, " + tot.dl + " lost" : "after fees") + "</small></div>" +
+      "<div><span>All time</span><b class='" + cls(tot ? tot.net : 0) + "'>" + (tot ? esc(usd(tot.net, true)) : "-") + "</b><small>" + (tot ? tot.w + " won, " + tot.l + " lost" : "15-minute crypto") + "</small></div></div>";
+    h += "<h4>Open trades</h4><div data-me-hand='1'>" + handRows(st) + "</div>";
+    h += "<p class='sm guard'>" + esc(guardLine(st)) + " <button type='button' class='link sm' data-me='open' data-tab='kalshi'>Change</button></p>";
+    if (s.pos && Object.keys(s.pos).length) h += "<p class='sm'>The Auto-trader is finishing " + Object.keys(s.pos).length + " trade" + (Object.keys(s.pos).length === 1 ? "" : "s") + " it opened before it closed for maintenance.</p>";
+    if (k && k.rows && k.rows.length) h += "<h4>Recent results</h4><ul class='plist'>" + k.rows.slice(0, 5).map(function (r) {
+      return "<li><span>" + esc(r[2]) + "</span><span class='sm'>" + esc(clockTime(r[1])) + "</span><b class='" + cls(r[3]) + "'>" + esc(usd(r[3], true)) + "</b></li>"; }).join("") + "</ul><p class='sm'>From your Kalshi account: every 15-minute crypto market you traded, by hand or not, after fees.</p>";
+    if (!s.ts) h = "<p class='sm'>The bot is picking up your account. This takes a few seconds.</p>" + h;
+    setHTML(R.mykal, h);
+    mePaintKalLive();
+  }
+  function mePaintKalLive() {
+    if (!R || !R.mykalAge || !A.st || !A.st.access || !A.st.key) return;
+    var a = typeof botAge === "function" ? botAge() : null;
+    setText(R.mykalAge, a == null ? "" : a > 45 ? "bot quiet for " + Math.round(a) + "s" : "updated " + (a < 5 ? "just now" : Math.round(a) + "s ago"));
+  }
+  function mePaintUnlock(st) {
+    var pay = st.pay_url || AUTO_PAY;
+    if (st.trial) { setHTML(R.mykal, "<p>Your balance, your open trades and a stop loss that watches the trades you place on Kalshi.</p><p class='at-warn'>The free trial doesn't include this. <a href='./#get'>Get full access</a> first.</p>"); return; }
+    if (R.mykal.dataset.sig === "lock|" + pay) return;
+    R.mykal.dataset.sig = "lock|" + pay; R.mykal.__h = null;                 // (written straight in, so the next normal paint must not think it is already showing)
+    R.mykal.innerHTML = "<p>See your Kalshi balance and open trades here, get your real win and loss record, and put a stop loss on the trades you place yourself. The bot sells at your line or just alerts you.</p>" +
+      "<p class='sm'>$15, paid once. Already paid for the Auto-trader? You have it: it unlocks on its own. Trading can lose money.</p>" +
+      (pay ? "<a class='at-btn go' href='" + esc(pay) + "' target='_blank' rel='noopener noreferrer'>Unlock for $15</a>" : "") +
+      "<form data-me-form='buy' class='at-bet' style='margin-top:10px' autocomplete='off' novalidate><input class='at-in code' data-me-in='rcpt' type='text' autocapitalize='characters' autocorrect='off' spellcheck='false' maxlength='60' placeholder='Receipt number, 1234-5678' aria-label='Receipt number from your Stripe email' style='max-width:none'><button type='submit' class='at-btn sm go'>Unlock</button></form>" +
+      "<p class='at-msg' data-me-msg='buy' role='status' aria-live='polite'></p>";
+  }
+  function meBuy(form) {
+    if (ME.buying) return;
+    var inp = form.querySelector("[data-me-in=rcpt]"), msg = R.mykal.querySelector("[data-me-msg=buy]"), btn = form.querySelector("button");
+    var say = function (t, kind) { if (msg) { msg.className = "at-msg " + (kind || ""); msg.textContent = t; } };
+    var v = inp.value.trim();
+    if (v.replace(/[^A-Za-z0-9]/g, "").length < 6) return say("Type your receipt number first. It looks like 1234-5678.", "err");
+    ME.buying = true; btn.disabled = true; say("Checking. This takes a few seconds.");
+    var tok = S.token, end = function (t, kind) { ME.buying = false; btn.disabled = false; say(t, kind); };
+    rpc("auto_buy_request", { p_token: tok, p_receipt: v }).then(function (id) {
+      var t0 = Date.now();
+      (function poll() {
+        if (S.token !== tok) return;
+        if (Date.now() - t0 > 100000) return end("This is taking longer than usual. Try again in a minute.", "err");
+        rpc("auto_buy_result", { p_token: tok, p_id: id }).then(function (r) {
+          if (!r || r.status === "pending") return setTimeout(poll, 1200);
+          if (r.status === "ok") { end("Unlocked.", "ok"); R.mykal.dataset.sig = ""; autoNow(0); return; }
+          end(r.message || "That receipt didn't work.", "err");
+        }, function () { setTimeout(poll, 1500); });
+      })();
+    }, function (e) { if (/have/i.test(String((e && e.message) || ""))) { end("You already have it.", "ok"); return autoNow(0); } end(autoFriendly(e), "err"); });
+  }
+  function meSaveSettings(patch) {                          // the stop loss settings are saved with the account, so the bot uses them
+    if (!A.st || !A.st.access) return;
+    A.set = Object.assign({}, AUTO_DEF, A.st.settings || {}, A.set || {}, patch);
+    A.editAt = Date.now();
+    meSaved("Saving...");
+    clearTimeout(ME.saveT);
+    ME.saveT = setTimeout(function () {
+      ME.saveT = null;
+      var sent = JSON.stringify(A.set);
+      rpc("auto_save", { p_token: S.token, p_settings: A.set }).then(function (r) {
+        if (r && r.settings) { A.st.settings = r.settings; if (JSON.stringify(A.set) === sent) A.set = Object.assign({}, AUTO_DEF, r.settings); }
+        meSaved("Saved"); mePaintKal(); autoNow(300);
+      }, function (e) { meSaved(autoFriendly(e)); });
+    }, 450);
+    mePaintSheet(); mePaintKal();
+  }
+  function meSaved(t) { var el = $("meSaved"); if (el) el.textContent = t || ""; }
+
+  /* ---------- flip calls: how they turned out */
+  function fcStats(coin) {
+    var coins = (S.rec && S.rec.data && S.rec.data.coins) || {}, one = coins[coin] && coins[coin].fc, n = 0, ok = 0;
+    Object.keys(coins).forEach(function (c) { var f = coins[c].fc; if (f) { n += f.n | 0; ok += f.ok | 0; } });
+    return { one: one || null, n: n, ok: ok };
+  }
+  function paintFcRec(r, coin) {
+    if (!r || !r.fcRec) return;
+    var f = fcStats(coin);
+    if (!f.one || !f.one.n) { r.fcRec.hidden = true; return; }
+    r.fcRec.hidden = false; setText(r.fcRec, "The bot's flip calls on " + coin + ": " + f.one.ok + " of " + f.one.n + " right (" + Math.round(100 * f.one.ok / f.one.n) + "%).");
+  }
+  function mePaintFc() {
+    if (!R || !R.fcp) return;
+    var f = fcStats(S.coin), one = f.one, h = "";
+    setText(R.fcpSum, f.n ? f.ok + " of " + f.n + " right, all coins" : "");
+    if (one && one.n) {
+      h += "<p><b>" + one.ok + " of " + one.n + "</b> flip calls on " + esc(S.coin) + " were right (" + Math.round(100 * one.ok / one.n) + "%).</p>";
+      h += "<ul class='plist'>" + one.r.slice().reverse().slice(0, 6).map(function (x) {
+        return "<li><span class='at-side " + (x[1] === "UP" ? "up" : "down") + "'>" + (x[1] === "UP" ? "&#9650; " : "&#9660; ") + esc(x[1]) + "</span><span class='sm'>" + esc(clockTime(x[0])) + " market, called with " + esc(tlMin(x[3])) + " left at " + x[4] + "%</span>" +
+          (x[2] ? "<span class='chip up'>Right</span>" : "<span class='chip down'>Wrong</span>") + "</li>"; }).join("") + "</ul>";
+    } else h += "<p class='sm'>No flip calls graded on " + esc(S.coin) + " yet.</p>";
+    h += "<p class='sm'>A flip call is the bot saying a market will end on the other side before the price gets there, from the price's own direction and speed (not Kalshi's prices). " +
+      "A call is right when the market ends on the side it called. Called flips are hard, so even 40% right can be useful when the price you pay is low.</p>";
+    setHTML(R.fcp, h);
+    var v = S.view[S.coin]; if (v && R.fcRec) paintFcRec(R, S.coin);
+  }
+
+  /* ---------- Customize */
+  function seg(name, opts, cur, attr) {
+    return "<div class='seg mes' role='group' aria-label='" + esc(name) + "'>" + opts.map(function (o) { return "<button type='button' data-" + (attr || "pref") + "='" + esc(o[0]) + "' data-v='" + esc(o[1]) + "' aria-pressed='" + (String(cur) === String(o[1]) ? "true" : "false") + "'>" + esc(o[2]) + "</button>"; }).join("") + "</div>";
+  }
+  function sw(key, title, sub, on, attr) {
+    return "<label class='at-switch'><input type='checkbox' data-" + (attr || "pref") + "='" + esc(key) + "'" + (on ? " checked" : "") + "><span><b>" + esc(title) + "</b>" + (sub ? "<small>" + esc(sub) + "</small>" : "") + "</span></label>";
+  }
+  var SHEET_TABS = [["alerts", "Alerts"], ["board", "Board"], ["tabs", "Tabs"], ["look", "Look"], ["kalshi", "Stop loss"]];
+  function meSheet(on, tab) {
+    var el = $("meSheet"); if (!el) return;
+    if (tab) ME.tab = tab;
+    ME.sheet = !!on; el.hidden = !on; $("custBtn").setAttribute("aria-expanded", on ? "true" : "false");
+    document.body.classList.toggle("sheet-open", !!on);
+    if (!on) { if (ME.lastFocus && ME.lastFocus.focus) { try { ME.lastFocus.focus(); } catch (e) {} } return; }
+    ME.lastFocus = document.activeElement;
+    if (!el.dataset.built) meSheetBuild();
+    mePaintSheet();
+    var c = el.querySelector(".mclose"); if (c) c.focus();
+  }
+  function meSheetBuild() {
+    var el = $("meSheet");
+    el.dataset.built = "1";
+    el.innerHTML = "<div class='mback' data-me='close'></div><div class='mpanel2'><div class='mtop'><h2 id='meTitle'>Customize</h2><span class='sm' id='meSaved' role='status' aria-live='polite'></span><button type='button' class='mclose' data-me='close' aria-label='Close'>&times;</button></div>" +
+      "<div class='mtabs' role='tablist'>" + SHEET_TABS.map(function (t) { return "<button type='button' role='tab' data-me='tab' data-tab='" + t[0] + "' aria-selected='false'>" + t[1] + "</button>"; }).join("") + "</div>" +
+      "<div class='mbody' data-me-body='1'></div>" +
+      "<div class='mlook' data-me-look='1' hidden>" + LOOK_HTML + "</div></div>";
+    LKH = bind(el.querySelector("[data-me-look]"));
+    el.addEventListener("click", meSheetClick);
+    el.addEventListener("change", meSheetChange);
+    el.addEventListener("input", meSheetInput);
+  }
+  function mePaintSheet() {
+    var el = $("meSheet"); if (!el || !el.dataset.built || el.hidden) return;
+    Array.prototype.forEach.call(el.querySelectorAll(".mtabs button"), function (b) { b.setAttribute("aria-selected", b.dataset.tab === ME.tab ? "true" : "false"); });
+    var body = el.querySelector("[data-me-body]"), look = el.querySelector("[data-me-look]"), h = "";
+    look.hidden = ME.tab !== "look";
+    var foc = document.activeElement, fk = foc && foc.dataset && (foc.dataset.pref || foc.dataset.set || foc.dataset.meIn);
+    if (ME.tab === "alerts") {
+      var perm = !("Notification" in window) ? "This browser can't show system notifications." : Notification.permission === "denied" ? "Blocked in this browser's site settings. Allow notifications for this site there." : Notification.permission === "granted" ? "Allowed." : "Your browser asks the first time you switch this on.";
+      h = sw("nOn", "Alerts on this device", "They work while this page is open, even in a background tab.", P.nOn) +
+        "<h4>Which coins</h4>" + seg("Which coins", [["nCoins", "view", "The coin I'm looking at"], ["nCoins", "all", "All coins"], ["nCoins", "pick", "Pick coins"]], P.nCoins) +
+        (P.nCoins === "pick" ? "<div class='at-chips mchips'>" + COINS.map(function (c) { return "<button type='button' class='at-chip' data-coinpick='" + c[0] + "' aria-pressed='" + ((P.nList || []).indexOf(c[0]) >= 0) + "'>" + c[0] + "</button>"; }).join("") + "</div>" : "") +
+        "<h4>Tell me when</h4>" + ALERT_TYPES.map(function (t) { return sw(t[0], t[1], t[2], P[t[0]]); }).join("") +
+        (P.nEnd ? "<div class='at-field'><span class='lbl'>Warn me with this much time left</span>" + seg("Time left", [["nEndS", 30, "30s"], ["nEndS", 60, "1 min"], ["nEndS", 120, "2 min"], ["nEndS", 180, "3 min"]], P.nEndS) + "</div>" : "") +
+        "<div class='at-field'><span class='lbl'>Only calls at least this strong (for the call and bet alerts)</span>" + seg("Strength", [["nConf", "any", "Any"], ["nConf", "lean", "Lean"], ["nConf", "strong", "Strong"], ["nConf", "very", "Very strong"]], P.nConf) + "</div>" +
+        "<h4>How</h4><div class='at-field'><span class='lbl'>Sound</span>" + seg("Sound", [["nSound", "chime", "Chime"], ["nSound", "ping", "Ping"], ["nSound", "pop", "Pop"], ["nSound", "alarm", "Alarm"], ["nSound", "off", "Off"]], P.nSound) + "</div>" +
+        (P.nSound !== "off" ? "<div class='at-field'><label for='meVol'>Volume: <span>" + P.nVol + "%</span></label><input class='at-range' id='meVol' data-pref='nVol' type='range' min='5' max='100' step='5' value='" + P.nVol + "'></div>" : "") +
+        "<p class='sm'>The chime rises for UP and falls for DOWN. A stop loss always uses the alarm.</p>" +
+        sw("nVib", "Vibrate", "On phones that allow it.", P.nVib) + sw("nSys", "System notifications", perm, P.nSys) + sw("nFlash", "Blink the browser tab", "When the page is in the background.", P.nFlash) +
+        sw("nQuiet", "Quiet hours", "Alerts still show on the page and in the list, with no sound, buzz or notification.", P.nQuiet) +
+        (P.nQuiet ? "<div class='at-two'><div class='at-field'><label for='meQf'>From</label><input class='at-in' id='meQf' type='time' data-pref='nQFrom' value='" + esc(P.nQFrom) + "'></div><div class='at-field'><label for='meQt'>To</label><input class='at-in' id='meQt' type='time' data-pref='nQTo' value='" + esc(P.nQTo) + "'></div></div>" : "") +
+        "<div class='at-row'><button type='button' class='at-btn' data-me='test'>Send a test alert</button></div>" +
+        "<p class='sm'>To get alerts with this page closed, use the bot's alerts in your Discord server. With the $15 unlock, your stop loss can also message your phone (Auto-trader tab, Key and alerts).</p>";
+    } else if (ME.tab === "board") {
+      h = "<h4>Show these boxes</h4>" + PANELS.map(function (p) { return sw("panel:" + p[0], p[1], p[2], !(P.hide || {})[p[0]]); }).join("") +
+        "<h4>Layout</h4>" + sw("compact", "Compact", "Less space between and inside the boxes.", P.compact) +
+        "<div class='at-field'><span class='lbl'>Text size</span>" + seg("Text size", [["text", "s", "Smaller"], ["text", "m", "Normal"], ["text", "l", "Bigger"]], P.text) + "</div>" +
+        "<div class='at-field'><label for='meAmt'>Your calls: amount to fill in ($)</label><input class='at-in' id='meAmt' data-pref='amt' type='number' inputmode='decimal' min='1' step='1' value='" + esc(P.amt) + "'></div>" +
+        "<div class='at-row'><button type='button' class='at-btn sm' data-me='resetboard'>Show everything again</button></div>";
+    } else if (ME.tab === "tabs") {
+      var order = meCoinOrderAll();
+      h = "<h4>Coin tabs</h4><div class='at-field'><span class='lbl'>Style</span>" + seg("Tab style", [["tStyle", "line", "Underline"], ["tStyle", "pills", "Pills"], ["tStyle", "boxes", "Boxes"]], P.tStyle) + "</div>" +
+        "<div class='at-field'><span class='lbl'>On each tab</span>" + seg("On each tab", [["tShow", "none", "Just the name"], ["tShow", "call", "The call"], ["tShow", "pct", "Call and chance"]], P.tShow) + "</div>" +
+        "<div class='at-field'><span class='lbl'>Order, and which coins to show</span><ul class='corder'>" + order.map(function (c, i) {
+          var off = !!(P.tHide || {})[c[0]];
+          return "<li><b>" + esc(c[0]) + "</b><span class='sm'>" + esc(c[1]) + "</span><button type='button' class='at-btn sm' data-cmove='" + c[0] + "' data-d='-1'" + (i === 0 ? " disabled" : "") + " aria-label='Move " + esc(c[0]) + " left'>&uarr;</button>" +
+            "<button type='button' class='at-btn sm' data-cmove='" + c[0] + "' data-d='1'" + (i === order.length - 1 ? " disabled" : "") + " aria-label='Move " + esc(c[0]) + " right'>&darr;</button>" +
+            "<button type='button' class='at-btn sm' data-chide='" + c[0] + "' aria-pressed='" + (!off) + "'>" + (off ? "Hidden" : "Shown") + "</button></li>";
+        }).join("") + "</ul></div>" +
+        sw("tAuto", "Show the Auto-trader tab", "It's closed for maintenance for now.", P.tAuto) +
+        "<h4>Browser tab</h4><div class='at-field'><span class='lbl'>Title</span>" + seg("Title", [["title", "call", "Call and countdown"], ["title", "price", "Price and countdown"], ["title", "plain", "Just Kiros"]], P.title) + "</div>" +
+        sw("fav", "Colour the tab icon with the call", "Green for UP, red for DOWN.", P.fav !== false);
+    } else if (ME.tab === "look") {
+      h = "<h4>Colour</h4><div class='swatches' role='group' aria-label='Accent colour'>" + ACCENTS.map(function (a) { return "<button type='button' class='swatch' data-pref='accent' data-v='" + a[0] + "' aria-pressed='" + (P.accent === a[0]) + "' style='--sw:" + a[1] + "'><i></i>" + esc(a[2]) + "</button>"; }).join("") + "</div>" +
+        sw("cb", "Colour-blind friendly UP and DOWN", "Blue for UP and orange for DOWN instead of green and red.", P.cb) +
+        sw("music", "Music player", "A Spotify or Apple Music player at the bottom right (on a computer).", P.music !== false);
+    } else if (ME.tab === "kalshi") h = sheetKalshi();
+    body.innerHTML = h;
+    if (fk) { var again = body.querySelector("[data-pref='" + fk + "'], [data-set='" + fk + "']"); if (again && again.focus) { try { again.focus({ preventScroll: true }); } catch (e) { again.focus(); } } }
+    if (ME.tab === "look") lookPaint();
+  }
+  function meCoinOrderAll() {
+    var seen = {}, out = [];
+    (P.tOrder || []).forEach(function (c) { var x = COINS.filter(function (y) { return y[0] === c; })[0]; if (x && !seen[c]) { seen[c] = 1; out.push(x); } });
+    COINS.forEach(function (x) { if (!seen[x[0]]) out.push(x); });
+    return out;
+  }
+  function sheetKalshi() {
+    var st = A.st;
+    if (!st || !st.access) return "<p>The stop loss watches the trades you place on Kalshi yourself. It comes with the $15 unlock (people who paid for the Auto-trader already have it).</p><div class='at-row'><button type='button' class='at-btn go' data-me='tokal'>See how to unlock it</button></div>";
+    if (!st.key) return "<p>Connect your Kalshi key first. The bot needs it to see your trades.</p><div class='at-row'><button type='button' class='at-btn go' data-me='key'>Connect your Kalshi key</button></div>";
+    var s = Object.assign({}, AUTO_DEF, st.settings || {}, A.set || {});
+    var h = sw("guard_on", "Watch the trades I place on Kalshi", "Only the 15-minute crypto markets.", s.guard_on !== false, "set");
+    if (s.guard_on === false) return h;
+    h += "<div class='at-field'><span class='lbl'>When a line is hit</span>" + seg("When a line is hit", [["guard_act", "alert", "Alert me"], ["guard_act", "sell", "Sell it for me"]], s.guard_act, "set") +
+      "<p class='sm'>" + (s.guard_act === "sell" ? "The bot sells the whole trade at the best price someone pays at that moment, a few cents under if it falls fast. Your key needs trading turned on." : "You get an alert here (and on your phone, if you set that up). You decide whether to sell.") + "</p></div>" +
+      "<div class='at-field'><span class='lbl'>Stop loss</span>" + seg("Stop loss", [["g_stop", "off", "Off"], ["g_stop", "auto", "Automatic"], ["g_stop", "manual", "My own"]], s.g_stop, "set") +
+      (s.g_stop === "manual" ? "<div class='at-bet'><input class='at-in' data-set='g_stop_c' type='number' inputmode='numeric' min='3' max='90' step='1' value='" + s.g_stop_c + "' aria-label='Cents under what you paid'><span class='sm'>cents under what you paid</span></div>" +
+        "<div class='at-chips'>" + [5, 10, 15, 20, 30].map(function (n) { return "<button type='button' class='at-chip' data-set='g_stop_c' data-v='" + n + "' aria-pressed='" + (s.g_stop_c === n) + "'>" + n + "c</button>"; }).join("") + "</div>" : "") +
+      "<p class='sm'>" + (s.g_stop === "auto" ? "Automatic: the bot's own judgement. It acts when its call turns hard against your side, or when you're 15 cents down and the market agrees it's losing." : s.g_stop === "manual" ? "Checked about 3 times a second." : "No stop loss.") + "</p></div>" +
+      "<div class='at-field'><span class='lbl'>Take profit</span>" + seg("Take profit", [["g_tp", "off", "Off"], ["g_tp", "auto", "Automatic"], ["g_tp", "manual", "My own"]], s.g_tp, "set") +
+      (s.g_tp === "manual" ? "<div class='at-bet'><input class='at-in' data-set='g_tp_c' type='number' inputmode='numeric' min='3' max='90' step='1' value='" + s.g_tp_c + "' aria-label='Cents over what you paid'><span class='sm'>cents over what you paid</span></div>" : "") +
+      "<p class='sm'>" + (s.g_tp === "auto" ? "Automatic: when the price pays more than the bot thinks the trade is worth." : s.g_tp === "manual" ? "When someone pays this much more than you did." : "No profit target: the trade rides to the end unless a stop hits.") + "</p></div>" +
+      sw("alert_guard", "Also message my phone or Discord", s.alert_ntfy || s.alert_discord ? "Set up already." : "Set it up in the Auto-trader tab, Key and alerts.", s.alert_guard !== false, "set") +
+      "<p class='sm'>The bot never adds to a trade or buys anything for you here. Prices move fast, so a sale can fill a little under the line.</p>";
+    return h;
+  }
+  function lookPaint() {
+    if (!LKH || !LKH.dim) return;
+    setText(LKH.dimVal, String(A.dim)); if (LKH.dim !== document.activeElement) LKH.dim.value = A.dim;
+    LKH.bgThumb.hidden = !A.bg; LKH.bgClear.hidden = !A.bg;
+    if (A.bg) LKH.bgThumb.style.backgroundImage = "url(\"" + (A.bg.type === "file" ? A.bgObj : A.bg.url) + "\")";
+    starsPaint();
+  }
+  function meSheetClick(ev) {
+    var t = ev.target, b = t.closest && t.closest("button, [data-me]"); if (!b || b.tagName === "LABEL") return;
+    var me = b.dataset.me;
+    if (me === "close") return meSheet(false);
+    if (me === "tab") { ME.tab = b.dataset.tab; return mePaintSheet(); }
+    if (me === "test") return meTest();
+    if (me === "resetboard") { P.hide = {}; P.compact = false; P.text = "m"; prefSave(); mePrefsApply(); return mePaintSheet(); }
+    if (me === "key") { meSheet(false); return meGoKey(); }
+    if (me === "tokal") { meSheet(false); return meGoPanel("mykal"); }
+    if (b.dataset.a === "bgclear") return autoBgClear();
+    if (b.dataset.a === "bgurl") return autoBgUrl(LKH.bgUrl.value);
+    if (b.dataset.coinpick) { var l = (P.nList || []).slice(), i = l.indexOf(b.dataset.coinpick); if (i >= 0) l.splice(i, 1); else l.push(b.dataset.coinpick); prefSet("nList", l); return mePaintSheet(); }
+    if (b.dataset.cmove) { var o = meCoinOrderAll().map(function (x) { return x[0]; }), j = o.indexOf(b.dataset.cmove), k = j + Number(b.dataset.d); if (k >= 0 && k < o.length) { o.splice(j, 1); o.splice(k, 0, b.dataset.cmove); prefSet("tOrder", o); rebuildCoins(); } return mePaintSheet(); }
+    if (b.dataset.chide) { var hd = Object.assign({}, P.tHide || {}), c = b.dataset.chide; if (hd[c]) delete hd[c]; else hd[c] = true; if (Object.keys(hd).length >= COINS.length) return; prefSet("tHide", hd); rebuildCoins(); return mePaintSheet(); }
+    if (b.dataset.set && b.dataset.v != null && b.tagName === "BUTTON") { var pv = {}, val = b.dataset.v; pv[b.dataset.set] = /^\d+$/.test(val) ? Number(val) : val; return meSaveSettings(pv); }
+    if (b.dataset.pref && b.dataset.v != null && b.tagName === "BUTTON") {
+      var k2 = b.dataset.pref, v2 = b.dataset.v; P[k2] = /^\d+$/.test(v2) && k2 !== "text" ? Number(v2) : v2; prefSave();
+      if (k2 === "tStyle" || k2 === "tShow") meTabsApply();
+      if (k2 === "title") { S.lastTitle = 0; var vv = S.view[S.coin]; if (vv) updateTitle(vv); }
+      mePrefsApply(); mePaintFeed(); return mePaintSheet();
+    }
+  }
+  function meSheetChange(ev) {
+    var t = ev.target;
+    if (t === LKH.bgFile && t.files && t.files[0]) return autoBgFile(t.files[0]);
+    if (t === LKH.starOn) return starsToggle(t.checked);
+    if (t.dataset.set) {
+      var p = {};
+      if (t.type === "checkbox") p[t.dataset.set] = !!t.checked;
+      else { var n = Math.round(Number(t.value)); if (!isFinite(n)) return; n = Math.min(90, Math.max(3, n)); t.value = n; p[t.dataset.set] = n; }
+      return meSaveSettings(p);
+    }
+    var k = t.dataset.pref; if (!k) return;
+    if (k.indexOf("panel:") === 0) { var hd = Object.assign({}, P.hide || {}), id = k.slice(6); if (t.checked) delete hd[id]; else hd[id] = true; prefSet("hide", hd); return mePanelsApply(); }
+    if (t.type === "checkbox") {
+      if (k === "nSys" && t.checked) return meAskSystem(t);
+      prefSet(k, !!t.checked);
+      if (k === "tAuto" || k === "fav") { meTabsApply(); S.favKey = ""; var vv = S.view[S.coin]; if (vv) updateTitle(vv); }
+      mePrefsApply(); mePaintFeed(); return mePaintSheet();
+    }
+    if (k === "amt") { var a = Number(t.value); if (a >= 0.01) prefSet("amt", Math.round(a * 100) / 100); return mePaintMine(); }
+    if (k === "nQFrom" || k === "nQTo") { if (/^\d\d:\d\d$/.test(t.value)) prefSet(k, t.value); return; }
+  }
+  function meSheetInput(ev) {
+    var t = ev.target;
+    if (t === LKH.dim) { A.dim = Number(t.value) || 0; store("kh_auto_dim", String(A.dim)); setText(LKH.dimVal, String(A.dim)); return autoBgApply(); }
+    if (starsInput(t)) return;
+    if (t.dataset.pref === "nVol") { prefSet("nVol", Number(t.value) || 0); var lab = t.parentNode.querySelector("label span"); if (lab) lab.textContent = P.nVol + "%"; }
+  }
+  function meAskSystem(t) {
+    if (!("Notification" in window)) { t.checked = false; return mePaintSheet(); }
+    var done = function (perm) { prefSet("nSys", perm === "granted"); if (perm === "granted") meSwReady(); mePaintSheet(); };
+    try { var q = Notification.requestPermission(done); if (q && q.then) q.then(done); } catch (e) { done(Notification.permission); }
+  }
+  function meGoKey() { setMode("auto"); if (A.built) autoTab("setup"); else A.tab = "setup"; store("kh_auto_tab", "setup"); try { window.scrollTo(0, 0); } catch (e) {} }
+  function meGoPanel(id) { var el = R && R.board && R.board.querySelector("[data-panel='" + id + "']"); if (el) { el.classList.remove("me-off"); el.scrollIntoView({ block: "start" }); } }
+  $("custBtn").addEventListener("click", function () { meSheet(!ME.sheet); });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key !== "Escape") return;
+    if (ME.sheet) { var m = $("atModal"); if (!m) meSheet(false); }
+    else if (ME.bellOpen) meBellOpen(false);
+  });
+
+  /* ---------- clicks and typing inside the board's new boxes */
+  $("view").addEventListener("click", function (ev) {
+    var b = ev.target.closest && ev.target.closest("[data-me]"); if (!b) return;
+    var me = b.dataset.me;
+    if (me === "open") return meSheet(true, b.dataset.tab || "alerts");
+    if (me === "pick") return mePick(b.dataset.side);
+    if (me === "unpick") { rpc("board_unpick", { p_token: S.token, p_id: Number(b.dataset.id) }).then(function () { ME.pkVer = 0; ME.pkNext = 0; ME.pkAgain = true; ME.msg.pick = "Removed."; }, function () {}); return; }
+    if (me === "key") return meGoKey();
+    if (me === "sell") return armOrRun(b, function () { rpc("auto_cmd", { p_token: S.token, p_cmd: "sell:" + b.dataset.coin }).then(function () { autoNow(300); }, function (e) { alertBox(autoFriendly(e)); }); });
+  });
+  function alertBox(t) { meToast({ k: "", c: "", t: Date.now(), h: "Couldn't do that", b: t, s: "", tone: "" }); }
+  $("view").addEventListener("input", function (ev) {
+    var t = ev.target; if (!t.dataset || !t.dataset.meIn) return;
+    if (t.dataset.meIn === "amt") ME.amtTyped = t.value;
+    if (t.dataset.meIn === "px") ME.pxTyped = t.value;
+  });
+  $("view").addEventListener("submit", function (ev) { var f = ev.target; if (f.dataset && f.dataset.meForm === "buy") { ev.preventDefault(); meBuy(f); } });
   /* ---------- start ---------- */
   function takeOwnerLink() {                                              // the private owner link carries the sign-in after a #; take it and clean the address bar
     var m = /[#&]owner=([0-9a-f]{64})(?![0-9a-f])/i.exec(location.hash || "");
