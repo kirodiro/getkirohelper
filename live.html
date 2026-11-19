@@ -637,7 +637,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
   "use strict";
   var API_URL = "https://dgpxbinbtpapjoganfmw.supabase.co";
   var API_KEY = "sb_publishable_q9asvXJt3nJgEH_5Ikac9A_zb1j1oDa";
-  var POLL_VIS = 1000, POLL_HID = 2500, WAIT_MS = 1000, HIDDEN_IDLE_MS = 3 * 60 * 60 * 1000;
+  var POLL_VIS = 1000, POLL_HID = 10000, WAIT_MS = 1000, HIDDEN_IDLE_MS = 30 * 60 * 1000;      // a background tab asks every 10 s and pauses after 30 minutes
   var COINS = [["BTC", "Bitcoin"], ["ETH", "Ethereum"], ["SOL", "Solana"], ["XRP", "XRP"], ["DOGE", "Dogecoin"], ["BNB", "BNB"], ["HYPE", "Hyperliquid"]];
   var TV_SRC = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
   var TV_SYM = { BTC: "COINBASE:BTCUSD", ETH: "COINBASE:ETHUSD", SOL: "COINBASE:SOLUSD", XRP: "COINBASE:XRPUSD", DOGE: "COINBASE:DOGEUSD", BNB: "COINBASE:BNBUSD", HYPE: "KUCOIN:HYPEUSDT" };
@@ -2137,7 +2137,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
 
   /* ---------- asking the database ---------- */
   function autoEvery() {
-    if (document.hidden) return A.mode === "auto" ? 6000 : 20000;
+    if (document.hidden) return A.mode === "auto" ? 15000 : 30000;     // a tab in the background asks rarely (it catches up the moment it's opened again)
     if (A.mode === "auto") return (A.st && !A.st.access) ? 5000 : 2000;
     return (A.st && A.st.access) ? 15000 : 0;                      // locked, and not looking at it: nothing to watch
   }
@@ -2200,6 +2200,9 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
       autoPaintLive();
       if (!A.liveT && !A.liveBusy && liveWanted()) liveSchedule(0);
       return;
+    }
+    if (r.state) {                                               // the Edge check block comes along every 20 s: keep the last one in between
+      if (r.state.edge) A.edgeLast = r.state.edge; else if (A.edgeLast) r.state.edge = A.edgeLast;
     }
     A.st = r; A.recv = performance.now(); A.ver = r.ver || 0;
     fxAccess(r.access);
@@ -2659,6 +2662,7 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
   }
   function autoPaintEdge(e) {
     if (!AK.edgeBox) return;
+    if (e === undefined) { setHTML(AK.edgeBox, "<p class='at-empty'>Loading the edge check. It arrives within 20 seconds.</p>"); return; }
     if (!e || !e.styles) {
       setHTML(AK.edgeBox, "<p class='at-empty'>" + (e && e.on === false ? "The owner has switched the edge check off, so real money trades without it." : "Not enough finished markets yet. The bot grades every market it watches, and this fills in within a couple of hours.") + "</p>" + labHTML(e && e.lab));
       return;
