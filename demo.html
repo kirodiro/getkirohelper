@@ -576,6 +576,8 @@ body.autobg .foot,body.autobg .status{text-shadow:0 1px 2px rgba(0,0,0,.6)}
 .fcbadge{margin-left:8px;padding:2px 8px;border-radius:999px;font:700 .74rem/1.4 var(--font);background:var(--flatbg);color:var(--flat);white-space:nowrap}
 .fcbadge.fc-watch{background:var(--warnbg);color:var(--warn)}
 .fcbadge.fc-flip{background:var(--brand);color:#121416;animation:fcp 1.6s ease-in-out infinite}
+.fcbadge.fc-flipped{background:var(--brand);color:#121416}
+.fcbadge.fc-cand{box-shadow:inset 0 0 0 1px var(--warn)}
 @keyframes fcp{50%{box-shadow:0 0 0 5px rgba(240,140,58,.0),0 0 0 3px rgba(240,140,58,.35)}}
 .s-flip .lab{display:flex;align-items:center;flex-wrap:wrap;gap:4px}
 .meter .fcbase{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:var(--ink);opacity:.7;border-radius:1px}
@@ -1043,16 +1045,30 @@ body.sheet-open{overflow:hidden}
     var n = pts.length, mt = 0, mp = 0, i; for (i = 0; i < n; i++) { mt += pts[i][0]; mp += pts[i][1]; } mt /= n; mp /= n;
     var num = 0, den = 0; for (i = 0; i < n; i++) { num += (pts[i][0] - mt) * (pts[i][1] - mp); den += (pts[i][0] - mt) * (pts[i][0] - mt); } return den ? num / den : null;
   }
-  function fcFor(m, t, flipP) {
-    var q = m.q, left = q.left, gap = m.p - m.target, lead = gap >= 0 ? "UP" : "DOWN", other = lead === "UP" ? "DOWN" : "UP";
+  function fcFor(m, t, flipP) {                            // the same rules as the bot: pings only for a flip that held with the new side 88%+, or a proven setup
+    var q = m.q, left = q.left, sc = ROUND / 900, gap = m.p - m.target, lead = gap >= 0 ? "UP" : "DOWN", other = lead === "UP" ? "DOWN" : "UP";
     var v30 = slope(m.path || [], 30, t), v90 = slope(m.path || [], 90, t), vel = v30 != null && v90 != null ? 0.6 * v30 + 0.4 * v90 : (v30 || v90 || 0);
     var toward = lead === "UP" ? -vel : vel, sd = m.p * m.sig * Math.sqrt(Math.max(left, 1)) + m.p * 0.00002, proj = gap + vel * Math.min(left, 120) * 0.5;
-    var z = (lead === "UP" ? proj : -proj) / sd, risk = clamp(1 - cdf(z), 0, 0.99), prev = m.fcs && m.fcs.tk === m.tk && m.fcs.lead === lead ? m.fcs : { tk: m.tk, lead: lead, lvl: "calm", since: t };
-    var sc = ROUND / 900, lvl = left > 840 * sc ? "early" : left < 45 * sc ? "late" : ((risk >= 0.52 && toward > 0) || (prev.lvl === "flip" && risk >= 0.4)) ? "flip" : (risk >= 0.3 || (prev.lvl !== "calm" && prev.lvl !== "early" && risk >= 0.22)) ? "watch" : "calm";
-    if (lvl !== prev.lvl) { prev = { tk: m.tk, lead: lead, lvl: lvl, since: t }; if (lvl === "flip" && !DEMO.fc[m.tk + other]) DEMO.fc[m.tk + other] = { coin: m.code, tk: m.tk, to: other, left: Math.round(left / sc), risk: Math.round(risk * 100), close: m.close }; }
-    m.fcs = prev;
+    var z = (lead === "UP" ? proj : -proj) / sd, risk = clamp(1 - cdf(z), 0, 0.99), near = Math.abs(gap) / sd, pl = 1 - flipP;
+    var s = m.fcs && m.fcs.tk === m.tk ? m.fcs : { tk: m.tk, lead: lead, ls: t, est: null, lvl: "calm", since: t, fired: null, to: null, shown: 0 };
+    if (s.lead !== lead) { if (t - s.ls >= 60 * sc) s.est = s.lead; s.lead = lead; s.ls = t; }
+    var held = t - s.ls, lvl = "calm", to = null, sure = null, cand = false;
+    if (left > 600 * sc) lvl = "early";
+    else if (left < 30 * sc) lvl = "late";
+    else if (s.est && lead !== s.est && held >= 15 * sc && pl >= 0.88) {
+      lvl = "flipped"; to = lead; sure = pl;
+      if (s.fired !== s.ls) { s.fired = s.ls; s.shown = t; if (!DEMO.fc[m.tk + "c" + lead]) DEMO.fc[m.tk + "c" + lead] = { coin: m.code, tk: m.tk, to: lead, left: Math.round(left / sc), risk: Math.round(pl * 100), close: m.close, k: "c" }; }
+    } else if (s.lvl === "flipped" && s.to === lead && t - s.shown < 120 * sc && pl >= 0.6) { lvl = "flipped"; to = lead; sure = pl; }
+    else if (left <= 420 * sc && left >= 60 * sc && held >= 60 * sc && near <= 0.6 && toward > 0 && risk >= 0.62) { lvl = "watch"; to = other; sure = risk; cand = true; }
+    else if (toward > 0 && (risk >= 0.35 || (s.lvl === "watch" && risk >= 0.25))) { lvl = "watch"; to = other; sure = risk; }
+    if (lvl !== s.lvl) { s.lvl = lvl; s.since = t; }
+    s.to = to; m.fcs = s;
     var why = [], vm = toward * 60; if (toward > 0) why.push("moving toward the target at $" + (m.p >= 1000 ? Math.round(vm) : m.p >= 10 ? vm.toFixed(2) : vm.toFixed(4)) + " a minute");
-    return { lvl: lvl, to: lvl === "watch" || lvl === "flip" ? other : null, risk: +(risk * 100).toFixed(1), base: +(flipP * 100).toFixed(1), vel: sig(toward * 60), eta: toward > 0 ? Math.round(Math.abs(gap) / toward) : null, why: why, since: Math.floor(prev.since) };
+    if (lvl === "flipped") why = [lead + " has held for " + Math.round(held / sc) + " seconds after crossing the target"];
+    var out = { lvl: lvl, to: to, risk: +(risk * 100).toFixed(1), base: +(flipP * 100).toFixed(1), vel: sig(toward * 60), eta: toward > 0 ? Math.round(Math.abs(gap) / toward) : null, why: why, since: Math.floor(s.since), proof: [17, 38] };
+    if (sure != null) out.sure = +(sure * 100).toFixed(1);
+    if (cand) out.cand = true;
+    return out;
   }
   function gev(kind, h, px, act, net) { DEMO.gseq++; var e = { i: DEMO.gseq, t: Math.floor(Date.now() / 1000), k: kind, c: h.c, s: h.s, tk: h.tk, e: h.e, n: h.n0 }; if (px != null) e.px = px; if (act) e.a = act; if (net != null) e.net = r2(net); DEMO.gev.push(e); DEMO.gev = DEMO.gev.slice(-20); }
   function demoHand(t) {                                   // pretends you bought on Kalshi by hand now and then, and watches it with your stop loss
@@ -1088,10 +1104,10 @@ body.sheet-open{overflow:hidden}
     var keep = Object.keys(DEMO.res); if (keep.length > 400) delete DEMO.res[keep[0]];
     var h = DEMO.hand[m.tk];
     if (h) { var won = h.s === outcome, net = won ? h.n * (100 - h.e) / 100 - h.fe : -h.n * h.e / 100 - h.fe; if (won) DEMO.bal = r2(DEMO.bal + h.n); DEMO.krec.unshift([m.tk, Math.floor(t), h.c, r2(net)]); gev("gone", h, won ? 100 : 0); delete DEMO.hand[m.tk]; }
-    ["UP", "DOWN"].forEach(function (to) {
-      var c = DEMO.fc[m.tk + to]; if (!c) return; delete DEMO.fc[m.tk + to];
-      var r = DEMO.fcRec[c.coin] = DEMO.fcRec[c.coin] || { n: 0, ok: 0, r: [] }, ok = to === outcome;
-      r.n++; if (ok) r.ok++; r.r.push([c.close, to, ok ? 1 : 0, c.left, c.risk]); r.r = r.r.slice(-12); DEMO.rts++;
+    ["cUP", "cDOWN", "pUP", "pDOWN"].forEach(function (key) {
+      var c = DEMO.fc[m.tk + key]; if (!c) return; delete DEMO.fc[m.tk + key];
+      var to = c.to, r = DEMO.fcRec[c.coin] = DEMO.fcRec[c.coin] || { v: 2, n: 0, ok: 0, c: [0, 0], p: [0, 0], r: [] }, ok = to === outcome;
+      r.n++; if (ok) r.ok++; r[c.k][0]++; if (ok) r[c.k][1]++; r.r.push([c.close, to, ok ? 1 : 0, c.left, c.risk, c.k]); r.r = r.r.slice(-12); DEMO.rts++;
     });
     if (DEMO.picks.some(function (p) { return p.tk === m.tk; })) DEMO.pver++;
   }
@@ -1156,7 +1172,7 @@ body.sheet-open{overflow:hidden}
         if (!Object.keys(DEMO.fcRec).length) return { ok: true, none: true };
         if (a.p_have === DEMO.rts) return { ok: true, same: true, ts: DEMO.rts };
         var rc = {}; Object.keys(DEMO.fcRec).forEach(function (c) { rc[c] = { s: { open: [0, 0, 0], mid: [0, 0, 0], late: [0, 0, 0], last: [0, 0, 0] }, r: [], fc: DEMO.fcRec[c] }; });
-        return { ok: true, ts: DEMO.rts, data: { since: Math.floor(T0 / 1000), cps: [["open", "At open", 900], ["mid", "8 min left", 480], ["late", "3 min left", 180], ["last", "1 min left", 60]], coins: rc } };
+        return { ok: true, ts: DEMO.rts, data: { since: Math.floor(T0 / 1000), cps: [["open", "At open", 900], ["mid", "8 min left", 480], ["late", "3 min left", 180], ["last", "1 min left", 60]], coins: rc, fcs: [17, 38, false] } };
       }
       case "live_pulse": {
         if (!authed) return { ok: false, reason: "expired" };
@@ -2014,7 +2030,7 @@ body.sheet-open{overflow:hidden}
 
   /* ---------- painting the numbers ---------- */
   function cents(x) { return x != null ? x + "c" : "-"; }
-  var FC_WORD = { calm: "Calm", watch: "Flip watch", flip: "Flip call", early: "Too early", late: "Last minute" };
+  var FC_WORD = { calm: "Calm", watch: "Flip watch", flip: "Flip call", flipped: "Flipped", early: "Too early", late: "Last 30 seconds" };
   function paintFlip(r, v, left) {
     var d = v.data, fc = d.fc;
     if (fc && fc.lvl) return paintFlipCall(r, v, left, fc);
@@ -2030,29 +2046,40 @@ body.sheet-open{overflow:hidden}
     setText(r.flipTxt2, f.cross != null ? "Chance it touches the target again: " + Math.round(f.cross) + "%" + (f.crossings != null ? ", crossed it " + f.crossings + "x so far." : ".") : "");
     paintFcRec(r, d.coin);
   }
-  function paintFlipCall(r, v, left, fc) {                 // the bot's own flip call: the price's path toward the target, not Kalshi's prices
+  function paintFlipCall(r, v, left, fc) {                 // the bot's own flip calls: it only pings when it is very sure (the price's path and its own odds, not Kalshi's prices)
     var d = v.data, f = d.flip || {}, risk = Number(fc.risk) || 0, lvl = fc.lvl, lead = d.diff >= 0 ? "UP" : "DOWN", gap = Math.abs(d.diff);
+    var sure = fc.sure != null ? Math.round(Number(fc.sure)) : null, pf = fc.proof || [0, 0];
     var lc = lvl === "flip" ? "high" : lvl === "watch" ? "med" : "low";
     setText(r.flipHead, "Flip watch");
-    r.fcBadge.hidden = false; r.fcBadge.className = "fcbadge fc-" + lvl;
-    setText(r.fcBadge, lvl === "flip" ? "Flip call: " + fc.to : lvl === "watch" ? "Watching for " + fc.to : (FC_WORD[lvl] || lvl));
+    r.fcBadge.hidden = false; r.fcBadge.className = "fcbadge fc-" + lvl + (fc.cand ? " fc-cand" : "");
+    setText(r.fcBadge, lvl === "flipped" ? "Flipped to " + fc.to : lvl === "flip" ? "Flip call: " + fc.to : lvl === "watch" ? (fc.cand ? "Possible flip: " : "Watching for ") + fc.to : (FC_WORD[lvl] || lvl));
     setText(r.flipPct, risk < 1 ? "<1%" : Math.round(risk) + "%");
-    setText(r.flipLvl, lvl === "flip" ? "Likely flip" : lvl === "watch" ? "Possible" : risk >= 12 ? "Some risk" : "Low"); r.flipLvl.className = "lvl lv-" + lc;
+    setText(r.flipLvl, lvl === "flipped" ? "Flipped" : lvl === "flip" ? "Likely flip" : lvl === "watch" ? "Possible" : risk >= 12 ? "Some risk" : "Low"); r.flipLvl.className = "lvl lv-" + lc;
     r.flipFill.className = "lv-" + lc; r.flipFill.style.width = Math.min(100, Math.max(2, risk)).toFixed(0) + "%";
     var base = fc.base != null ? Number(fc.base) : (f.pct != null ? Number(f.pct) : null);
-    r.fcBase.hidden = base == null; if (base != null) r.fcBase.style.left = Math.min(100, Math.max(0, base)).toFixed(0) + "%";
+    r.fcBase.hidden = base == null || lvl === "flipped"; if (base != null) r.fcBase.style.left = Math.min(100, Math.max(0, base)).toFixed(0) + "%";
     r.flipMeter.setAttribute("aria-label", "Flip risk " + Math.round(risk) + " percent" + (base != null ? ", " + Math.round(base) + " percent from distance alone" : ""));
     var where = d.coin + " is $" + dollars(gap, d.spot) + " " + (d.diff >= 0 ? "above" : "below") + " the target";
-    var vel = Number(fc.vel) || 0, t;
-    if (lvl === "flip") t = "The bot calls a flip: it thinks this ends " + fc.to + ". " + where + " but moving toward it at $" + dollars(vel, d.spot) + " a minute" + (fc.eta != null ? " (it would reach the target in about " + leftText(fc.eta) + ")." : ".");
-    else if (lvl === "watch") t = where + (vel > 0 ? " and drifting toward it at $" + dollars(vel, d.spot) + " a minute." : ".") + " Not a flip call yet.";
-    else if (lvl === "early") t = where + ". Flip calls start once the first minute is over.";
-    else if (lvl === "late") t = where + ". In the last 45 seconds there is too little time left to call a flip.";
+    var vel = Number(fc.vel) || 0, t, t2 = base != null ? "From distance alone: " + (base < 1 ? "under 1" : Math.round(base)) + "% (the thin mark). The big number adds the price's direction and speed." : "";
+    var rec = pf[1] ? " Calls like this were right " + pf[0] + " of the last " + pf[1] + " times." : "";
+    if (lvl === "flipped") {
+      t = "Flip: " + d.coin + " crossed the target and has stayed " + (d.diff >= 0 ? "above" : "below") + " it. The bot now gives " + fc.to + " a " + sure + "% chance to win.";
+      t2 = "The bot only says a flip happened when it is at least 88% sure of the new side. Kalshi's price usually moves with it, so check the price before you buy.";
+    } else if (lvl === "flip") {
+      t = "Strong flip call: the bot thinks this ends " + fc.to + " (" + sure + "%). " + where + " but moving toward it at $" + dollars(vel, d.spot) + " a minute" + (fc.eta != null ? " (it would reach the target in about " + leftText(fc.eta) + ")." : ".");
+      t2 = "Flip calls before the flip only ping while their practice record is strong." + rec;
+    } else if (lvl === "watch" && fc.cand) {
+      t = where + " and moving toward it fast. It looks like a flip could be coming, but nothing pings yet.";
+      t2 = "The bot is still testing calls like this before it trusts them" + (pf[1] ? ": right " + pf[0] + " of " + pf[1] + " so far" : "") + ". It needs 65% right over at least 40 before it pings them.";
+    }
+    else if (lvl === "watch") t = where + (vel > 0 ? " and drifting toward it at $" + dollars(vel, d.spot) + " a minute." : ".") + " Not sure enough to ping.";
+    else if (lvl === "early") { t = where + ". Flip calls start with 10 minutes left: early on, the price crosses the target back and forth and a flip means little."; t2 = ""; }
+    else if (lvl === "late") { t = where + ". In the last 30 seconds there is too little time left to act on a flip."; t2 = ""; }
     else t = where + (vel < -0.0001 ? ", moving away from it." : ".") + " It would have to " + (lead === "UP" ? "drop" : "climb") + " $" + dollars(gap, d.spot) + " in " + leftText(left) + " to flip.";
     setText(r.flipTxt, t);
-    var why = (fc.why || []).filter(function (x, i) { return !(i === 0 && /^moving toward/.test(x) && lvl === "flip"); });
-    r.fcWhy.hidden = !why.length; setText(r.fcWhy, why.length ? "Also: " + why.join("; ") + "." : "");
-    setText(r.flipTxt2, base != null ? "From distance alone: " + (base < 1 ? "under 1" : Math.round(base)) + "% (the thin mark). The big number adds the price's direction and speed." : "");
+    var why = (fc.why || []).filter(function (x, i) { return !(i === 0 && /^moving toward/.test(x) && (lvl === "flip" || fc.cand)); });
+    r.fcWhy.hidden = !why.length || lvl === "flipped"; setText(r.fcWhy, why.length ? "Also: " + why.join("; ") + "." : "");
+    setText(r.flipTxt2, t2);
     paintFcRec(r, d.coin);
   }
   function paintClock(v) {
@@ -4292,8 +4319,8 @@ body.sheet-open{overflow:hidden}
     ["mykal", "Your Kalshi", "Balance, open trades and the stop loss ($15 unlock)."], ["fcrec", "Flip calls", "How the bot's flip calls turned out."], ["feed", "Your alerts", "The last alerts on this device."],
     ["whale", "Whale watch", "Big buys on Kalshi and big moves on the exchanges."], ["details", "More detail", "Why this call and the chart votes."], ["record", "Bot record", "How every call was graded."]];
   var ALERT_TYPES = [["nCall", "The call changes side", "UP turns to DOWN, or back."], ["nBet", "The bot says bet", "A coin goes from Skip to a side."],
-    ["nBuy", "Buy signal", "Buy now, with where to take profit and where to get out."], ["nFlip", "Flip call", "The bot calls a flip before it happens."],
-    ["nWatch", "Flip watch", "An early warning that a flip might be coming."], ["nCross", "The price crosses the target", "The other side is winning right now."],
+    ["nBuy", "Buy signal", "Buy now, with where to take profit and where to get out."], ["nFlip", "Flips (only when very sure)", "A flip that happened and held, with the new side 88%+ likely, or a flip call that has proven itself."],
+    ["nWatch", "Flip watch", "An early heads-up that the price is drifting toward the target. Often wrong."], ["nCross", "The price crosses the target", "The other side is winning right now."],
     ["nWhale", "Whale buy", "Someone bets $1,000 or more (the coin you're looking at)."], ["nEnd", "A market is about to end", "With the bot's call at that moment."],
     ["nNew", "A new market opens", "With the bot's first call."], ["nStop", "Your Kalshi trades", "Your stop loss is hit, a trade is sold, a new trade is watched ($15 unlock)."]];
   var LOOK_HTML =
@@ -4443,8 +4470,10 @@ body.sheet-open{overflow:hidden}
     if (b.scalp && !m.buy) emit("nBuy", coin, coin + " buy signal: " + b.scalp.side + " at about " + Math.round(b.scalp.entry) + "c",
       "Take profit near " + Math.round(b.scalp.tp) + "c, get out if it falls to " + Math.round(b.scalp.sl) + "c. On Kalshi buy " + (b.scalp.side === "UP" ? "Yes (Up)" : "No (Down)") + ".", b.scalp.side, b.tk + ":" + b.scalp.side);
     m.buy = !!b.scalp;
-    if (lvl === "flip" && m.lvl !== "flip") emit("nFlip", coin, coin + " flip call: " + b.fc.to, "The bot thinks this ends " + b.fc.to + ". Flip risk " + Math.round(b.fc.risk) + "%" + (b.left > 0 ? ", " + leftText(b.left) + " left." : "."), b.fc.to, b.tk + ":" + b.fc.to);
-    else if (lvl === "watch" && (m.lvl === "calm" || m.lvl === "early")) emit("nWatch", coin, coin + " flip watch: " + b.fc.to, "The price is drifting toward the target. Flip risk " + Math.round(b.fc.risk) + "%.", b.fc.to, b.tk + ":" + b.fc.to);
+    var fsure = b.fc ? Math.round(Number(b.fc.sure != null ? b.fc.sure : b.fc.risk) || 0) : 0, fleft = b.left > 0 ? ", " + leftText(b.left) + " left." : ".";
+    if (lvl === "flipped" && m.lvl !== "flipped") emit("nFlip", coin, coin + " flipped to " + b.fc.to, "The price crossed the target and held. The bot gives " + b.fc.to + " a " + fsure + "% chance" + fleft, b.fc.to, b.tk + ":c" + b.fc.to);
+    else if (lvl === "flip" && m.lvl !== "flip") emit("nFlip", coin, coin + " strong flip call: " + b.fc.to, "The bot thinks this ends " + b.fc.to + " (" + fsure + "%)" + fleft, b.fc.to, b.tk + ":p" + b.fc.to);
+    else if (lvl === "watch" && (m.lvl === "calm" || m.lvl === "early")) emit("nWatch", coin, coin + " flip watch: " + b.fc.to, "The price is drifting toward the target. Often wrong: not a flip call.", b.fc.to, b.tk + ":" + b.fc.to);
     if (lvl) m.lvl = lvl;
     if (lead !== m.lead && Math.abs(b.spot - b.target) / Math.max(b.target, 1e-9) > 0.00002) {
       emit("nCross", coin, coin + " crossed the target: " + lead + " is winning", "Price " + money(b.spot) + ", target " + money(b.target) + (b.left > 0 ? ", " + leftText(b.left) + " left." : "."), lead, b.tk + ":" + lead + ":" + Math.floor(now / 20000));
@@ -4623,7 +4652,7 @@ body.sheet-open{overflow:hidden}
       var toss = x.conf === "TOSS-UP";
       cc.hidden = false; cc.className = "ccall " + (toss ? "flat" : x.side === "UP" ? "up" : "down");
       cc.textContent = toss ? "\u2013" : (x.side === "UP" ? "\u25B2" : "\u25BC") + (P.tShow === "pct" ? Math.round((x.prob || 0) * 100) : "");
-      if (x.fc && x.fc.lvl === "flip") { cc.className += " fl"; cc.textContent = "FLIP " + (x.fc.to === "UP" ? "\u25B2" : "\u25BC"); }
+      if (x.fc && (x.fc.lvl === "flip" || x.fc.lvl === "flipped")) { cc.className += " fl"; cc.textContent = "FLIP " + (x.fc.to === "UP" ? "\u25B2" : "\u25BC"); }
     });
   }
   function meTabsApply() {
@@ -4836,28 +4865,33 @@ body.sheet-open{overflow:hidden}
 
   /* ---------- flip calls: how they turned out */
   function fcStats(coin) {
-    var coins = (S.rec && S.rec.data && S.rec.data.coins) || {}, one = coins[coin] && coins[coin].fc, n = 0, ok = 0;
+    var data = (S.rec && S.rec.data) || {}, coins = data.coins || {}, one = coins[coin] && coins[coin].fc, n = 0, ok = 0;
     Object.keys(coins).forEach(function (c) { var f = coins[c].fc; if (f) { n += f.n | 0; ok += f.ok | 0; } });
-    return { one: one || null, n: n, ok: ok };
+    return { one: one || null, n: n, ok: ok, prac: data.fcs || null };
   }
   function paintFcRec(r, coin) {
     if (!r || !r.fcRec) return;
     var f = fcStats(coin);
     if (!f.one || !f.one.n) { r.fcRec.hidden = true; return; }
-    r.fcRec.hidden = false; setText(r.fcRec, "The bot's flip calls on " + coin + ": " + f.one.ok + " of " + f.one.n + " right (" + Math.round(100 * f.one.ok / f.one.n) + "%).");
+    r.fcRec.hidden = false; setText(r.fcRec, "The bot's flip pings on " + coin + ": " + f.one.ok + " of " + f.one.n + " right (" + Math.round(100 * f.one.ok / f.one.n) + "%).");
+  }
+  function fcRow(x) {
+    var kind = x[5], what = kind === "c" ? "flip seen with " + esc(tlMin(x[3])) + " left, " + x[4] + "% sure" : kind === "p" ? "flip called with " + esc(tlMin(x[3])) + " left at " + x[4] + "%" : "called with " + esc(tlMin(x[3])) + " left at " + x[4] + "%";
+    return "<li><span class='at-side " + (x[1] === "UP" ? "up" : "down") + "'>" + (x[1] === "UP" ? "&#9650; " : "&#9660; ") + esc(x[1]) + "</span><span class='sm'>" + esc(clockTime(x[0])) + " market, " + what + "</span>" +
+      (x[2] ? "<span class='chip up'>Right</span>" : "<span class='chip down'>Wrong</span>") + "</li>";
   }
   function mePaintFc() {
     if (!R || !R.fcp) return;
-    var f = fcStats(S.coin), one = f.one, h = "";
+    var f = fcStats(S.coin), one = f.one, h = "", pr = f.prac;
     setText(R.fcpSum, f.n ? f.ok + " of " + f.n + " right, all coins" : "");
     if (one && one.n) {
-      h += "<p><b>" + one.ok + " of " + one.n + "</b> flip calls on " + esc(S.coin) + " were right (" + Math.round(100 * one.ok / one.n) + "%).</p>";
-      h += "<ul class='plist'>" + one.r.slice().reverse().slice(0, 6).map(function (x) {
-        return "<li><span class='at-side " + (x[1] === "UP" ? "up" : "down") + "'>" + (x[1] === "UP" ? "&#9650; " : "&#9660; ") + esc(x[1]) + "</span><span class='sm'>" + esc(clockTime(x[0])) + " market, called with " + esc(tlMin(x[3])) + " left at " + x[4] + "%</span>" +
-          (x[2] ? "<span class='chip up'>Right</span>" : "<span class='chip down'>Wrong</span>") + "</li>"; }).join("") + "</ul>";
-    } else h += "<p class='sm'>No flip calls graded on " + esc(S.coin) + " yet.</p>";
-    h += "<p class='sm'>A flip call is the bot saying a market will end on the other side before the price gets there, from the price's own direction and speed (not Kalshi's prices). " +
-      "A call is right when the market ends on the side it called. Called flips are hard, so even 40% right can be useful when the price you pay is low.</p>";
+      h += "<p><b>" + one.ok + " of " + one.n + "</b> flip pings on " + esc(S.coin) + " were right (" + Math.round(100 * one.ok / one.n) + "%).</p>";
+      h += "<ul class='plist'>" + one.r.slice().reverse().slice(0, 6).map(fcRow).join("") + "</ul>";
+    } else h += "<p class='sm'>No flips graded on " + esc(S.coin) + " yet. The bot now pings a flip only when it is very sure, so there are fewer of them, and the record started fresh with these rules.</p>";
+    h += "<p class='sm'>The bot pings a flip in two cases. <b>Flipped</b>: a side led for at least a minute, then the price crossed the target, stayed across, and the bot's odds give the new side 88% or more (10 minutes left or less). " +
+      "<b>Flip call</b>: a tight setup before the flip (price close to the target and moving at it fast, with the charts agreeing). These only ping once they've been right 65% of the time over at least 40 practice calls" +
+      (pr && pr[1] ? ". Practice so far: " + pr[0] + " of " + pr[1] + " right" + (pr[2] ? ", so they ping now" : ", so they don't ping yet") : "") +
+      ". A ping is right when the market ends on the side it named. Nothing here uses Kalshi's prices.</p>";
     setHTML(R.fcp, h);
     var v = S.view[S.coin]; if (v && R.fcRec) paintFcRec(R, S.coin);
   }
@@ -5142,8 +5176,9 @@ body.sheet-open{overflow:hidden}
           "<b>Time left</b> counts down to the close. Early on a lot can change. Near the end, the side that's ahead usually holds, but not always.",
           "Kalshi decides the result from an average of the coin's price over the last minute, so the final seconds still count."])) +
       lesson("4. Flip watch", li(["<b>Flip risk</b> is the chance that the side winning now ends up losing.", "The thin mark on the bar is the risk from distance alone. The big number also counts which way the price is moving and how fast.",
-          "<b>Calm</b>: nothing worrying. <b>Flip watch</b>: the price is drifting toward the target. <b>Flip call</b>: the bot thinks it will end on the other side.",
-          "Flip calls are new. Check how they've done in the Flip calls box before you lean on them."])) +
+          "<b>Calm</b>: nothing worrying. <b>Flip watch</b>: the price is drifting toward the target (often nothing comes of it, so it doesn't ping unless you turn it on).",
+          "<b>Flipped</b>: the price crossed the target and stayed across, and the bot gives the new side 88% or more. This pings. By then Kalshi's price has usually moved too, so check it before you buy.",
+          "<b>Flip call</b>: a tight setup before the flip. It only pings once calls like it have proven themselves in practice. Check the Flip calls box to see how the pings have done."])) +
       lesson("5. Kalshi prices and what you can win", "<p>Prices are in cents, from 1c to 99c, and work like chances: Yes at 60c means the market thinks UP has about a 60% chance.</p>" +
         li(["You pay the price. If you're right you get 100c back. Buy at 60c: win 40c, or lose 60c.", "Kalshi takes a small fee on each trade. It's biggest near 50c.",
           "<b>Buy at</b> is what you pay. <b>Sell at</b> is what someone pays you if you sell early. The gap between them is a cost too.",
@@ -5198,7 +5233,7 @@ body.sheet-open{overflow:hidden}
   var TOUR = [
     ["#coins", "Pick a coin", "Each tab is one coin's 15-minute market. Tap one to see its call and chart."],
     ["#view .s-call", "The bot's call", "UP or DOWN is the bot's pick for where the price ends against the target. The % is how sure it is. Skip means too close to call."],
-    ["#view .s-flip", "Flip watch", "The chance the side that's winning now ends up losing. When it says Flip call, the bot thinks the other side will win."],
+    ["#view .s-flip", "Flip watch", "The chance the side that's winning now ends up losing. It only pings when the bot is very sure: a flip that happened and held, or a flip call that has proven itself."],
     ["#view .s-time", "Time left", "Each market lasts 15 minutes. The result is set by the average price in the final minute."],
     ["#view .s-px", "Price and target", "If the price now is above the target, UP is winning. The gap is how far it would have to move to flip."],
     ["#view .chartp", "The chart", "Green candles went up, red went down. The dashed yellow line is the target. Switch candle sizes with 1m, 5m, 15m and 1h."],
