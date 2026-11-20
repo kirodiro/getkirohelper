@@ -2064,7 +2064,7 @@ body.sheet-open{overflow:hidden}
     var rec = pf[1] ? " Calls like this were right " + pf[0] + " of the last " + pf[1] + " times." : "";
     if (lvl === "flipped") {
       t = "Flip: " + d.coin + " crossed the target and has stayed " + (d.diff >= 0 ? "above" : "below") + " it. The bot now gives " + fc.to + " a " + sure + "% chance to win.";
-      t2 = "The bot only says a flip happened when it is at least 88% sure of the new side. Kalshi's price usually moves with it, so check the price before you buy.";
+      t2 = "The bot only says a flip happened when it is at least " + (fc.bar || 88) + "% sure of the new side, and it raises that bar by itself if these pings slip under 82% right. Kalshi's price usually moves with it, so check the price before you buy.";
     } else if (lvl === "flip") {
       t = "Strong flip call: the bot thinks this ends " + fc.to + " (" + sure + "%). " + where + " but moving toward it at $" + dollars(vel, d.spot) + " a minute" + (fc.eta != null ? " (it would reach the target in about " + leftText(fc.eta) + ")." : ".");
       t2 = "Flip calls before the flip only ping while their practice record is strong." + rec;
@@ -4319,7 +4319,7 @@ body.sheet-open{overflow:hidden}
     ["mykal", "Your Kalshi", "Balance, open trades and the stop loss ($15 unlock)."], ["fcrec", "Flip calls", "How the bot's flip calls turned out."], ["feed", "Your alerts", "The last alerts on this device."],
     ["whale", "Whale watch", "Big buys on Kalshi and big moves on the exchanges."], ["details", "More detail", "Why this call and the chart votes."], ["record", "Bot record", "How every call was graded."]];
   var ALERT_TYPES = [["nCall", "The call changes side", "UP turns to DOWN, or back."], ["nBet", "The bot says bet", "A coin goes from Skip to a side."],
-    ["nBuy", "Buy signal", "Buy now, with where to take profit and where to get out."], ["nFlip", "Flips (only when very sure)", "A flip that happened and held, with the new side 88%+ likely, or a flip call that has proven itself."],
+    ["nBuy", "Buy signal", "Buy now, with where to take profit and where to get out."], ["nFlip", "Flips (only when very sure)", "A flip that happened and held, with the new side 88%+ likely (the bot raises the bar if these slip), or a flip call that has proven itself."],
     ["nWatch", "Flip watch", "An early heads-up that the price is drifting toward the target. Often wrong."], ["nCross", "The price crosses the target", "The other side is winning right now."],
     ["nWhale", "Whale buy", "Someone bets $1,000 or more (the coin you're looking at)."], ["nEnd", "A market is about to end", "With the bot's call at that moment."],
     ["nNew", "A new market opens", "With the bot's first call."], ["nStop", "Your Kalshi trades", "Your stop loss is hit, a trade is sold, a new trade is watched ($15 unlock)."]];
@@ -4888,7 +4888,7 @@ body.sheet-open{overflow:hidden}
       h += "<p><b>" + one.ok + " of " + one.n + "</b> flip pings on " + esc(S.coin) + " were right (" + Math.round(100 * one.ok / one.n) + "%).</p>";
       h += "<ul class='plist'>" + one.r.slice().reverse().slice(0, 6).map(fcRow).join("") + "</ul>";
     } else h += "<p class='sm'>No flips graded on " + esc(S.coin) + " yet. The bot now pings a flip only when it is very sure, so there are fewer of them, and the record started fresh with these rules.</p>";
-    h += "<p class='sm'>The bot pings a flip in two cases. <b>Flipped</b>: a side led for at least a minute, then the price crossed the target, stayed across, and the bot's odds give the new side 88% or more (10 minutes left or less). " +
+    h += "<p class='sm'>The bot pings a flip in two cases. <b>Flipped</b>: a side led for at least a minute, then the price crossed the target, stayed across, and the bot's odds give the new side " + ((S.rec && S.rec.data && S.rec.data.fcbar) || 88) + "% or more (10 minutes left or less). The bot raises that bar by itself if these pings slip under 82% right. " +
       "<b>Flip call</b>: a tight setup before the flip (price close to the target and moving at it fast, with the charts agreeing). These only ping once they've been right 65% of the time over at least 40 practice calls" +
       (pr && pr[1] ? ". Practice so far: " + pr[0] + " of " + pr[1] + " right" + (pr[2] ? ", so they ping now" : ", so they don't ping yet") : "") +
       ". A ping is right when the market ends on the side it named. Nothing here uses Kalshi's prices.</p>";
