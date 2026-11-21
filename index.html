@@ -1162,6 +1162,7 @@ var REVIEW_API_URL = "https://dgpxbinbtpapjoganfmw.supabase.co";             /* 
 var REVIEW_API_KEY = "sb_publishable_q9asvXJt3nJgEH_5Ikac9A_zb1j1oDa";             /* its public "publishable" key (safe to put on a web page) */
 var REVIEW_EMAIL = "kirodoesva@gmail.com";
 var DISCORD_ICON = "";               /* the server picture, as a data: image address (empty = a letter badge) */
+var DISCORD_INVITE = "kiroskove";   /* the invite code: the server picture is read from Discord with it (empty = keep the letter badge) */
 var PROMO_CODE = "";             /* the discount code shown next to the buy buttons (empty = no code shown) */
 var PROMO_OFF = "15%";               /* how much it takes off, shown as "15% off" */
 
@@ -1228,6 +1229,16 @@ var PROMO_OFF = "15%";               /* how much it takes off, shown as "15% off
     var im = document.createElement("img");
     im.src = DISCORD_ICON; im.alt = ""; im.width = 60; im.height = 60;
     dcIcon.textContent = ""; dcIcon.appendChild(im);
+  }
+  else if (dcIcon && DISCORD_INVITE && window.fetch) {         /* the server's own picture, straight from Discord; the letter stays if it can't be read */
+    fetch("https://discord.com/api/v10/invites/" + encodeURIComponent(DISCORD_INVITE)).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      var g = d && d.guild;
+      if (!g || !g.id || !g.icon) return;
+      var pic = new Image();
+      pic.alt = ""; pic.width = 60; pic.height = 60; pic.decoding = "async";
+      pic.onload = function () { dcIcon.textContent = ""; dcIcon.appendChild(pic); };
+      pic.src = "https://cdn.discordapp.com/icons/" + g.id + "/" + g.icon + (g.icon.indexOf("a_") === 0 ? ".gif" : ".png") + "?size=128";
+    }).catch(function () {});
   }
 
   /* reviews: stars, hero rating, slideshow, list, form, and the owner's delete mode */
