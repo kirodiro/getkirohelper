@@ -4888,7 +4888,7 @@ body.sheet-open{overflow:hidden}
       h += "<p><b>" + one.ok + " of " + one.n + "</b> flip pings on " + esc(S.coin) + " were right (" + Math.round(100 * one.ok / one.n) + "%).</p>";
       h += "<ul class='plist'>" + one.r.slice().reverse().slice(0, 6).map(fcRow).join("") + "</ul>";
     } else h += "<p class='sm'>No flips graded on " + esc(S.coin) + " yet. The bot now pings a flip only when it is very sure, so there are fewer of them, and the record started fresh with these rules.</p>";
-    h += "<p class='sm'>The bot pings a flip in two cases. <b>Flipped</b>: a side led for at least a minute, then the price crossed the target, stayed across, and the bot's odds give the new side " + ((S.rec && S.rec.data && S.rec.data.fcbar) || 88) + "% or more (10 minutes left or less). The bot raises that bar by itself if these pings slip under 82% right. " +
+    h += "<p class='sm'>The bot pings a flip in two cases. <b>Flipped</b>: a side led for at least 30 seconds, then the price crossed the target, stayed across, and the bot's odds give the new side " + ((S.rec && S.rec.data && S.rec.data.fcbar) || 88) + "% or more (10 minutes left or less). The bot raises that bar by itself if these pings slip under 82% right. " +
       "<b>Flip call</b>: a tight setup before the flip (price close to the target and moving at it fast, with the charts agreeing). These only ping once they've been right 65% of the time over at least 40 practice calls" +
       (pr && pr[1] ? ". Practice so far: " + pr[0] + " of " + pr[1] + " right" + (pr[2] ? ", so they ping now" : ", so they don't ping yet") : "") +
       ". A ping is right when the market ends on the side it named. Nothing here uses Kalshi's prices.</p>";
