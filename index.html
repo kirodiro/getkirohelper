@@ -789,8 +789,40 @@ footer a { text-underline-offset: 3px; }
   </div>
 </section>
 
+<section class="band" id="plus">
+  <div class="garland" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="head">
+      <p class="label rv">✨ Markets+</p>
+      <h2 class="split">Currencies, commodities <em class="grad">and hourly crypto.</em></h2>
+      <p class="sub rv">The same Live board, on Kalshi's other short markets: the bot's call, the chance it flips, flip calls, candles with indicators, its graded record and the Kalshi prices. A separate $20 unlock, paid once. You don't need the $45 bot for it.</p>
+    </div>
+    <ul class="facts">
+      <li class="rv"><h3>💱 Currencies</h3><p>EUR/USD, GBP/USD, USD/JPY, AUD/USD and USD/CAD, in Kalshi's 15-minute up or down rounds. Each one is shown in its own units, like 1.15234.</p></li>
+      <li class="rv" style="--d:1"><h3>🛢️ Commodities</h3><p>Gold, silver, oil, natural gas and copper, also in 15-minute rounds. These keep running at the weekend, when the currency markets are closed.</p></li>
+      <li class="rv" style="--d:2"><h3>⏱️ Hourly crypto</h3><p>The BTC, ETH, SOL and XRP hourly price ladders: the bot's chance for every line near the price next to Kalshi's, and a full call on the line closest to where the hour began.</p></li>
+    </ul>
+    <p class="fine rv" style="margin-top:28px"><b>How it reads these markets.</b> Kalshi settles them on Pyth prices, which cost hundreds of dollars a month to stream. The bot uses free feeds instead and lines each one up with Kalshi's own target at the start of every round, so it only has to judge the move since then. Its calls are estimates that can be wrong, and nothing here promises profit or accuracy. The record shows how they really did.</p>
+    <div class="cta-row rv">
+      <a class="btn" id="plusBuyLanding" href="https://discord.gg/kiroskove" target="_blank" rel="noopener noreferrer">💳 Get Markets+, $20</a>
+      <a class="btn ghost" href="live.html">📈 Open the Live board</a>
+    </div>
+    <p class="fine rv" style="margin-top:12px">After you pay, Stripe emails you a receipt with a number like 1234-5678. Type it on the Live board to sign in. Already have Kiros helper? Sign in with that receipt, open a Markets+ tab and add the new one there, so both work on one sign-in. If you have the Auto-trader add-on, its stop loss and profit target cover these markets too.</p>
+  </div>
+</section>
+<script>
+(function () {                     /* the Markets+ payment link is kept on the Live board's database, so the owner can change it without a new page */
+  try {
+    fetch("https://dgpxbinbtpapjoganfmw.supabase.co/rest/v1/rpc/live_plus_info", { method: "POST", headers: { "apikey": "sb_publishable_q9asvXJt3nJgEH_5Ikac9A_zb1j1oDa", "Content-Type": "application/json" }, body: "{}" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { var a = document.getElementById("plusBuyLanding"); if (a && j && j.url && /^https:\/\//.test(j.url)) a.href = j.url; })
+      .catch(function () {});
+  } catch (e) {}
+})();
+</script>
+
 <section class="band" id="auto">
-  <div class="garland" aria-hidden="true"></div><svg class="dangle" viewBox="0 0 92 96" aria-hidden="true" focusable="false"><g style="transform-origin: 16px 0px"><path d="M16 0 V44" stroke="#8C7A70" stroke-width="1"/><rect x="13" y="43" width="6" height="4" rx="1" fill="#C9B8A6"/><circle cx="16" cy="56" r="9" fill="#D42B37"/><circle cx="12.8" cy="52.4" r="2.7" fill="#FFB3B8" opacity=".65"/><path d="M7.5 56.0 h17.1" stroke="#ECE4D8" stroke-width="1.6" opacity=".8"/></g><g style="transform-origin: 46px 0px"><path d="M46 0 V66" stroke="#8C7A70" stroke-width="1"/><rect x="43" y="65" width="6" height="4" rx="1" fill="#C9B8A6"/><circle cx="46" cy="80" r="11" fill="#ECE4D8"/><circle cx="42.1" cy="75.6" r="3.3" fill="#FFFFFF" opacity=".65"/><path d="M35.5 80.0 h20.9" stroke="#D42B37" stroke-width="1.6" opacity=".8"/></g><g style="transform-origin: 76px 0px"><path d="M76 0 V32" stroke="#8C7A70" stroke-width="1"/><rect x="73" y="31" width="6" height="4" rx="1" fill="#C9B8A6"/><circle cx="76" cy="43" r="8" fill="#D42B37"/><circle cx="73.2" cy="39.8" r="2.4" fill="#FFB3B8" opacity=".65"/><path d="M68.4 43.0 h15.2" stroke="#ECE4D8" stroke-width="1.6" opacity=".8"/></g></svg>
+  <div class="lights band-lights" aria-hidden="true"></div><svg class="dangle" viewBox="0 0 92 96" aria-hidden="true" focusable="false"><g style="transform-origin: 16px 0px"><path d="M16 0 V44" stroke="#8C7A70" stroke-width="1"/><rect x="13" y="43" width="6" height="4" rx="1" fill="#C9B8A6"/><circle cx="16" cy="56" r="9" fill="#D42B37"/><circle cx="12.8" cy="52.4" r="2.7" fill="#FFB3B8" opacity=".65"/><path d="M7.5 56.0 h17.1" stroke="#ECE4D8" stroke-width="1.6" opacity=".8"/></g><g style="transform-origin: 46px 0px"><path d="M46 0 V66" stroke="#8C7A70" stroke-width="1"/><rect x="43" y="65" width="6" height="4" rx="1" fill="#C9B8A6"/><circle cx="46" cy="80" r="11" fill="#ECE4D8"/><circle cx="42.1" cy="75.6" r="3.3" fill="#FFFFFF" opacity=".65"/><path d="M35.5 80.0 h20.9" stroke="#D42B37" stroke-width="1.6" opacity=".8"/></g><g style="transform-origin: 76px 0px"><path d="M76 0 V32" stroke="#8C7A70" stroke-width="1"/><rect x="73" y="31" width="6" height="4" rx="1" fill="#C9B8A6"/><circle cx="76" cy="43" r="8" fill="#D42B37"/><circle cx="73.2" cy="39.8" r="2.4" fill="#FFB3B8" opacity=".65"/><path d="M68.4 43.0 h15.2" stroke="#ECE4D8" stroke-width="1.6" opacity=".8"/></g></svg>
   <div class="wrap">
     <div class="head" style="margin-bottom:0">
       <p class="label rv">🛑 Add-on</p>
@@ -806,7 +838,7 @@ footer a { text-underline-offset: 3px; }
 </section>
 
 <section class="band" id="trial">
-  <div class="lights band-lights" aria-hidden="true"></div>
+  <div class="garland" aria-hidden="true"></div>
   <div class="wrap">
     <div class="head">
       <p class="label rv">🎁 Free trial</p>
@@ -828,7 +860,7 @@ footer a { text-underline-offset: 3px; }
 </section>
 
 <section class="band" id="trust">
-  <div class="garland" aria-hidden="true"></div>
+  <div class="lights band-lights" aria-hidden="true"></div>
   <div class="wrap">
     <div class="head">
       <p class="label rv">Why people stay</p>
@@ -868,7 +900,7 @@ footer a { text-underline-offset: 3px; }
 </section>
 
 <section class="band" id="get">
-  <div class="lights band-lights" aria-hidden="true"></div>
+  <div class="garland" aria-hidden="true"></div>
   <div class="wrap">
     <div class="head">
       <p class="label rv">Getting in</p>
@@ -909,7 +941,7 @@ footer a { text-underline-offset: 3px; }
 </section>
 
 <section class="band" id="updates">
-  <div class="garland" aria-hidden="true"></div>
+  <div class="lights band-lights" aria-hidden="true"></div>
   <div class="wrap">
     <div class="head">
       <p class="label rv">📝 Update log</p>
@@ -997,7 +1029,7 @@ footer a { text-underline-offset: 3px; }
 </section>
 
 <section class="band" id="faq">
-  <div class="lights band-lights" aria-hidden="true"></div><svg class="dangle" viewBox="0 0 92 96" aria-hidden="true" focusable="false"><g style="transform-origin: 16px 0px"><path d="M16 0 V44" stroke="#8C7A70" stroke-width="1"/><rect x="13" y="43" width="6" height="4" rx="1" fill="#C9B8A6"/><circle cx="16" cy="56" r="9" fill="#D42B37"/><circle cx="12.8" cy="52.4" r="2.7" fill="#FFB3B8" opacity=".65"/><path d="M7.5 56.0 h17.1" stroke="#ECE4D8" stroke-width="1.6" opacity=".8"/></g><g style="transform-origin: 46px 0px"><path d="M46 0 V66" stroke="#8C7A70" stroke-width="1"/><rect x="43" y="65" width="6" height="4" rx="1" fill="#C9B8A6"/><circle cx="46" cy="80" r="11" fill="#ECE4D8"/><circle cx="42.1" cy="75.6" r="3.3" fill="#FFFFFF" opacity=".65"/><path d="M35.5 80.0 h20.9" stroke="#D42B37" stroke-width="1.6" opacity=".8"/></g><g style="transform-origin: 76px 0px"><path d="M76 0 V32" stroke="#8C7A70" stroke-width="1"/><rect x="73" y="31" width="6" height="4" rx="1" fill="#C9B8A6"/><circle cx="76" cy="43" r="8" fill="#D42B37"/><circle cx="73.2" cy="39.8" r="2.4" fill="#FFB3B8" opacity=".65"/><path d="M68.4 43.0 h15.2" stroke="#ECE4D8" stroke-width="1.6" opacity=".8"/></g></svg>
+  <div class="garland" aria-hidden="true"></div><svg class="dangle" viewBox="0 0 92 96" aria-hidden="true" focusable="false"><g style="transform-origin: 16px 0px"><path d="M16 0 V44" stroke="#8C7A70" stroke-width="1"/><rect x="13" y="43" width="6" height="4" rx="1" fill="#C9B8A6"/><circle cx="16" cy="56" r="9" fill="#D42B37"/><circle cx="12.8" cy="52.4" r="2.7" fill="#FFB3B8" opacity=".65"/><path d="M7.5 56.0 h17.1" stroke="#ECE4D8" stroke-width="1.6" opacity=".8"/></g><g style="transform-origin: 46px 0px"><path d="M46 0 V66" stroke="#8C7A70" stroke-width="1"/><rect x="43" y="65" width="6" height="4" rx="1" fill="#C9B8A6"/><circle cx="46" cy="80" r="11" fill="#ECE4D8"/><circle cx="42.1" cy="75.6" r="3.3" fill="#FFFFFF" opacity=".65"/><path d="M35.5 80.0 h20.9" stroke="#D42B37" stroke-width="1.6" opacity=".8"/></g><g style="transform-origin: 76px 0px"><path d="M76 0 V32" stroke="#8C7A70" stroke-width="1"/><rect x="73" y="31" width="6" height="4" rx="1" fill="#C9B8A6"/><circle cx="76" cy="43" r="8" fill="#D42B37"/><circle cx="73.2" cy="39.8" r="2.4" fill="#FFB3B8" opacity=".65"/><path d="M68.4 43.0 h15.2" stroke="#ECE4D8" stroke-width="1.6" opacity=".8"/></g></svg>
   <div class="wrap">
     <div class="head">
       <p class="label rv">Before you ask</p>
@@ -1014,6 +1046,7 @@ footer a { text-underline-offset: 3px; }
       <details><summary>Is the Live board more accurate than Discord?</summary><p>It uses the same reads, so the two agree. What changes is speed and convenience: it refreshes every few seconds instead of waiting for the next post, and the chart and every number sit on one screen. No tool can promise a right call, so treat it as an estimate either way.</p></details>
       <details><summary>Does the free trial include the Live board?</summary><p>No. The trial runs in Discord for two hours. The Live board opens with the receipt number from a purchase.</p></details>
       <details><summary>Can I share my receipt number for the Live board?</summary><p>One receipt works on up to 2 devices at once. If a third device signs in, the oldest one is signed out. A refunded receipt stops working.</p></details>
+      <details><summary>What is Markets+?</summary><p>A $20 add-on for the Live board, paid once: Kalshi's 15-minute currency and commodity markets (EUR/USD, GBP/USD, USD/JPY, AUD/USD, USD/CAD, gold, silver, oil, natural gas, copper) and the hourly BTC, ETH, SOL and XRP ladders, with the same calls, flip calls and record as the crypto board. You can buy it on its own, without the $45 bot. Its receipt signs you in to those markets; add it to your Kiros helper sign-in to have both in one place.</p></details>
       <details><summary>How is my Kalshi key kept safe?</summary><p>You make an API key on Kalshi, never your password. Before it leaves your phone or computer, the page locks it so the website's database can't read it. Only the bot can open it, to read your trades and sell when your stop loss says so. You can remove it any time from the Live board, and a refund removes it too.</p></details>
       <details><summary>How much does it cost?</summary><p>$45, paid once. Every payment is covered by the 7-day refund. The optional stop-loss add-on is a separate $15, paid once, inside the Live board. Discount codes are for the main access only.</p></details>
       <details><summary>Do I need a Kalshi account?</summary><p>Only to place trades. Reading the verdicts takes nothing beyond Discord. Kalshi is an independent company with its own rules.</p></details>
@@ -1032,7 +1065,7 @@ footer a { text-underline-offset: 3px; }
 </svg>
 
 <section class="band" id="reviews">
-  <div class="garland" aria-hidden="true"></div>
+  <div class="lights band-lights" aria-hidden="true"></div>
   <div class="wrap">
     <div class="head">
       <p class="label rv">Reviews</p>
@@ -1092,7 +1125,7 @@ footer a { text-underline-offset: 3px; }
     <svg class="ginger g-foot two" aria-hidden="true" focusable="false"><use href="#gb"/></svg>
     <svg class="ginger g-foot wave" aria-hidden="true" focusable="false"><use href="#gb"/></svg>
     <p>Kiros helper provides estimates, not financial advice and not promises of profit. Prediction markets carry real risk, including the loss of your entire stake. Only use money you can afford to lose.</p>
-    <p class="foot-links">❄️ <a href="#updates">Update log</a> &middot; <a href="#auto">Stop loss</a> &middot; <a href="#trial">Free trial</a> &middot; <a href="#markets">Markets</a> &middot; <a href="#faq">FAQ</a></p>
+    <p class="foot-links">❄️ <a href="#updates">Update log</a> &middot; <a href="#auto">Stop loss</a> &middot; <a href="#plus">Markets+</a> &middot; <a href="#trial">Free trial</a> &middot; <a href="#markets">Markets</a> &middot; <a href="#faq">FAQ</a></p>
     <p>Not affiliated with Kalshi or Discord.</p>
     <p>Support: <a class="mail" href="mailto:kirodoesva@gmail.com">kirodoesva@gmail.com</a>. Refunds are available within 7 days of purchase.</p>
   </div>

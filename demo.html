@@ -648,6 +648,36 @@ body.sheet-open{overflow:hidden}
 .mt-sign{display:inline-block;margin:0 0 12px;padding:6px 12px;border:2px solid var(--warn);border-radius:6px;color:var(--warn);font:800 1.05rem/1 var(--font);font-stretch:120%;letter-spacing:.08em;text-transform:uppercase;background:repeating-linear-gradient(-45deg,rgba(227,169,59,.16) 0 10px,transparent 10px 20px)}
 .at-maint h2{font:800 1.35rem/1.15 var(--font);margin:0 0 8px}.at-maint p{margin:0 0 8px}
 .autowrap.maint>.at-card[data-k=head],.autowrap.maint .at-tab[data-tab=trade],.autowrap.maint .at-tab[data-tab=settings],.autowrap.maint .at-pane[data-pane=trade],.autowrap.maint .at-pane[data-pane=settings]{display:none!important}
+/* Markets+ (currencies, commodities, hourly crypto): the set switch, locked and closed markets, the hourly ladder */
+.sets{display:flex;gap:6px;margin-top:12px;overflow-x:auto;scrollbar-width:none}
+.sets::-webkit-scrollbar{display:none}
+.setbtn{appearance:none;cursor:pointer;flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--muted);font:600 .86rem/1 var(--font);white-space:nowrap}
+.setbtn:hover{color:var(--ink)}
+.setbtn[aria-pressed=true]{background:var(--raise);border-color:var(--line2);color:var(--ink)}
+.setbtn:focus-visible,.addrow input:focus-visible,.btn.ghost:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.plustag{display:inline-flex;align-items:center;padding:2px 6px;border-radius:4px;border:1px solid rgba(227,179,65,.45);color:#E3B341;font:700 .66rem/1.1 var(--font);letter-spacing:.02em;white-space:nowrap}
+.plustag.big{font-size:.8rem;padding:4px 8px;margin:0 0 10px;width:max-content}
+.lockic{font-size:.78rem;opacity:.8}
+.lockcard{max-width:620px;margin:10px auto 18px;padding:22px 20px;border-color:var(--line2)}
+.lockcard h2{font:700 1.25rem/1.25 var(--font);margin:0 0 8px}
+.lockcard p{margin:0 0 10px;line-height:1.5}
+.lklist{margin:0 0 12px;padding-left:1.1em;line-height:1.5}.lklist li{margin:4px 0}
+.lkbuy{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;margin:4px 0 18px}
+.addform{border-top:1px solid var(--line);padding-top:14px;display:grid;gap:8px}
+.addform label.l{font:600 .88rem/1.35 var(--font);color:var(--muted)}
+.addrow{display:flex;gap:8px;flex-wrap:wrap}
+.addrow input{flex:1 1 200px;min-width:0;min-height:48px;padding:0 14px;border-radius:8px;border:1px solid var(--line2);background:var(--bg);color:var(--ink);font:500 1.05rem/1 var(--code);letter-spacing:.04em}
+.colR>.ladderp{order:1}
+.ladtable td{padding:8px 8px 8px 0}
+.ladtable td.n{font-variant-numeric:tabular-nums}
+.ladtable td.up{color:var(--up)}.ladtable td.down{color:var(--down)}
+.ladtable tr.lmain td{background:rgba(255,255,255,.035)}
+.ladtable tr.lmain td:first-child{box-shadow:inset 3px 0 0 var(--brand);padding-left:8px}
+.plusnote{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);display:grid;gap:10px}
+.plusnote p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.5}
+.btn.ghost{background:none;border:1px solid var(--line2);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;text-decoration:none;min-height:44px;width:max-content}
+.btn.ghost:hover{background:var(--raise)}
+#grantKind{min-height:48px;padding:0 10px;border-radius:6px;border:1px solid var(--line2);background:var(--bg);color:var(--ink);font:500 .95rem/1 var(--font)}
 </style>
 </head>
 <body>
@@ -686,6 +716,7 @@ body.sheet-open{overflow:hidden}
       <p class="msg" id="gateMsg" role="status" aria-live="polite"></p>
     </form>
     <p class="fine">It&rsquo;s in the Stripe receipt email, written like 1234-5678. One receipt works on up to 2 devices. Bought before the website and got an access code from the owner? Type that code in the same box. On the free Discord trial? Tap the trial button in the server and the bot sends you a code to type here. It works until your trial ends. <a href="./#get">Get access</a></p>
+    <div class="plusnote" id="plusNote"><p><b>New: Markets+.</b> Currencies, commodities and the hourly crypto ladders on this same board, for $20. It has its own receipt: sign in with it above. Already signed in with Kiros helper? Add it from the Markets+ tabs.</p><a class="btn ghost" id="plusBuy" href="https://discord.gg/kiroskove" target="_blank" rel="noopener">Get Markets+</a></div>
   </section>
 
   <!-- 2) the live board (blurred sample behind the gate, real data after sign-in) -->
@@ -696,6 +727,7 @@ body.sheet-open{overflow:hidden}
       <button type="button" class="modebtn" data-mode="board" aria-pressed="true">Live board</button>
       <button type="button" class="modebtn" data-mode="auto" aria-pressed="false">Auto-trader<span class="modedot" id="modeDot" hidden title="The Auto-trader is running"></span></button>
     </div>
+    <div class="sets" id="sets" role="group" aria-label="Which markets"></div>
     <div class="coins" id="coins" role="group" aria-label="Pick a market"></div>
     <div class="status" id="status">
       <span class="dot" id="dot"></span><span id="statusTxt" aria-live="polite">Connecting...</span><span class="pill" id="ownerPill" hidden>Owner</span><span class="sp"></span>
@@ -717,9 +749,17 @@ body.sheet-open{overflow:hidden}
         <p class="hint">For people who bought before the website. Type their email, get a personal code, and send it to them. They type it in the box where the receipt number goes.</p>
         <form id="grantForm" class="grant" autocomplete="off" novalidate>
           <input type="text" id="grantEmail" maxlength="120" placeholder="Their email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Their email">
+          <select id="grantKind" aria-label="What the code opens"><option value="core">Kiros helper</option><option value="plus">Markets+</option><option value="both">Both</option></select>
           <button type="submit" id="grantGo">Create code</button>
         </form>
         <div id="grantResult" aria-live="polite"></div>
+        <p class="hint">Giving the same email again with another choice changes what their code opens (no new code).</p>
+        <h4>Markets+</h4>
+        <p class="hint">Payment link for the $20 Markets+ (the Stripe link people tap to pay). Turn promotion codes off on it. It shows on the sign-in page and on the locked Markets+ tabs. Leave it empty and those buttons point to your Discord.</p>
+        <form id="plusForm" class="grant" autocomplete="off" novalidate>
+          <input type="text" id="plusUrl" maxlength="300" placeholder="https://buy.stripe.com/..." inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Payment link for Markets+">
+          <button type="submit" id="plusGo">Save link</button>
+        </form>
         <h4>People you gave access</h4>
         <div id="ownerGuests"><p class="empty">Nobody yet.</p></div>
         <h4>On the board</h4>
@@ -742,6 +782,7 @@ body.sheet-open{overflow:hidden}
     <div class="stage" id="stage" data-mode="board">
       <section class="autowrap" id="autoWrap" hidden aria-label="Auto-trader"></section>
       <div id="view"></div>
+      <div id="lockv" class="lockv" hidden></div>
     </div>
     <div id="recWrap" hidden></div>
     <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
@@ -763,6 +804,13 @@ body.sheet-open{overflow:hidden}
   var CODES = [["BTC", "Bitcoin", 64200, 0.00009], ["ETH", "Ethereum", 1870, 0.00011], ["SOL", "Solana", 74, 0.00014], ["XRP", "XRP", 1.08, 0.00014],
                ["DOGE", "Dogecoin", 0.081, 0.00017], ["BNB", "BNB", 590, 0.0001], ["HYPE", "Hyperliquid", 58, 0.00018]];
   var CB = { BTC: "BTC-USD", ETH: "ETH-USD", SOL: "SOL-USD", XRP: "XRP-USD", DOGE: "DOGE-USD", BNB: "BNB-USD", HYPE: "HYPE-USD" };
+  // Markets+ (made up too): [code, name, rough price, move per second, set, decimals, unit, coin an hourly ladder follows]
+  var PCODES = [["EURUSD", "EUR/USD", 1.152, 0.000012, "fx", 5, ""], ["GBPUSD", "GBP/USD", 1.312, 0.000014, "fx", 5, ""], ["USDJPY", "USD/JPY", 153.8, 0.000014, "fx", 3, ""],
+                ["AUDUSD", "AUD/USD", 0.655, 0.000016, "fx", 5, ""], ["USDCAD", "USD/CAD", 1.38, 0.000011, "fx", 5, ""],
+                ["GOLD", "Gold", 4100, 0.00004, "cmd", 2, "$"], ["SILVER", "Silver", 52, 0.00007, "cmd", 3, "$"], ["OIL", "Oil (WTI)", 61.5, 0.00006, "cmd", 2, "$"],
+                ["NATGAS", "Natural gas", 3.05, 0.0001, "cmd", 4, "$"], ["COPPER", "Copper", 5.1, 0.00005, "cmd", 4, "$"],
+                ["BTCH", "Bitcoin hourly", 0, 0, "h1", 2, "$", "BTC"], ["ETHH", "Ethereum hourly", 0, 0, "h1", 2, "$", "ETH"], ["SOLH", "Solana hourly", 0, 0, "h1", 3, "$", "SOL"], ["XRPH", "XRP hourly", 0, 0, "h1", 4, "$", "XRP"]];
+  var HROUND = FAST ? 720 : 3600;
   var T0 = Date.now(), PXOK = 0;
   var DEMO = { res: {}, picks: [], pid: 0, pver: 1, hand: {}, gev: [], gseq: 0, krec: [], fc: {}, fcRec: {}, bal: 250, next: 0, rts: 1 };        // the Live board's own tools, for the demo (see below)
   var realFetch = window.fetch;
@@ -794,6 +842,24 @@ body.sheet-open{overflow:hidden}
     M[c[0]] = { code: c[0], name: c[1], sig: sg, p: p, drift: 0, driftT: 0, hist: rows.filter(function (r) { return r[0] < minute; }), cur: [minute, p, p, p, p],
       rid: null, target: p, tk: "", close: 0, mktN: 0, modN: 0, chartCache: null, q: null };
   });
+  PCODES.forEach(function (c) {
+    if (c[7]) {                                                     // an hourly ladder: the same price as its coin, an hour per round
+      var bm = M[c[7]];
+      M[c[0]] = { code: c[0], name: c[1], sig: bm.sig, p: bm.p, drift: 0, driftT: 0, hist: bm.hist, cur: bm.cur, base: c[7], grp: c[4], dp: c[5], unit: c[6], round: HROUND,
+        rid: null, target: bm.p, tk: "", close: 0, mktN: 0, modN: 0, chartCache: null, q: null };
+      return;
+    }
+    var p = c[2], sg = c[3], rows = [], t0 = Math.floor(NOW / 60) * 60 - 3000 * 60, px = p * Math.exp(-sg * 7.7 * 12 * randn());
+    for (var i = 0; i < 3000; i++) {
+      var o = px, mv = sg * 7.746 * (randn() + 0.05 * Math.sin(i / 40)); px = o * Math.exp(mv);
+      rows.push([t0 + i * 60, sig(o), sig(Math.max(o, px) * (1 + Math.abs(randn()) * sg * 3)), sig(Math.min(o, px) * (1 - Math.abs(randn()) * sg * 3)), sig(px)]);
+    }
+    var last = rows[rows.length - 1], k = last[4] ? p / last[4] : 1;
+    rows = rows.map(function (r) { return [r[0], sig(r[1] * k), sig(r[2] * k), sig(r[3] * k), sig(r[4] * k)]; });
+    var minute = Math.floor(NOW / 60) * 60;
+    M[c[0]] = { code: c[0], name: c[1], sig: sg, p: p, drift: 0, driftT: 0, hist: rows.filter(function (r) { return r[0] < minute; }), cur: [minute, p, p, p, p], grp: c[4], dp: c[5], unit: c[6],
+      rid: null, target: p, tk: "", close: 0, mktN: 0, modN: 0, chartCache: null, q: null };
+  });
   function agg(rows, P, now) {
     var out = [], cur = null;
     rows.forEach(function (c) { var b = Math.floor(c[0] / P) * P; if (!cur || cur[0] !== b) { cur = [b, c[1], c[2], c[3], c[4]]; out.push(cur); } else { cur[2] = Math.max(cur[2], c[2]); cur[3] = Math.min(cur[3], c[3]); cur[4] = c[4]; } });
@@ -817,6 +883,11 @@ body.sheet-open{overflow:hidden}
       macd: { side: macd[n] >= sg[n] ? "UP" : "DOWN" }, bb: { pb: +clamp((cl[n] - (mean - 2 * sd)) / (4 * sd), -0.2, 1.2).toFixed(3) }, st: Math.round(hh === ll ? 50 : 100 * (cl[n] - ll) / (hh - ll)) };
   }
   function stepMarket(m, t) {
+    var RD = m.round || ROUND;
+    if (m.base) {                                                   // an hourly ladder moves with its coin
+      var bm = M[m.base]; m.p = bm.p; m.hist = bm.hist; m.cur = bm.cur; m.path = bm.path; m.sig = bm.sig; m.chartCache = bm.chartCache;
+      m.mktN = m.mktN * 0.88 + randn() * 0.019; m.modN = m.modN * 0.9 + randn() * 0.0175;
+    } else {
     if (t >= m.driftT) { m.drift = randn() * 0.08; m.driftT = t + 30 + Math.random() * 40; }
     m.p = m.p * Math.exp(m.sig * (randn() + m.drift));
     (m.path = m.path || []).push([t, m.p]); while (m.path.length && t - m.path[0][0] > 180) m.path.shift();
@@ -824,11 +895,13 @@ body.sheet-open{overflow:hidden}
     var minute = Math.floor(t / 60) * 60;
     if (minute > m.cur[0]) { m.hist.push(m.cur.map(function (v, i) { return i ? sig(v) : v; })); if (m.hist.length > 3200) m.hist.shift(); m.cur = [minute, m.p, m.p, m.p, m.p]; m.chartCache = null; }
     else { m.cur[2] = Math.max(m.cur[2], m.p); m.cur[3] = Math.min(m.cur[3], m.p); m.cur[4] = m.p; }
-    var rid = Math.floor(t / ROUND);
+    }
+    var rid = Math.floor(t / RD);
     if (rid !== m.rid) {
       if (m.rid != null) onClose(m, m.p >= m.target ? "UP" : "DOWN", t);
-      var first = m.rid == null; m.rid = rid; m.target = m.p; m.close = (rid + 1) * ROUND;
-      if (first) { var startT = rid * ROUND, back = m.hist.filter(function (r) { return r[0] <= startT; }); if (back.length) m.target = back[back.length - 1][4]; }
+      var first = m.rid == null; m.rid = rid; m.target = m.p; m.close = (rid + 1) * RD;
+      if (m.base) m.target = Math.round(m.p / (m.p > 1000 ? 250 : m.p > 50 ? 1 : 0.01)) * (m.p > 1000 ? 250 : m.p > 50 ? 1 : 0.01);     // the ladder line nearest the price
+      if (first && !m.base) { var startT = rid * RD, back = m.hist.filter(function (r) { return r[0] <= startT; }); if (back.length) m.target = back[back.length - 1][4]; }
       var d = new Date(m.close * 1000); m.tk = "DEMO-" + m.code + "-" + ("0" + d.getHours()).slice(-2) + ("0" + d.getMinutes()).slice(-2) + "-" + (rid % 100);
       m.traded = 0; m.stopped = false; m.looks = { side: null, n: 0 };
     }
@@ -1029,6 +1102,24 @@ body.sheet-open{overflow:hidden}
       kalshi: { yes_ask: q.ya, yes_bid: q.yb, no_ask: q.na, no_bid: q.nb, buy: "Buy " + (side === "UP" ? "Yes" : "No") + " at " + price + "c. It pays 100c if the market ends " + side + "." },
       fc: fcFor(m, t, flipP),
       scalp: (prob >= 0.66 && edge >= 6 && q.left > 150 * ROUND / 900 && q.left < 780 * ROUND / 900) ? { on: true, side: side, entry: price, tp: Math.min(price + 8, 99), sl: Math.max(price - 6, 1), edge: +edge.toFixed(1), prob: +prob.toFixed(3) } : { on: false, why: "no strong call with a good price right now (demo)" }, why: ["This is the demo's made-up market.", "Price is " + (m.p >= m.target ? "above" : "below") + " the target."], votes: [], feeds: {}, cur: m.cur.map(function (v, i) { return i ? sig(v) : v; }) };
+    if (m.grp) {                                                    // Markets+: its own units, round length and (hourly) the ladder
+      d.grp = m.grp; d.dp = m.dp; d.unit = m.unit; d.win = m.round || ROUND; d.target_src = "made-up";
+      d.tv = { EURUSD: "FX:EURUSD", GBPUSD: "FX:GBPUSD", USDJPY: "FX:USDJPY", AUDUSD: "FX:AUDUSD", USDCAD: "FX:USDCAD", GOLD: "OANDA:XAUUSD", SILVER: "OANDA:XAGUSD", OIL: "TVC:USOIL", NATGAS: "TVC:NATURALGAS", COPPER: "COMEX:HG1!" }[code];
+      d.align = m.base ? undefined : { src: [m.grp === "fx" ? "Yahoo" : "Hyperliquid"], move: +((m.p / m.target - 1) * 100).toFixed(4) };
+      if (m.base) {
+        var step = m.p > 1000 ? 250 : m.p > 50 ? 1 : 0.01, k0 = Math.round(m.p / step) * step, sd = m.sig * Math.sqrt(Math.max(q.left, 1));
+        d.ladder = [];
+        for (var ki = -4; ki <= 4; ki++) {
+          var kk = +(k0 + ki * step).toFixed(4), main = Math.abs(kk - m.target) < step / 2;
+          var pk = main ? q.pm : clamp(cdf(Math.log(m.p / kk) / sd) + m.modN * 0.5, 0.01, 0.99), mk = clamp(cdf(Math.log(m.p / kk) / sd) * 100 + m.mktN * 80, 1, 99);
+          var yak = Math.round(clamp(mk + 1, 2, 99)), ybk = Math.round(clamp(mk - 1, 1, 98));
+          d.ladder.push({ tk: m.tk + "-T" + kk, k: kk, p: +pk.toFixed(4), ya: yak, yb: ybk, na: 100 - ybk, nb: 100 - yak, main: main });
+        }
+        if (!d.ladder.some(function (x) { return x.main; })) d.ladder.push({ tk: m.tk + "-T" + m.target, k: m.target, p: +q.pm.toFixed(4), ya: q.ya, yb: q.yb, na: q.na, nb: q.nb, main: true });
+        d.ladder.sort(function (a, b) { return a.k - b.k; });
+        d.event = m.tk;
+      }
+    }
     return d;
   }
   function chartFor(code) {
@@ -1063,7 +1154,7 @@ body.sheet-open{overflow:hidden}
     else if (toward > 0 && (risk >= 0.35 || (s.lvl === "watch" && risk >= 0.25))) { lvl = "watch"; to = other; sure = risk; }
     if (lvl !== s.lvl) { s.lvl = lvl; s.since = t; }
     s.to = to; m.fcs = s;
-    var why = [], vm = toward * 60; if (toward > 0) why.push("moving toward the target at $" + (m.p >= 1000 ? Math.round(vm) : m.p >= 10 ? vm.toFixed(2) : vm.toFixed(4)) + " a minute");
+    var why = [], vm = toward * 60; if (toward > 0) why.push("moving toward the target at " + (m.unit != null ? m.unit : "$") + (m.dp != null ? vm.toFixed(m.dp) : m.p >= 1000 ? Math.round(vm) : m.p >= 10 ? vm.toFixed(2) : vm.toFixed(4)) + " a minute");
     if (lvl === "flipped") why = [lead + " has held for " + Math.round(held / sc) + " seconds after crossing the target"];
     var out = { lvl: lvl, to: to, risk: +(risk * 100).toFixed(1), base: +(flipP * 100).toFixed(1), vel: sig(toward * 60), eta: toward > 0 ? Math.round(Math.abs(gap) / toward) : null, why: why, since: Math.floor(s.since), proof: [17, 38] };
     if (sure != null) out.sure = +(sure * 100).toFixed(1);
@@ -1163,7 +1254,7 @@ body.sheet-open{overflow:hidden}
       case "live_get": {
         if (!authed) return { ok: false, reason: "expired" };
         var code = String(a.p_coin || "BTC"); if (!M[code]) return { ok: true, wait: true };
-        var ch = chartFor(code), out = { ok: true, age: 0.4, ver: Math.floor(Date.now()), data: boardData(code), chart_ts: ch.ts };
+        var ch = chartFor(code), out = { ok: true, age: 0.4, ver: Math.floor(Date.now()), data: boardData(code), chart_ts: ch.ts, acc: { c: true, p: true } };
         if (ch.ts !== a.p_have) out.chart = ch.rows;
         return out;
       }
@@ -1306,14 +1397,30 @@ body.sheet-open{overflow:hidden}
   var POLL_VIS = 1000, POLL_HID = 10000, WAIT_MS = 1000, HIDDEN_IDLE_MS = 30 * 60 * 1000;      // a background tab asks every 10 s and pauses after 30 minutes
   var COINS = [["BTC", "Bitcoin"], ["ETH", "Ethereum"], ["SOL", "Solana"], ["XRP", "XRP"], ["DOGE", "Dogecoin"], ["BNB", "BNB"], ["HYPE", "Hyperliquid"]];
   var TV_SRC = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-  var TV_SYM = { BTC: "COINBASE:BTCUSD", ETH: "COINBASE:ETHUSD", SOL: "COINBASE:SOLUSD", XRP: "COINBASE:XRPUSD", DOGE: "COINBASE:DOGEUSD", BNB: "COINBASE:BNBUSD", HYPE: "KUCOIN:HYPEUSDT" };
+  var TV_SYM = { BTC: "COINBASE:BTCUSD", ETH: "COINBASE:ETHUSD", SOL: "COINBASE:SOLUSD", XRP: "COINBASE:XRPUSD", DOGE: "COINBASE:DOGEUSD", BNB: "COINBASE:BNBUSD", HYPE: "KUCOIN:HYPEUSDT",
+                 EURUSD: "FX:EURUSD", GBPUSD: "FX:GBPUSD", USDJPY: "FX:USDJPY", AUDUSD: "FX:AUDUSD", USDCAD: "FX:USDCAD", GOLD: "OANDA:XAUUSD", SILVER: "OANDA:XAGUSD",
+                 OIL: "TVC:USOIL", NATGAS: "TVC:NATURALGAS", COPPER: "COMEX:HG1!", BTCH: "COINBASE:BTCUSD", ETHH: "COINBASE:ETHUSD", SOLH: "COINBASE:SOLUSD", XRPH: "COINBASE:XRPUSD" };
+  /* Markets+ (the $20 add-on): currencies and commodities (15-minute up/down) and the hourly crypto ladders. [code, name, set] */
+  var PLUS = [["EURUSD", "EUR/USD", "fx"], ["GBPUSD", "GBP/USD", "fx"], ["USDJPY", "USD/JPY", "fx"], ["AUDUSD", "AUD/USD", "fx"], ["USDCAD", "USD/CAD", "fx"],
+              ["GOLD", "Gold", "cmd"], ["SILVER", "Silver", "cmd"], ["OIL", "Oil (WTI)", "cmd"], ["NATGAS", "Natural gas", "cmd"], ["COPPER", "Copper", "cmd"],
+              ["BTCH", "BTC", "h1"], ["ETHH", "ETH", "h1"], ["SOLH", "SOL", "h1"], ["XRPH", "XRP", "h1"]];
+  var SETS = [["c15", "Crypto 15m"], ["fx", "Currencies"], ["cmd", "Commodities"], ["h1", "Hourly crypto"]];
+  var CORE_URL = "./#get", DISCORD_URL = "https://discord.gg/kiroskove";
+  function setOf(c) { for (var i = 0; i < PLUS.length; i++) if (PLUS[i][0] === c) return PLUS[i][2]; return "c15"; }
+  function isPlus(c) { return setOf(c) !== "c15"; }
+  function plusName(c) { for (var i = 0; i < PLUS.length; i++) if (PLUS[i][0] === c) return PLUS[i][1]; return c; }
+  function dispCoin(d) { return d && d.grp ? (d.grp === "h1" ? plusName(d.coin) : (d.name || d.coin)) : (d ? d.coin : ""); }   // how a market is called in sentences
+  /* the units the board writes prices in: $ and a sensible number of decimals for crypto, or the market's own (5 decimals for EUR/USD, no $) */
+  var U = { cur: "$", dp: null };
+  function setUnits(d) { U.cur = d && d.unit != null ? d.unit : "$"; U.dp = d && d.dp != null ? Number(d.dp) : null; }
   var CONF = { "VERY STRONG": "Very strong", "STRONG": "Strong", "LEAN": "Lean", "TOSS-UP": "Toss-up" };
 
   var $ = function (id) { return document.getElementById(id); };
   var S = { token: null, coin: "BTC", dev: null, view: {}, chart: {}, chartTs: {}, seen: {}, noSeen: false, fails: 0, idle: false, busy: false, signing: false,
             nextAt: 0, worker: null, wurl: null, iv: null, hiddenSince: 0, lastTitle: 0, lastChart: 0, lastClock: 0, favKey: "", hover: null, geo: null,
             trialAt: 0, lastTrial: 0, tab: "bot", tf: "1", ind: null, tvCoin: null, tvTf: null, tvTimer: null,
-            rec: null, recTimer: null, recFail: 0, recView: "coin", recCp: "mid", recMore: false };
+            rec: null, recTimer: null, recFail: 0, recView: "coin", recCp: "mid", recMore: false,
+            set: "c15", acc: null, locked: {}, plusUrl: null };
   var REC_POLL_MS = 30000;
   var R = null;                                                   // handles to the live board's pieces (see bind)
 
@@ -1326,9 +1433,10 @@ body.sheet-open{overflow:hidden}
     return Array.prototype.map.call(a, function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
   }
   function device() { if (!S.dev) { S.dev = store("kh_live_dev"); if (!S.dev || S.dev.length < 16) { S.dev = newDevice(); store("kh_live_dev", S.dev); } } return S.dev; }
-  function money(p) { var a = Math.abs(p), d = a >= 10 ? 2 : a >= 1 ? 4 : 5; return (p < 0 ? "-$" : "$") + a.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
-  function dollars(x, ref) { ref = Math.abs(ref); var d = ref >= 1000 ? 0 : ref >= 10 ? 2 : ref >= 1 ? 4 : 5; return Math.abs(x).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
-  function axisFmt(hi) { var d = hi >= 1000 ? 0 : hi >= 10 ? 2 : hi >= 1 ? 4 : 5; return function (p) { return p.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }; }
+  function money(p) { var a = Math.abs(p), d = U.dp != null ? U.dp : (a >= 10 ? 2 : a >= 1 ? 4 : 5); return (p < 0 ? "-" : "") + U.cur + a.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
+  function dollars(x, ref) { ref = Math.abs(ref); var d = U.dp != null ? U.dp : (ref >= 1000 ? 0 : ref >= 10 ? 2 : ref >= 1 ? 4 : 5); return Math.abs(x).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
+  function amtu(x, ref) { return U.cur + dollars(x, ref); }                    // an amount in the market's units: $12.40, or 0.00031 for an exchange rate
+  function axisFmt(hi) { var d = U.dp != null ? U.dp : (hi >= 1000 ? 0 : hi >= 10 ? 2 : hi >= 1 ? 4 : 5); return function (p) { return p.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }; }
   function mmss(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); }
   function leftText(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + "m " + ("0" + (s % 60)).slice(-2) + "s"; }
   function signed(x, d) { if (x == null || !isFinite(x)) return "-"; return (x >= 0 ? "+" : "") + Number(x).toFixed(d); }
@@ -1356,7 +1464,7 @@ body.sheet-open{overflow:hidden}
   /* ---------- view switching ---------- */
   function showGate(msg, kind) {
     stopPolling(); musicHide(); meStop();
-    S.token = null; store("kh_live_tok", null); S.trialAt = 0; updateTrial();
+    S.token = null; store("kh_live_tok", null); S.trialAt = 0; updateTrial(); S.acc = null; S.locked = {};
     $("board").hidden = true;
     $("gate").hidden = false;
     $("sampleWrap").hidden = false;
@@ -1364,7 +1472,7 @@ body.sheet-open{overflow:hidden}
     ownerOn(false); O.loaded = false; store("kh_live_owner", null);
     S.rec = null; $("recWrap").hidden = true; $("recLink").hidden = true;
     resetTitle();
-    renderSample();
+    renderSample(); plusInfo();
     setMsg(msg || "", kind || "");
     $("go").disabled = false;
     $("go").textContent = "Open the live board";
@@ -1465,7 +1573,7 @@ body.sheet-open{overflow:hidden}
     if (document.hidden) { if (!S.hiddenSince) S.hiddenSince = now; if (!S.idle && now - S.hiddenSince > HIDDEN_IDLE_MS) goIdle(); }
     else S.hiddenSince = 0;
     var v = S.view[S.coin];
-    if (v) {
+    if (v && !v.data.closed && !S.locked[S.coin]) {
       if (!document.hidden && now - S.lastClock >= 240) { S.lastClock = now; paintClock(v); }
       if (!document.hidden && now - S.lastChart >= 1000) { S.lastChart = now; drawChartNow(); }
       if (now - S.lastTitle >= 1000) { S.lastTitle = now; updateTitle(v); }
@@ -1503,6 +1611,14 @@ body.sheet-open{overflow:hidden}
       if (r.owner) { if (!S.owner) ownerOn(true); if (!O.loaded) { O.loaded = true; ownerLoad(true); } }
       else if (S.owner) { ownerOn(false); store("kh_live_owner", null); }
       S.trialAt = r.trial != null ? performance.now() + Number(r.trial) * 1000 : 0; updateTrial();         // a free-trial sign-in is told how long it has left
+      if (r.acc) { var accKey = (r.acc.c ? "c" : "") + (r.acc.p ? "p" : ""); if (!S.acc || accKey !== (S.acc.c ? "c" : "") + (S.acc.p ? "p" : "")) { S.acc = r.acc; refreshSets(); } }
+      if (r.plus_url !== undefined) S.plusUrl = r.plus_url || null;
+      if (r.locked) {                                                    // a market this sign-in didn't unlock: the board offers it instead
+        S.locked[coin] = r.locked; S.waiting = null;
+        if (coin === S.coin) renderView();
+        return schedule(Math.max(interval(), 5000));
+      }
+      if (S.locked[coin]) { delete S.locked[coin]; if (coin === S.coin) renderView(); }
       if (r.wait) { S.waiting = coin; if (coin === S.coin) renderView(); return schedule(WAIT_MS); }
       S.waiting = null;
       hideBannerIf("net");
@@ -1534,7 +1650,7 @@ body.sheet-open{overflow:hidden}
   }
   document.addEventListener("visibilitychange", function () {
     if (!S.token) return;
-    if (!document.hidden) { S.hiddenSince = 0; if (S.idle) resume(); else schedule(0); var v = S.view[S.coin]; if (v && R) { paintClock(v); drawChartNow(); updateTitle(v); } }
+    if (!document.hidden) { S.hiddenSince = 0; if (S.idle) resume(); else schedule(0); var v = S.view[S.coin]; if (v && R && v.data.call && !S.locked[S.coin]) { paintClock(v); drawChartNow(); updateTitle(v); } }
   });
   window.addEventListener("online", function () { if (S.token) schedule(0); });
 
@@ -1552,6 +1668,7 @@ body.sheet-open{overflow:hidden}
   }
   function setFav(color, glyph) { var l = $("fav"), h = favHref(color, glyph); if (l && h) l.href = h; }
   function updateTitle(v) {
+    if (!v.data.call) { var tc = (v.data.name || v.data.coin) + " closed | Kiros live"; if (document.title !== tc) document.title = tc; return; }
     var d = v.data, c = d.call, left = leftNow(v), toss = c.conf === "TOSS-UP", how = meTitleMode();
     if (meFlashing()) return;                                         // a new alert is blinking in the tab title
     var head = toss ? "Skip" : (c.side === "UP" ? "▲ UP " : "▼ DOWN ") + Math.round(c.prob * 100) + "%";
@@ -1582,8 +1699,10 @@ body.sheet-open{overflow:hidden}
       recSchedule(Math.min(REC_POLL_MS * Math.pow(2, S.recFail), 300000));
     });
   }
+  function setKeys() { return S.set === "c15" ? COINS.map(function (c) { return c[0]; }) : PLUS.filter(function (c) { return c[2] === S.set; }).map(function (c) { return c[0]; }); }
+  function recW(data, coin) { var c = ((data && data.coins) || {})[coin]; return (c && c.w) || (setOf(coin) === "h1" ? 3600 : 900); }
   function recSum(data, coin, cp) {
-    var out = [0, 0, 0], coins = coin === "all" ? Object.keys((data && data.coins) || {}) : [coin];
+    var out = [0, 0, 0], coins = coin === "all" ? Object.keys((data && data.coins) || {}).filter(function (c) { return setKeys().indexOf(c) >= 0; }) : [coin];
     coins.forEach(function (c) { var s = (((data && data.coins) || {})[c] || {}).s; s = s && s[cp]; if (s) { out[0] += s[0] | 0; out[1] += s[1] | 0; out[2] += s[2] | 0; } });
     return out;
   }
@@ -1595,12 +1714,13 @@ body.sheet-open{overflow:hidden}
   function recTime(ts) { return clockTime(ts); }
   /* ---- when in each market the call was right: r[3] = [seconds watched, [[seconds since open, "U"|"D"|"T"], ...]] ---- */
   function tlMin(sec) { sec = Math.round(sec); return sec < 90 ? sec + " sec" : Math.round(sec / 60) + " min"; }
-  function tlParse(r) {
+  function tlParse(r, W) {
+    W = W || 900;
     var t = r && r[3]; if (!t || !t[1] || !t[1].length) return null;
-    var end = Math.min(900, Math.max(0, Number(t[0]) || 0)), pts = [], res = r[1] === "U" ? "U" : "D";
+    var end = Math.min(W, Math.max(0, Number(t[0]) || 0)), pts = [], res = r[1] === "U" ? "U" : "D";
     for (var i = 0; i < t[1].length && i < 200; i++) {
       var p = t[1][i], o = p ? Number(p[0]) : NaN, c = p ? p[1] : "";
-      if (!(o >= 0 && o <= 900) || (c !== "U" && c !== "D" && c !== "T")) continue;
+      if (!(o >= 0 && o <= W) || (c !== "U" && c !== "D" && c !== "T")) continue;
       if (pts.length && o < pts[pts.length - 1][0]) continue;
       pts.push([o, c]);
     }
@@ -1615,15 +1735,15 @@ body.sheet-open{overflow:hidden}
     }
     add(0, pts[0][0], "n", "");
     pts.forEach(function (p, i) { add(p[0], i + 1 < pts.length ? pts[i + 1][0] : end, p[1] === "T" ? "s" : (p[1] === res ? "w" : "l"), p[1]); });
-    add(end, 900, "n", "");
+    add(end, W, "n", "");
     if (!(tot.w + tot.l + tot.s > 0)) return null;
-    return { segs: segs, tot: tot, first: pts[0][0], end: end };
+    return { segs: segs, tot: tot, first: pts[0][0], end: end, W: W };
   }
   function tlText(m, close) {
-    var open = close - 900, T = m.tot, segs = m.segs;
+    var W = m.W || 900, open = close - W, T = m.tot, segs = m.segs;
     function at(sec) { return recTime(open + sec); }
     function span(s) { return at(s[0]) + " to " + at(s[1]); }
-    var full = m.first <= 30 && m.end >= 870, toClose = m.end >= 870, lastSeg = null;
+    var full = m.first <= 30 && m.end >= W - 30, toClose = m.end >= W - 30, lastSeg = null;
     for (var i = segs.length - 1; i >= 0; i--) if (segs[i][2] !== "n") { lastSeg = segs[i]; break; }
     if (T.w === 0) {
       if (T.l === 0) return "Too close to call the whole time (skipped)";
@@ -1643,61 +1763,66 @@ body.sheet-open{overflow:hidden}
     var tail = lastSeg && lastSeg[2] === "l" ? ", wrong " : lastSeg && lastSeg[2] === "s" ? ", skipped " : ", not right ";
     return "Right " + shown + more + (right.length === 1 ? " (" + tlMin(right[0][1] - right[0][0]) + ")" : "") + tail + (toClose ? "at the close" : "when it stopped watching");
   }
-  function tlRow(r) {
-    var m = tlParse(r); if (!m) return "";
-    var close = Number(r[0]) || 0, open = close - 900, ended = r[1] === "U" ? "UP" : "DOWN", text = tlText(m, close);
+  function tlRow(r, W) {
+    var m = tlParse(r, W); if (!m) return "";
+    var close = Number(r[0]) || 0, open = close - m.W, ended = r[1] === "U" ? "UP" : "DOWN", text = tlText(m, close);
     var names = { w: "right", l: "wrong", s: "skipped (too close to call)", n: "not watched" };
     var bar = m.segs.map(function (s) {
       var tip = recTime(open + s[0]) + " to " + recTime(open + s[1]) + ": " + (s[2] === "n" ? "the bot wasn't watching" : "called " + (s[3] === "T" ? "too close to call" : (s[3] === "U" ? "UP" : "DOWN")) + (s[2] === "s" ? "" : ", " + names[s[2]]));
-      return "<i class='" + s[2] + "' style='width:" + ((s[1] - s[0]) / 9).toFixed(3) + "%' title='" + esc(tip) + "'></i>";
+      return "<i class='" + s[2] + "' style='width:" + ((s[1] - s[0]) * 100 / m.W).toFixed(3) + "%' title='" + esc(tip) + "'></i>";
     }).join("");
     var parts = []; [["w", "right "], ["l", "wrong "], ["s", "skipped "], ["n", "not watched "]].forEach(function (x) { if (m.tot[x[0]] >= 1) parts.push(x[1] + tlMin(m.tot[x[0]])); });
     var subText = parts.join(", "); subText = subText.charAt(0).toUpperCase() + subText.slice(1);
     return "<li class='tlrow'><div class='tlhead'><b>" + esc(recTime(open) + " to " + recTime(close)) + "</b><span class='" + (r[1] === "U" ? "up" : "down") + "'>Ended " + ended + "</span></div>" +
       "<div class='tlbar' role='img' aria-label='" + esc(text) + "'>" + bar + "</div><p class='tlmain'>" + esc(text) + "</p><p class='tlsub'>" + esc(subText) + "</p></li>";
   }
-  function tlAgg(rows) {
+  function tlAgg(rows, W) {
     var o = { n: 0, w: 0, l: 0 };
-    rows.forEach(function (r) { var m = tlParse(r); if (!m) return; o.n++; o.w += m.tot.w; o.l += m.tot.l; });
+    rows.forEach(function (r) { var m = tlParse(r, W); if (!m) return; o.n++; o.w += m.tot.w; o.l += m.tot.l; });
     return o;
   }
-  function tlHtml(rows) {
-    var withTl = rows.filter(function (r) { return !!tlParse(r); }).reverse();
+  function tlHtml(rows, W) {
+    W = W || 900;
+    var withTl = rows.filter(function (r) { return !!tlParse(r, W); }).reverse();
     if (!withTl.length) return "<div class='tlh'>When the call was right</div><p class='recnote'>This fills in for markets that finish after the bot is updated. Each one will show a bar from open to close, and when in that market the call matched the result.</p>";
-    var ag = tlAgg(withTl), pct = (ag.w + ag.l) >= 60 ? Math.round(100 * ag.w / (ag.w + ag.l)) : null;
+    var ag = tlAgg(withTl, W), pct = (ag.w + ag.l) >= 60 ? Math.round(100 * ag.w / (ag.w + ag.l)) : null;
     var more = S.recMore && withTl.length > 8, list = withTl.slice(0, more ? 24 : 8);
     var out = "<div class='tlh'>When the call was right</div>";
     if (pct != null) out += "<p class='tlbig'>Right for <b>" + pct + "%</b> of the time it made a call, over the last " + ag.n + (ag.n === 1 ? " market" : " markets") + ".</p>";
     if (ag.n < 10) out += "<p class='recnote recsmall'>That is only " + ag.n + (ag.n === 1 ? " market" : " markets") + " so far, so it can swing a lot.</p>";
-    out += "<p class='recsub'>One bar per 15-minute market, from open to close, newest first. Green means that at that moment the bot&rsquo;s call matched how the market ended.</p>" +
+    out += "<p class='recsub'>One bar per " + (W === 3600 ? "hourly" : "15-minute") + " market, from open to close, newest first. Green means that at that moment the bot&rsquo;s call matched how the market ended.</p>" +
       "<div class='reclegend tlkey'><span><i class='kw w'></i>right</span><span><i class='kw l'></i>wrong</span><span><i class='kw s'></i>too close to call</span><span><i class='kw n'></i>not watched</span></div>" +
-      "<div class='tlscale' aria-hidden='true'><span>Open</span><span class='m' style='left:33.33%'>5 min</span><span class='m' style='left:66.67%'>10 min</span><span>Close</span></div><ol class='tllist'>" + list.map(tlRow).join("") + "</ol>";
+      "<div class='tlscale' aria-hidden='true'><span>Open</span><span class='m' style='left:33.33%'>" + (W === 3600 ? "20 min" : "5 min") + "</span><span class='m' style='left:66.67%'>" + (W === 3600 ? "40 min" : "10 min") + "</span><span>Close</span></div><ol class='tllist'>" +
+      list.map(function (r) { return tlRow(r, W); }).join("") + "</ol>";
     if (withTl.length > 8) out += "<button type='button' class='link' data-rm='1'>" + (more ? "Show fewer" : "Show older markets") + "</button>";
     return out;
   }
   function tlAllHtml(data) {
     var rowsHtml = "";
-    COINS.forEach(function (c) {
-      var ag = tlAgg((((data && data.coins) || {})[c[0]] || {}).r || []); if (!ag.n) return;
-      rowsHtml += "<tr><td>" + esc(c[0]) + "</td><td class='n'>" + ag.n + (ag.n === 1 ? " market" : " markets") + "</td><td>" + ((ag.w + ag.l) >= 60 ? recWin(ag.w, ag.l) : "<span class='sm'>-</span>") + "</td></tr>";
+    setCoins(S.set).forEach(function (c) {
+      var ag = tlAgg((((data && data.coins) || {})[c[0]] || {}).r || [], recW(data, c[0])); if (!ag.n) return;
+      rowsHtml += "<tr><td>" + esc(isPlus(c[0]) ? plusName(c[0]) : c[0]) + "</td><td class='n'>" + ag.n + (ag.n === 1 ? " market" : " markets") + "</td><td>" + ((ag.w + ag.l) >= 60 ? recWin(ag.w, ag.l) : "<span class='sm'>-</span>") + "</td></tr>";
     });
     if (!rowsHtml) return "";
     return "<div class='tlh'>How much of the time the call was right</div><p class='recsub'>Counts the time the bot had a call out (not the &ldquo;too close to call&rdquo; time), across its recent markets. Tap a coin and open its own record to see each market.</p>" +
       "<table class='rectable'><thead><tr><th>Coin</th><th>Looked at</th><th>Right for</th></tr></thead><tbody>" + rowsHtml + "</tbody></table>";
   }
   function recHtml() {
-    var data = S.rec && S.rec.data, view = S.recView === "all" ? "all" : "coin", coin = S.coin;
-    var cps = (data && data.cps && data.cps.length) ? data.cps : [["open", "At open", 900], ["mid", "8 min left", 480], ["late", "3 min left", 180], ["last", "1 min left", 60]];
+    var data = S.rec && S.rec.data, view = S.recView === "all" ? "all" : "coin", coin = S.coin, cname = isPlus(coin) ? plusName(coin) + (setOf(coin) === "h1" ? " hourly" : "") : coin;
+    var own = ((data && data.coins) || {})[coin], W = recW(data, coin);
+    var cps = (own && own.cps && own.cps.length) ? own.cps : W === 3600 ? [["open", "At open", 3600], ["h30", "30 min left", 1800], ["h10", "10 min left", 600], ["last", "1 min left", 60]]
+            : (data && data.cps && data.cps.length) ? data.cps : [["open", "At open", 900], ["mid", "8 min left", 480], ["late", "3 min left", 180], ["last", "1 min left", 60]];
+    var allLab = S.set === "c15" ? "All coins" : "All " + ((SETS.filter(function (x) { return x[0] === S.set; })[0] || [0, "markets"])[1]).toLowerCase();
     if (!cps.some(function (x) { return x[0] === S.recCp; })) S.recCp = cps[0][0];
     var cpLabel = ""; cps.forEach(function (x) { if (x[0] === S.recCp) cpLabel = x[1]; });
     var since = ""; if (data && data.since) { try { since = new Date(data.since * 1000).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); } catch (e) {} }
     var key = view === "all" ? "all" : coin;
     var h = "<article class='card reccard' aria-label='The bot&#39;s record'><div class='rechead'><h3>Bot record</h3><div class='seg' role='group' aria-label='Which record'>" +
-      "<button type='button' data-rv='coin' aria-pressed='" + (view === "coin") + "'>" + esc(coin) + "</button><button type='button' data-rv='all' aria-pressed='" + (view === "all") + "'>All coins</button></div></div>";
+      "<button type='button' data-rv='coin' aria-pressed='" + (view === "coin") + "'>" + esc(cname) + "</button><button type='button' data-rv='all' aria-pressed='" + (view === "all") + "'>" + esc(allLab) + "</button></div></div>";
     h += "<p class='recsub'>Every call is graded with Kalshi&rsquo;s final result for that market." + (since ? " Counting since " + esc(since) + "." : "") + "</p>";
     var total = 0, skipped = 0; cps.forEach(function (x) { var t = recSum(data, key, x[0]); total += t[0] + t[1] + t[2]; });
     if (!total) {
-      h += "<p class='sm'>" + (view === "all" ? "Nothing graded yet." : "Nothing graded for " + esc(coin) + " yet.") + " The bot writes down its call at four points in every 15-minute market, and the first results show up about two minutes after a market closes" + (view === "coin" && data && Object.keys(data.coins || {}).length ? ". Tap All coins to see the others" : "") + ".</p></article>";
+      h += "<p class='sm'>" + (view === "all" ? "Nothing graded yet." : "Nothing graded for " + esc(cname) + " yet.") + " The bot writes down its call at four points in every " + (W === 3600 ? "hourly" : "15-minute") + " market, and the first results show up about two minutes after a market closes" + (view === "coin" && data && Object.keys(data.coins || {}).length ? ". Tap All coins to see the others" : "") + ".</p></article>";
       return h;
     }
     h += "<table class='rectable'><thead><tr><th>Call made</th><th>Record</th><th>Win rate</th></tr></thead><tbody>";
@@ -1711,9 +1836,9 @@ body.sheet-open{overflow:hidden}
       cps.map(function (x) { return "<button type='button' data-rc='" + esc(x[0]) + "' aria-pressed='" + (x[0] === S.recCp) + "'>" + esc(x[1]) + "</button>"; }).join("") + "</div>";
     if (view === "all") {
       h += "<table class='rectable'><thead><tr><th>Coin</th><th>Record</th><th>Win rate</th></tr></thead><tbody>";
-      COINS.forEach(function (c) {
+      setCoins(S.set).forEach(function (c) {
         var t = recSum(data, c[0], S.recCp); if (!(t[0] + t[1] + t[2])) return;
-        h += "<tr><td>" + esc(c[0]) + (t[2] ? "<small>" + t[2] + " skipped</small>" : "") + "</td><td class='n'>" + t[0] + " - " + t[1] + "</td><td>" + recWin(t[0], t[1]) + "</td></tr>";
+        h += "<tr><td>" + esc(isPlus(c[0]) ? plusName(c[0]) : c[0]) + (t[2] ? "<small>" + t[2] + " skipped</small>" : "") + "</td><td class='n'>" + t[0] + " - " + t[1] + "</td><td>" + recWin(t[0], t[1]) + "</td></tr>";
       });
       h += "</tbody></table>" + tlAllHtml(data);
     } else {
@@ -1728,7 +1853,7 @@ body.sheet-open{overflow:hidden}
         return "<span class='rd " + cls + "' role='listitem' title='" + esc(txt) + "' aria-label='" + esc(txt) + "'>" + glyph + "</span>";
       }).join("") + "</div>";
       h += "<div class='reclegend'><span>&#10003; right</span><span>&#10007; wrong</span><span>&ndash; skipped (too close to call)</span><span>&middot; no call made</span></div>";
-      h += tlHtml(rows);
+      h += tlHtml(rows, W);
     }
     if (graded < 20) h += "<p class='recnote recsmall'>Only " + graded + " graded " + (graded === 1 ? "call" : "calls") + " so far at &ldquo;" + esc(cpLabel) + "&rdquo;, so these numbers can swing a lot. They get more meaningful as more markets settle.</p>";
     h += "<p class='recnote'>&ldquo;Skipped&rdquo; means the bot said it was too close to call, so it isn&rsquo;t counted as a win or a loss. Calls made later in a market are easier, because less time is left, so look at the early ones too. Past results don&rsquo;t promise the next market.</p></article>";
@@ -1755,11 +1880,53 @@ body.sheet-open{overflow:hidden}
   function hideBannerIf(key) { var b = $("banner"); if (!b.hidden && b.dataset.key === key) b.hidden = true; }
   function setStatus(kind, text) { $("dot").className = "dot " + kind; setText($("statusTxt"), text); }
 
+  /* ---------- market sets: the crypto 15-minute markets, and Markets+ (currencies, commodities, hourly crypto) ---------- */
+  function setCoins(set) { return set === "c15" ? meCoinOrder() : PLUS.filter(function (c) { return c[2] === set; }).map(function (c) { return [c[0], c[2] === "h1" ? c[1] + " hourly" : c[1]]; }); }
+  function setLocked(set) { if (!S.acc || S.owner) return false; return set === "c15" ? !S.acc.c : !S.acc.p; }
+  function buildSets() {
+    var box = $("sets"); if (!box) return;
+    if (!box.children.length) {
+      SETS.forEach(function (x) {
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "setbtn"; b.dataset.set = x[0];
+        b.innerHTML = esc(x[1]) + (x[0] !== "c15" ? "<span class='plustag'>Markets+</span>" : "") + "<span class='lockic' aria-hidden='true' hidden>&#128274;</span>";
+        b.addEventListener("click", function () { pickSet(x[0]); });
+        box.appendChild(b);
+      });
+    }
+    refreshSets();
+  }
+  function refreshSets() {
+    var box = $("sets"); if (!box) return;
+    box.hidden = !S.acc;                                       // shown once the database says what this sign-in unlocked (it has Markets+ then)
+    Array.prototype.forEach.call(box.children, function (b) {
+      b.setAttribute("aria-pressed", b.dataset.set === S.set ? "true" : "false");
+      var lk = setLocked(b.dataset.set), ic = b.querySelector(".lockic"); if (ic) ic.hidden = !lk;
+      b.title = lk ? "Not unlocked on this sign-in: tap to see how to add it" : "";
+    });
+  }
+  function pickSet(set, coin) {
+    if (S.set === set && !coin) return;
+    S.set = set; store("kh_live_set", set);
+    var list = setCoins(set), saved = store("kh_live_coin_" + set);
+    S.coin = coin || (saved && list.some(function (c) { return c[0] === saved; }) ? saved : (list[0] ? list[0][0] : S.coin));
+    store("kh_live_coin", S.coin); S.waiting = null; S.hover = null;
+    var cb = $("coins"); cb.innerHTML = ""; buildCoinButtons();
+    refreshSets(); renderView(); renderRecord();
+    if (S.tab === "tv") mountTV();
+    if (S.token) { hideBannerIf("stale"); schedule(0); }
+    if (typeof mePulseSoon === "function") mePulseSoon();
+  }
   /* ---------- market tabs ---------- */
   function buildCoinButtons() {
     var box = $("coins");
+    if (!$("sets").children.length) {
+      var sv = store("kh_live_set"), sc = store("kh_live_coin");
+      S.set = sc && isPlus(sc) ? setOf(sc) : (sv && SETS.some(function (x) { return x[0] === sv; }) ? sv : "c15");
+      buildSets();
+    }
     if (box.children.length) { refreshCoinButtons(); return; }
-    meCoinOrder().forEach(function (c) {
+    setCoins(S.set).forEach(function (c) {
       var b = document.createElement("button");
       b.type = "button"; b.className = "coinbtn"; b.dataset.coin = c[0]; b.title = c[1];
       var nm = document.createElement("span"); nm.className = "cname"; nm.textContent = c[0]; b.appendChild(nm);
@@ -1767,16 +1934,17 @@ body.sheet-open{overflow:hidden}
       var wb = document.createElement("span"); wb.className = "wbadge"; wb.hidden = true; wb.setAttribute("aria-hidden", "true"); wb.textContent = "\uD83D\uDC0B"; b.appendChild(wb);
       b.addEventListener("click", function () {
         if (S.coin === c[0]) return;
-        S.coin = c[0]; store("kh_live_coin", c[0]); S.waiting = null; S.hover = null;
+        S.coin = c[0]; store("kh_live_coin", c[0]); store("kh_live_coin_" + S.set, c[0]); S.waiting = null; S.hover = null;
         refreshCoinButtons(); renderView(); renderRecord();
         if (S.tab === "tv") mountTV();
         if (S.token) { hideBannerIf("stale"); schedule(0); }
       });
       box.appendChild(b);
     });
-    var saved = store("kh_live_coin"), shown = meCoinOrder();
+    var saved = store("kh_live_coin"), shown = setCoins(S.set);
     if (saved && shown.some(function (c) { return c[0] === saved; })) S.coin = saved;
     else if (shown.length && !shown.some(function (c) { return c[0] === S.coin; })) S.coin = shown[0][0];
+    if (S.set !== "c15") Array.prototype.forEach.call(box.children, function (b) { var n = b.querySelector(".cname"); if (n) n.textContent = plusName(b.dataset.coin); });
     refreshCoinButtons(); meTabsApply();
   }
   function refreshCoinButtons() { Array.prototype.forEach.call($("coins").children, function (b) { b.setAttribute("aria-pressed", b.dataset.coin === S.coin ? "true" : "false"); }); }
@@ -1790,7 +1958,7 @@ body.sheet-open{overflow:hidden}
     return "<div class='board' data-k='board' data-call='flat'>" +
       "<div class='loading' data-k='loading' hidden></div>" +
       "<section class='strip' aria-label='Current call'>" +
-        "<div class='s-id'><h2 data-k='name2'></h2><p class='sm'>15-minute market</p></div>" +
+        "<div class='s-id'><h2 data-k='name2'></h2><p class='sm' data-k='mktLab'>15-minute market</p></div>" +
         "<div class='s-call'><p class='whoami lab' data-k='who'></p>" +
           "<div class='big'><span class='side flat' data-k='side'>-</span><span class='pct' data-k='pct'></span><span class='pctlab' data-k='pctlab'>chance</span><span class='conf' data-k='conf'></span></div>" +
           "<p class='calltext' data-k='calltext'></p>" +
@@ -1825,6 +1993,8 @@ body.sheet-open{overflow:hidden}
         "<section class='panel plain feed' data-panel='feed' aria-label='Your alerts'><div class='ph'><h3>Your alerts</h3><button type='button' class='link sm' data-me='open' data-tab='alerts'>Choose alerts</button></div><div data-k='feed'></div></section>" +
       "</div>" +
       "<div class='colR'>" +
+        "<section class='panel plain ladderp' data-panel='ladder' data-k='ladderP' aria-label='Price ladder' hidden><div class='ph'><h3>Price ladder</h3><span class='sm' data-k='ladderSub'></span></div><div data-k='ladder'></div>" +
+          "<p class='sm fine2'>Each line is its own Kalshi market: does the price end at or above that number when the hour closes? The bot&rsquo;s chance comes from its own model, not from Kalshi&rsquo;s prices. Value is the bot&rsquo;s chance minus what the cheaper side costs, before Kalshi&rsquo;s fee.</p></section>" +
         "<section class='panel plain mykal' data-panel='mykal' aria-label='Your Kalshi'><div class='ph'><h3>Your Kalshi</h3><span class='sm' data-k='mykalAge'></span></div><div data-k='mykal'></div></section>" +
         "<aside class='panel signals' data-panel='ind' aria-label='Indicators'><h3>Indicators</h3><p class='verdict v-mix' data-k='verdict'></p><p class='sm' data-k='verdict2'></p><p class='bhint' data-k='hInd' hidden></p>" +
           "<div class='sig'><div class='sig-h'><span>EMA 9 and 21 (1 min)</span><b class='chip' data-k='emaChip'></b></div><p class='sm' data-k='emaTxt'></p><p class='sm' data-k='emaPx'></p></div>" +
@@ -1876,7 +2046,15 @@ body.sheet-open{overflow:hidden}
   function renderView() {
     if (!R) return;
     refreshCoinButtons();
-    var v = S.view[S.coin];
+    var v = S.view[S.coin], lk = S.locked[S.coin], lv = $("lockv");
+    if (lv && (lk || (v && v.data && v.data.closed))) {             // a market this sign-in didn't unlock, or one with no open round right now
+      viewEl.hidden = true; lv.hidden = false;
+      setHTML(lv, lk ? lockHTML(lk) : closedHTML(v.data));
+      setStatus(lk ? "slow" : "live", lk ? "Not unlocked on this sign-in" : (v.data.name || S.coin) + " is closed right now");
+      if (!lk) updateTitle(v);
+      return;
+    }
+    if (lv && !lv.hidden) { lv.hidden = true; viewEl.hidden = false; }
     if (!v) {
       R.board.classList.add("is-loading"); R.loading.hidden = false;
       setText(R.loading, S.waiting === S.coin ? "Getting the latest " + S.coin + " call. The first one can take a few seconds..." : "Loading " + S.coin + "...");
@@ -1888,6 +2066,71 @@ body.sheet-open{overflow:hidden}
     updateStatus(v);
     updateTitle(v);
     meOnView(S.coin, v);
+  }
+  /* ---------- Markets+: what a sign-in didn't unlock, and markets that are closed for now ---------- */
+  function addForm(kind) {
+    return "<form class='addform' data-add='" + kind + "' autocomplete='off' novalidate><label class='l' for='addRcpt'>Already bought it? Add the receipt number here and it unlocks on this sign-in</label>" +
+      "<div class='addrow'><input type='text' id='addRcpt' inputmode='text' autocapitalize='characters' autocorrect='off' spellcheck='false' maxlength='60' placeholder='1234-5678' aria-describedby='addMsg'>" +
+      "<button type='submit' class='btn addgo'>Add</button></div><p class='msg' id='addMsg' role='status' aria-live='polite'></p></form>";
+  }
+  function lockHTML(kind) {
+    if (kind === "plus") {
+      var buy = S.plusUrl ? "<a class='btn lkbuy' href='" + esc(S.plusUrl) + "' target='_blank' rel='noopener'>Get Markets+ for $20</a>"
+                          : "<a class='btn lkbuy' href='" + DISCORD_URL + "' target='_blank' rel='noopener'>Get Markets+ in Discord</a>";
+      return "<article class='card lockcard'><p class='plustag big'>Markets+</p><h2>Currencies, commodities and hourly crypto</h2>" +
+        "<p>The same board you use for crypto, on Kalshi&rsquo;s other short markets: the bot&rsquo;s call, the chance it flips, flip calls, candles with indicators, its record, and the Kalshi prices.</p>" +
+        "<ul class='lklist'><li><b>Currencies</b>, 15-minute rounds: EUR/USD, GBP/USD, USD/JPY, AUD/USD, USD/CAD</li><li><b>Commodities</b>, 15-minute rounds: gold, silver, oil, natural gas, copper</li><li><b>Hourly crypto</b>: the BTC, ETH, SOL and XRP price ladders</li></ul>" +
+        "<p class='sm'>$20, paid once. You don&rsquo;t need the $45 bot for it. If you have the Auto-trader add-on, its stop loss and profit target cover these markets too.</p>" + buy + addForm("plus") + "</article>";
+    }
+    return "<article class='card lockcard'><h2>The 15-minute crypto markets</h2><p>BTC, ETH, SOL, XRP, DOGE, BNB and HYPE come with Kiros helper. Markets+ on its own covers currencies, commodities and the hourly crypto ladders.</p>" +
+      "<a class='btn lkbuy' href='" + CORE_URL + "'>See Kiros helper</a>" + addForm("core") + "</article>";
+  }
+  function closedHTML(d) {
+    return "<article class='card lockcard'><h2>" + esc(d.name || d.coin) + " is closed right now</h2><p>" + esc(d.why || "Kalshi has no open round for this market right now.") + "</p>" +
+      "<p class='sm'>The board picks it up again by itself when Kalshi opens the next round." + (d.grp === "fx" ? " Commodities and the hourly crypto ladders keep running at the weekend." : "") + "</p></article>";
+  }
+  (function () {
+    var lv = $("lockv"); if (!lv) return;
+    lv.addEventListener("submit", function (ev) {
+      var f = ev.target.closest && ev.target.closest("form.addform"); if (!f) return;
+      ev.preventDefault();
+      var inp = f.querySelector("input"), msg = f.querySelector(".msg"), btn = f.querySelector("button"), val = inp.value.trim(), tok = S.token, dev = device();
+      function done(t, k) { btn.disabled = false; btn.textContent = "Add"; msg.textContent = t; msg.className = "msg" + (k ? " " + k : ""); }
+      if (val.replace(/[^A-Za-z0-9]/g, "").length < 6) return done("Type the receipt number first. It looks like 1234-5678.", "err");
+      btn.disabled = true; btn.textContent = "Checking..."; msg.className = "msg"; msg.textContent = "Checking. This takes a few seconds.";
+      rpc("live_add", { p_token: tok, p_receipt: val, p_device: dev }).then(function (id) {
+        var t0 = Date.now();
+        (function again() {
+          rpc("live_result", { p_id: id, p_device: dev }).then(function (r) {
+            if (S.token !== tok) return;
+            if (!r || r.status === "pending") { if (Date.now() - t0 > 100000) return done("This is taking longer than usual. Try again in a minute.", "err"); return setTimeout(again, 1200); }
+            if (r.status === "ok") { done(r.message || "Unlocked.", "ok"); S.locked = {}; refreshSets(); schedule(0); if (typeof mePulseSoon === "function") mePulseSoon(); return; }
+            done(r.message || "That receipt didn't work.", "err");
+          }, function (e) { done(friendly(e), "err"); });
+        })();
+      }, function (e) { done(/expired/i.test(String(e && e.message)) ? "Your sign-in ended. Sign in again, then add it." : friendly(e), "err"); });
+    });
+  })();
+  /* ---------- the hourly ladder: every "at or above" line near the price, with the bot's chance and Kalshi's price ---------- */
+  function niceStrike(k) {                                 // Kalshi writes "$100,000 or above" as a line at 99,999.99: show the number people know
+    var x = Number(k), t = String(x);
+    if (/\.\d*9$/.test(t)) { var dd = t.split(".")[1].length; x = Number((x + Math.pow(10, -dd)).toFixed(dd)); }
+    return x;
+  }
+  function paintLadder(r, d) {
+    var lad = d.ladder;
+    r.ladderP.hidden = !(lad && lad.length);
+    if (!lad || !lad.length) return;
+    setText(r.ladderSub, "closes " + clockTime(d.close_ts));
+    var rows = lad.slice().reverse().map(function (x) {
+      var p = Math.round(Number(x.p) * 100), ya = x.ya, na = x.na, ey = ya != null ? p - ya : null, en = na != null ? (100 - p) - na : null;
+      var best = ey != null && (en == null || ey >= en) ? ["YES", ey, ya] : (en != null ? ["NO", en, na] : null);
+      var val = best && best[1] >= 5 ? "<span class='chip " + (best[0] === "YES" ? "up" : "down") + "'>" + best[0] + " +" + best[1] + "</span>" : "<span class='sm'>-</span>";
+      var above = d.spot >= Number(x.k);
+      return "<tr" + (x.main ? " class='lmain'" : "") + "><td>" + money(niceStrike(x.k)) + (x.main ? "<small>followed</small>" : "") + "</td>" +
+        "<td class='n " + (above ? "up" : "down") + "'>" + p + "%</td><td class='n'>" + (ya != null ? ya + "c" : "-") + "</td><td class='n'>" + (na != null ? na + "c" : "-") + "</td><td>" + val + "</td></tr>";
+    }).join("");
+    setHTML(r.ladder, "<table class='rectable ladtable'><thead><tr><th>At or above</th><th>Bot</th><th>YES</th><th>NO</th><th>Value</th></tr></thead><tbody>" + rows + "</tbody></table>");
   }
   function updateStatus(v) {
     var a = ageNow(v);
@@ -1983,7 +2226,7 @@ body.sheet-open{overflow:hidden}
   function gapDollars(g, ref) { var a = Math.abs(g); return (a < 1 && ref >= 10) ? a.toFixed(2) : dollars(g, ref); }   // a gap of 20 cents shows as 0.20, not 0
   /* the same RSI and EMA lines, but compared with where they stood when THIS market opened (starts over with every new round) */
   function paintRound(r, d, ser) {
-    var n = ser.cs.length, openTs = d.close_ts - 900, k = -1, i;
+    var n = ser.cs.length, openTs = d.close_ts - (d.win || 900), k = -1, i;
     for (i = 0; i < n; i++) { if (ser.cs[i][0] < openTs) k = i; else break; }          // the last finished candle before the market opened
     if (!(k >= 21 && k < n - 1 && ser.rs[k] != null && ser.rs[n - 1] != null)) { r.rnd.hidden = true; return; }
     r.rnd.hidden = false;
@@ -2042,12 +2285,12 @@ body.sheet-open{overflow:hidden}
     r.flipFill.className = "lv-" + lc; r.flipFill.style.width = Math.min(100, Math.max(2, pct * 2)).toFixed(0) + "%";
     r.flipMeter.setAttribute("aria-label", "Chance it flips " + (pct < 1 ? "under 1" : Math.round(pct)) + " percent, " + (lvl || "unknown"));
     var gap = f.gap == null ? Math.abs(d.diff) : f.gap, lead = f.leader || (d.diff >= 0 ? "UP" : "DOWN");
-    setText(r.flipTxt, d.coin + " is $" + dollars(gap, d.spot) + " " + (d.diff >= 0 ? "above" : "below") + " the target. It would have to " + (lead === "UP" ? "drop" : "climb") + " $" + dollars(gap, d.spot) + " in " + leftText(left) + " to flip.");
+    setText(r.flipTxt, dispCoin(d) + " is " + amtu(gap, d.spot) + " " + (d.diff >= 0 ? "above" : "below") + " the target. It would have to " + (lead === "UP" ? "drop" : "climb") + " " + amtu(gap, d.spot) + " in " + leftText(left) + " to flip.");
     setText(r.flipTxt2, f.cross != null ? "Chance it touches the target again: " + Math.round(f.cross) + "%" + (f.crossings != null ? ", crossed it " + f.crossings + "x so far." : ".") : "");
     paintFcRec(r, d.coin);
   }
   function paintFlipCall(r, v, left, fc) {                 // the bot's own flip calls: it only pings when it is very sure (the price's path and its own odds, not Kalshi's prices)
-    var d = v.data, f = d.flip || {}, risk = Number(fc.risk) || 0, lvl = fc.lvl, lead = d.diff >= 0 ? "UP" : "DOWN", gap = Math.abs(d.diff);
+    var d = v.data, f = d.flip || {}, risk = Number(fc.risk) || 0, lvl = fc.lvl, lead = d.diff >= 0 ? "UP" : "DOWN", gap = Math.abs(d.diff), nm = dispCoin(d);
     var sure = fc.sure != null ? Math.round(Number(fc.sure)) : null, pf = fc.proof || [0, 0];
     var lc = lvl === "flip" ? "high" : lvl === "watch" ? "med" : "low";
     setText(r.flipHead, "Flip watch");
@@ -2059,23 +2302,23 @@ body.sheet-open{overflow:hidden}
     var base = fc.base != null ? Number(fc.base) : (f.pct != null ? Number(f.pct) : null);
     r.fcBase.hidden = base == null || lvl === "flipped"; if (base != null) r.fcBase.style.left = Math.min(100, Math.max(0, base)).toFixed(0) + "%";
     r.flipMeter.setAttribute("aria-label", "Flip risk " + Math.round(risk) + " percent" + (base != null ? ", " + Math.round(base) + " percent from distance alone" : ""));
-    var where = d.coin + " is $" + dollars(gap, d.spot) + " " + (d.diff >= 0 ? "above" : "below") + " the target";
+    var where = nm + " is " + amtu(gap, d.spot) + " " + (d.diff >= 0 ? "above" : "below") + " the target";
     var vel = Number(fc.vel) || 0, t, t2 = base != null ? "From distance alone: " + (base < 1 ? "under 1" : Math.round(base)) + "% (the thin mark). The big number adds the price's direction and speed." : "";
     var rec = pf[1] ? " Calls like this were right " + pf[0] + " of the last " + pf[1] + " times." : "";
     if (lvl === "flipped") {
-      t = "Flip: " + d.coin + " crossed the target and has stayed " + (d.diff >= 0 ? "above" : "below") + " it. The bot now gives " + fc.to + " a " + sure + "% chance to win.";
+      t = "Flip: " + nm + " crossed the target and has stayed " + (d.diff >= 0 ? "above" : "below") + " it. The bot now gives " + fc.to + " a " + sure + "% chance to win.";
       t2 = "The bot only says a flip happened when it is at least " + (fc.bar || 88) + "% sure of the new side, and it raises that bar by itself if these pings slip under 82% right. Kalshi's price usually moves with it, so check the price before you buy.";
     } else if (lvl === "flip") {
-      t = "Strong flip call: the bot thinks this ends " + fc.to + " (" + sure + "%). " + where + " but moving toward it at $" + dollars(vel, d.spot) + " a minute" + (fc.eta != null ? " (it would reach the target in about " + leftText(fc.eta) + ")." : ".");
+      t = "Strong flip call: the bot thinks this ends " + fc.to + " (" + sure + "%). " + where + " but moving toward it at " + amtu(vel, d.spot) + " a minute" + (fc.eta != null ? " (it would reach the target in about " + leftText(fc.eta) + ")." : ".");
       t2 = "Flip calls before the flip only ping while their practice record is strong." + rec;
     } else if (lvl === "watch" && fc.cand) {
       t = where + " and moving toward it fast. It looks like a flip could be coming, but nothing pings yet.";
       t2 = "The bot is still testing calls like this before it trusts them" + (pf[1] ? ": right " + pf[0] + " of " + pf[1] + " so far" : "") + ". It needs 65% right over at least 40 before it pings them.";
     }
-    else if (lvl === "watch") t = where + (vel > 0 ? " and drifting toward it at $" + dollars(vel, d.spot) + " a minute." : ".") + " Not sure enough to ping.";
+    else if (lvl === "watch") t = where + (vel > 0 ? " and drifting toward it at " + amtu(vel, d.spot) + " a minute." : ".") + " Not sure enough to ping.";
     else if (lvl === "early") { t = where + ". Flip calls start with 10 minutes left: early on, the price crosses the target back and forth and a flip means little."; t2 = ""; }
     else if (lvl === "late") { t = where + ". In the last 30 seconds there is too little time left to act on a flip."; t2 = ""; }
-    else t = where + (vel < -0.0001 ? ", moving away from it." : ".") + " It would have to " + (lead === "UP" ? "drop" : "climb") + " $" + dollars(gap, d.spot) + " in " + leftText(left) + " to flip.";
+    else t = where + (vel < -0.0001 ? ", moving away from it." : ".") + " It would have to " + (lead === "UP" ? "drop" : "climb") + " " + amtu(gap, d.spot) + " in " + leftText(left) + " to flip.";
     setText(r.flipTxt, t);
     var why = (fc.why || []).filter(function (x, i) { return !(i === 0 && /^moving toward/.test(x) && (lvl === "flip" || fc.cand)); });
     r.fcWhy.hidden = !why.length || lvl === "flipped"; setText(r.fcWhy, why.length ? "Also: " + why.join("; ") + "." : "");
@@ -2086,15 +2329,18 @@ body.sheet-open{overflow:hidden}
     var left = leftNow(v), d = v.data;
     setText(R.cd, left > 0 ? mmss(left) : "0:00");
     setText(R.cdSub, left > 0 ? "closes " + clockTime(d.close_ts) : "closed, the next market is loading");
-    R.tline.style.width = Math.max(0, Math.min(100, (1 - left / 900) * 100)).toFixed(1) + "%";
+    R.tline.style.width = Math.max(0, Math.min(100, (1 - left / (d.win || 900)) * 100)).toFixed(1) + "%";
     paintFlip(R, v, left);
     updateStatus(v);
   }
   function paint(r, v, ch, sample) {
-    var d = v.data, c = d.call, left = sample ? d.left_s : leftNow(v);
+    var d = v.data, c = d.call, left = sample ? d.left_s : leftNow(v), W = d.win || 900;
+    setUnits(d);                                              // EUR/USD is written 1.15234, gold $4,102.50, Bitcoin $100,000
     var toss = c.conf === "TOSS-UP", cls = toss ? "flat" : (c.side === "UP" ? "up" : "down");
     r.board.dataset.call = cls;
-    setText(r.who, d.name + ", " + d.coin + " 15-minute market"); setText(r.name2, d.name);
+    var kind = W === 3600 ? "hourly market" : "15-minute market";
+    setText(r.who, d.grp ? (dispCoin(d) + " " + kind) : (d.name + ", " + d.coin + " " + kind)); setText(r.name2, d.grp === "h1" ? d.name : d.name);
+    setText(r.mktLab, d.grp === "h1" ? "Hourly: ends at or above the followed line?" : kind + (d.grp ? ", Markets+" : ""));
     setText(r.side, toss ? "Skip" : (c.side === "UP" ? "▲ UP" : "▼ DOWN")); r.side.className = "side " + cls;
     setText(r.pct, Math.round(c.prob * 100) + "%"); setText(r.pctlab, toss ? "chance of " + c.side : "chance");
     setText(r.conf, CONF[c.conf] || c.conf); r.conf.className = "conf" + (toss ? "" : " c-" + cls);
@@ -2103,13 +2349,14 @@ body.sheet-open{overflow:hidden}
     r.splitFill.style.width = upShare.toFixed(1) + "%"; setText(r.splitUp, "UP " + upShare.toFixed(0) + "%"); setText(r.splitDn, "DOWN " + (100 - upShare).toFixed(0) + "%");
     r.split.setAttribute("aria-label", "Chance of UP " + upShare.toFixed(0) + " percent");
     var above = d.diff >= 0, fin = d.finish || {};
-    setText(r.spot, money(d.spot)); setText(r.target, money(d.target)); setText(r.targetLab, "Target (" + (d.target_src || "Kalshi") + ")");
-    setText(r.gap, "$" + dollars(d.diff, d.spot) + (above ? " above" : " below")); r.gap.className = above ? "up" : "down";
+    setText(r.spot, money(d.spot)); setText(r.target, money(d.grp === "h1" ? niceStrike(d.target) : d.target)); setText(r.targetLab, (d.grp === "h1" ? "Line followed (" : "Target (") + (d.target_src || "Kalshi") + ")");
+    setText(r.gap, amtu(d.diff, d.spot) + (above ? " above" : " below")); r.gap.className = above ? "up" : "down";
     setText(r.finish, fin.exp != null ? "~" + money(fin.exp) : "-");
     setText(r.cd, left > 0 ? mmss(left) : "0:00");
     setText(r.cdSub, left > 0 ? "closes " + clockTime(d.close_ts) : "closed, the next market is loading");
-    r.tline.style.width = Math.max(0, Math.min(100, (1 - left / 900) * 100)).toFixed(1) + "%";
+    r.tline.style.width = Math.max(0, Math.min(100, (1 - left / W) * 100)).toFixed(1) + "%";
     paintFlip(r, v, left);
+    if (r.ladderP) paintLadder(r, d);
     paintSignals(r, v, buildSeries(v, ch, "1", sample));      // the indicator panel is always the 1-minute view
     var ser = (sample || S.tab !== "tv") ? buildSeries(v, ch, sample ? "1" : S.tf, sample) : null;
     paintKalshi(r, d); paintScalp(r, d); paintDetails(r, d); paintAlerts(r, v, sample);
@@ -2160,6 +2407,8 @@ body.sheet-open{overflow:hidden}
   }
   function paintAlerts(r, v, sample) {
     var d = v.data, w = d.whale, buys, i;
+    if (r.walerts) r.walerts.hidden = !!d.grp;                // whale watch is for the crypto 15-minute markets only
+    if (d.grp) return;
     // 1. big buys on Kalshi
     if (!w || !Array.isArray(w.buys)) setHTML(r.wbuys, "<p class='sm wnone'>Big buys aren&rsquo;t available right now.</p>");
     else {
@@ -2276,7 +2525,7 @@ body.sheet-open{overflow:hidden}
     var sc = document.createElement("script"), tz = "";
     try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
     sc.type = "text/javascript"; sc.src = TV_SRC; sc.async = true;
-    var sym = TV_SYM[coin] || "COINBASE:BTCUSD", cfg = { autosize: true, symbol: sym, interval: S.tf, timezone: tz || "Etc/UTC", theme: "dark", style: "1", locale: "en",
+    var sym = TV_SYM[coin] || (S.view[coin] && S.view[coin].data && S.view[coin].data.tv) || "COINBASE:BTCUSD", cfg = { autosize: true, symbol: sym, interval: S.tf, timezone: tz || "Etc/UTC", theme: "dark", style: "1", locale: "en",
       backgroundColor: "#0F1113", gridColor: "rgba(255,255,255,0.05)", allow_symbol_change: false, hide_side_toolbar: true, save_image: false, calendar: false,
       support_host: "https://www.tradingview.com", studies: ["RSI@tv-basicstudies", "MAExp@tv-basicstudies"] };
     if (tg) cfg.compareSymbols = [{ symbol: sym + "*0+" + tg, position: "SameScale" }];
@@ -2302,7 +2551,7 @@ body.sheet-open{overflow:hidden}
   }
   function rsiColor(x) { var c = chartColors(); return x >= 70 ? c.warn : x > 55 ? c.up : x <= 30 ? c.warn : x < 45 ? c.down : c.flat; }
   function drawChartNow() {
-    var v = S.view[S.coin]; if (!v || !R || S.tab === "tv") return;
+    var v = S.view[S.coin]; if (!v || !R || S.tab === "tv" || !v.data.call || S.locked[S.coin]) return;
     drawChart(R, v, buildSeries(v, S.chart[S.coin] || {}, S.tf, false), false);
   }
   /* ---------- chart indicators ----------
@@ -2362,7 +2611,7 @@ body.sheet-open{overflow:hidden}
     store("kh_live_ind", JSON.stringify(Object.keys(S.ind)));
     markInds(); drawChartNow();
   }
-  function detailFmt(hi) { var dd = hi >= 1000 ? 1 : hi >= 10 ? 2 : hi >= 1 ? 4 : 6; return function (p) { return p.toLocaleString("en-US", { minimumFractionDigits: dd, maximumFractionDigits: dd }); }; }
+  function detailFmt(hi) { var dd = U.dp != null ? U.dp + 1 : (hi >= 1000 ? 1 : hi >= 10 ? 2 : hi >= 1 ? 4 : 6); return function (p) { return p.toLocaleString("en-US", { minimumFractionDigits: dd, maximumFractionDigits: dd }); }; }
 
   /* ---------- the chart: TradingView Lightweight Charts (the library is inlined above this script) ---------- */
   var LWC = window.LightweightCharts;
@@ -2383,7 +2632,7 @@ body.sheet-open{overflow:hidden}
         var ctx = sc.context, hr = sc.horizontalPixelRatio, vr = sc.verticalPixelRatio, W = sc.bitmapSize.width, H = sc.bitmapSize.height, ts = lw.chart.timeScale(), cc = chartColors();
         function LX(f) { var i0 = Math.floor(f), c0 = ts.logicalToCoordinate(i0), c1 = ts.logicalToCoordinate(i0 + 1); return c0 == null || c1 == null ? null : c0 + (c1 - c0) * (f - i0); }   // the library only answers for whole candle numbers
         function X(t) { var x = LX(lwIndex(s.cs, s.P, t) - 0.5); return x == null ? null : x * hr; }
-        var open = s.close - 900, x0 = X(open), x1 = X(s.close); if (x0 == null || x1 == null) return;
+        var open = s.close - (s.win || 900), x0 = X(open), x1 = X(s.close); if (x0 == null || x1 == null) return;
         var a = Math.max(0, Math.min(W, x0)), bb = Math.max(0, Math.min(W, x1)), i;
         ctx.save();
         ctx.fillStyle = "rgba(255,255,255,.04)"; if (bb > a) ctx.fillRect(a, 0, bb - a, H);
@@ -2555,7 +2804,7 @@ body.sheet-open{overflow:hidden}
     var items = act.map(function (x) { return { x: x, r: x.calc(s) }; });
     var key = d.coin + ":" + ser.tf, sig = act.map(function (x) { return x.id; }).join(",") + (small ? "s" : "l");
     var cks = 0; for (i = 0; i < n - 1; i++) cks += (cs[i][1] + cs[i][2] + cs[i][3] + cs[i][4]) * (i % 7 + 1);
-    var fmt = axisFmt(d.spot), fmtD = detailFmt(d.spot), dd = d.spot >= 1000 ? 0 : d.spot >= 10 ? 2 : d.spot >= 1 ? 4 : 5;
+    var fmt = axisFmt(d.spot), fmtD = detailFmt(d.spot), dd = d.dp != null ? Number(d.dp) : (d.spot >= 1000 ? 0 : d.spot >= 10 ? 2 : d.spot >= 1 ? 4 : 5);
     var keyChanged = lw.key !== key, newMarket = lw.close !== d.close_ts, structure = keyChanged || lw.n !== n || lw.cks !== cks || lw.cs[0] && lw.cs[0][0] !== cs[0][0];
     lw.cs = cs; lw.items = items; lw.P = P; lw.tf = ser.tf; lw.close = d.close_ts; lw.nowS = ser.nowS; lw.fmtD = fmtD;
     lw.target = d.target; lw.spot = d.spot;
@@ -2578,7 +2827,7 @@ body.sheet-open{overflow:hidden}
     }
     var msig = marks.map(function (q) { return q.time + q.shape; }).join(",");
     if (msig !== lw.mkSig) { lw.mk.setMarkers(marks); lw.mkSig = msig; }
-    lw.prim.s = { cs: cs, P: P, close: d.close_ts, target: d.target, bands: items.filter(function (m) { return m.r.band; }).map(function (m) { return m.r.band; }) };
+    lw.prim.s = { cs: cs, P: P, close: d.close_ts, win: d.win || 900, target: d.target, bands: items.filter(function (m) { return m.r.band; }).map(function (m) { return m.r.band; }) };
     if (lw.prim.req) lw.prim.req();
     var reads = []; items.forEach(function (m) { (m.r.read || []).forEach(function (q) { reads.push(q); }); });
     lw.geo = { P: P, cs: cs, fmt: fmt, fmtD: fmtD, reads: reads };
@@ -2586,7 +2835,7 @@ body.sheet-open{overflow:hidden}
     paintReadout(r, lw.geo, sample);
     box.dataset.panes = String(lw.chart.panes().length); box.dataset.target = String(d.target); box.dataset.crosses = String(marks.length);
     var names = act.map(function (x) { return x.name; }), nm = names.length ? " with " + (names.length > 1 ? names.slice(0, -1).join(", ") + " and " + names[names.length - 1] : names[0]) : "";
-    box.setAttribute("aria-label", d.coin + " " + TFN[ser.tf] + " candles" + nm + ". Price " + money(d.spot) + ", target " + money(d.target) + ", " + (d.diff >= 0 ? "above" : "below") + " the target.");
+    box.setAttribute("aria-label", dispCoin(d) + " " + TFN[ser.tf] + " candles" + nm + ". Price " + money(d.spot) + ", target " + money(d.target) + ", " + (d.diff >= 0 ? "above" : "below") + " the target.");
   }
   function axisTime(ts, P) {                                                       // clock time; with the weekday on the 1-hour chart, which spans two days
     if (P < 3600) return clockTime(ts);
@@ -2649,8 +2898,10 @@ body.sheet-open{overflow:hidden}
   function isGuest(key) { return String(key).indexOf("GUEST-") === 0; }
   function kname(key, cap) { if (String(key).indexOf("TRIAL-") === 0) return cap ? "Free trial" : "that free trial"; return isGuest(key) ? (cap ? "Guest access" : "that guest") : (cap ? "Receipt " : "receipt ") + key; }
   function fmtCode(c) { return String(c || "").replace(/[^A-Za-z0-9]/g, "").toUpperCase().replace(/(.{4})(?=.)/g, "$1-"); }
-  function inviteText(code) {
-    return "Here is your access code for the Kiros helper live board: " + fmtCode(code) + "\nGo to " + location.origin + location.pathname + " and type the code in the box. It works on up to 2 devices, so please keep it to yourself.";
+  var KIND_WORD = { core: "Kiros helper", plus: "Markets+", both: "Kiros helper + Markets+" };
+  function inviteText(code, kind) {
+    var what = kind === "plus" ? " (Markets+: currencies, commodities and hourly crypto)" : kind === "both" ? " (Kiros helper and Markets+)" : "";
+    return "Here is your access code for the Kiros helper live board" + what + ": " + fmtCode(code) + "\nGo to " + location.origin + location.pathname + " and type the code in the box. It works on up to 2 devices, so please keep it to yourself.";
   }
   function copyText(t, btn) {
     function ok() {
@@ -2674,7 +2925,8 @@ body.sheet-open{overflow:hidden}
   }
   function showGrant(r) {
     $("grantResult").innerHTML = "<div class='grantbox'><b>" + esc(r.email) + "</b><code class='gcode'>" + esc(fmtCode(r.code)) + "</code>" +
-      "<div class='pbtns'><button type='button' data-act='gmsg' data-code='" + esc(r.code) + "'>Copy message</button><button type='button' data-act='gcopy' data-code='" + esc(r.code) + "'>Copy code</button></div>" +
+      (r.kind && r.kind !== "core" ? "<span class='plustag'>" + esc(KIND_WORD[r.kind] || r.kind) + "</span>" : "") +
+      "<div class='pbtns'><button type='button' data-act='gmsg' data-code='" + esc(r.code) + "' data-kind='" + esc(r.kind || "core") + "'>Copy message</button><button type='button' data-act='gcopy' data-code='" + esc(r.code) + "'>Copy code</button></div>" +
       "<p class='hint'>\u201CCopy message\u201D gives you a ready note to paste into Discord, a text or an email.</p></div>";
   }
   function renderGuests(list) {
@@ -2686,8 +2938,8 @@ body.sheet-open{overflow:hidden}
       else if (g.devices > 0) meta = "<span class='dotsm" + (g.last_seen_s != null && g.last_seen_s < 60 ? " on" : "") + "'></span><span>" + (g.last_seen_s != null && g.last_seen_s < 60 ? "online now" : "last seen " + ago(g.last_seen_s || 0) + " ago") + "</span><span>" + g.devices + (g.devices === 1 ? " device" : " devices") + "</span>";
       else if (g.login_s == null) meta = "<span class='dotsm'></span><span>hasn't signed in yet</span>";
       else meta = "<span class='dotsm'></span><span>last signed in " + ago(g.login_s) + " ago</span>";
-      return "<div class='prow'><div class='pmain'><b>" + esc(g.email) + "</b><span>" + esc(fmtCode(g.code)) + "</span></div><div class='pmeta'>" + meta + "</div>" +
-        "<div class='pbtns'><button type='button' data-act='gmsg' data-code='" + esc(g.code) + "'>Copy message</button><button type='button' data-act='gcopy' data-code='" + esc(g.code) + "'>Copy code</button>" +
+      return "<div class='prow'><div class='pmain'><b>" + esc(g.email) + "</b><span>" + esc(fmtCode(g.code)) + (g.kind && g.kind !== "core" ? " \u00B7 " + esc(KIND_WORD[g.kind] || g.kind) : "") + "</span></div><div class='pmeta'>" + meta + "</div>" +
+        "<div class='pbtns'><button type='button' data-act='gmsg' data-code='" + esc(g.code) + "' data-kind='" + esc(g.kind || "core") + "'>Copy message</button><button type='button' data-act='gcopy' data-code='" + esc(g.code) + "'>Copy code</button>" +
         "<button type='button' class='danger' data-act='gremove' data-id='" + esc(g.id) + "'>Remove</button></div></div>";
     }).join("");
   }
@@ -2698,12 +2950,14 @@ body.sheet-open{overflow:hidden}
     $("ownerSum").textContent = "\uD83D\uDEE0\uFE0F Owner panel \u00B7 " + online + " on now";
     if ($("owner").querySelector("[data-armed]")) return;                 // don't redraw under a half-confirmed tap
     renderGuests(r.guests || []);
+    var pu = $("plusUrl"); if (pu && document.activeElement !== pu && !pu.dataset.typed) pu.value = r.plus_url || "";
+    if (r.plus_url !== undefined) S.plusUrl = r.plus_url || null;
     var others = r.people.filter(function (p) { return !p.owner; });
     var list = r.people.map(function (p) {
       var on = p.last_seen_s < 60;
       var main = "<div class='pmain'><b>" + esc(p.owner ? "You (owner)" : (p.label || "(no e-mail on the payment)")) + "</b>" + (p.owner ? "" : "<span>" + esc(kname(p.key, true)) + "</span>") + "</div>";
       var meta = "<div class='pmeta'><span class='dotsm" + (on ? " on" : "") + "'></span><span>" + (on ? "online now" : "last seen " + ago(p.last_seen_s) + " ago") + "</span>" +
-        (p.coin ? "<span>on " + esc(p.coin) + "</span>" : "") + "<span>" + p.devices + (p.devices === 1 ? " device" : " devices") + "</span><span>signed in " + ago(p.signed_in_s) + " ago</span></div>";
+        (p.coin ? "<span>on " + esc(isPlus(p.coin) ? plusName(p.coin) : p.coin) + "</span>" : "") + (p.plus ? "<span class='plustag'>" + (p.core ? "+ Markets+" : "Markets+ only") + "</span>" : "") + "<span>" + p.devices + (p.devices === 1 ? " device" : " devices") + "</span><span>signed in " + ago(p.signed_in_s) + " ago</span></div>";
       var btns = p.owner ? "<div></div>" : "<div class='pbtns'>" + ((!p.auto && String(p.key).indexOf("TRIAL-") !== 0) ? "<button type='button' data-act='autogrant' data-key='" + esc(p.key) + "'>Give Auto-trader</button>" : "") + "<button type='button' data-act='kick' data-key='" + esc(p.key) + "'>Sign out</button><button type='button' class='danger' data-act='block' data-key='" + esc(p.key) + "'>Block</button></div>";
       return "<div class='prow'>" + main + meta + btns + "</div>";
     }).join("");
@@ -2739,22 +2993,40 @@ body.sheet-open{overflow:hidden}
     if (!b) return;
     var act = b.dataset.act;
     if (act === "gcopy") return copyText(fmtCode(b.dataset.code), b);
-    if (act === "gmsg") return copyText(inviteText(b.dataset.code), b);
+    if (act === "gmsg") return copyText(inviteText(b.dataset.code, b.dataset.kind), b);
     if (act === "gremove") return armOrRun(b, function () { ownerRemoveGuest(b.dataset.id); });
     if (act === "autogrant" || act === "autoremove") return autoOwnerAct(act, b);
     armOrRun(b, function () { ownerAct(act, b.dataset.key); });
   });
+  $("plusUrl").addEventListener("input", function () { this.dataset.typed = "1"; });
+  $("plusForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var v = $("plusUrl").value.trim();
+    $("plusGo").disabled = true;
+    rpc("live_admin_plus_url", { p_token: S.token, p_url: v }).then(function (r) {
+      $("plusGo").disabled = false; delete $("plusUrl").dataset.typed; S.plusUrl = (r && r.plus_url) || null;
+      ownerSay(r && r.plus_url ? "Saved. The sign-in page and the locked Markets+ tabs now show a Get Markets+ button with this link." : "Cleared. The Get Markets+ buttons point to your Discord again.", true);
+    }, function (e) { $("plusGo").disabled = false; if (/bad link/i.test(String((e && e.message) || ""))) return ownerSay("That doesn't look like a link. It should start with https://", false); ownerFail(e); });
+  });
+  /* the sign-in page: where to buy Markets+ (the link the owner saved, or the Discord) */
+  function plusInfo() {
+    rpc("live_plus_info", {}).then(function (r) {
+      var u = r && r.url, b = $("plusBuy"); if (!b) return;
+      if (u) { S.plusUrl = u; b.href = u; b.textContent = "Get Markets+ for $20"; } else { b.href = DISCORD_URL; b.textContent = "Get Markets+ in Discord"; }
+    }, function () {});
+  }
   $("grantForm").addEventListener("submit", function (ev) {
     ev.preventDefault();
     var v = $("grantEmail").value.trim();
     if (v.length < 3) { ownerSay("Type their email first.", false); $("grantEmail").focus(); return; }
     $("grantGo").disabled = true;
-    rpc("live_admin_grant", { p_token: S.token, p_email: v }).then(function (r) {
+    var kind = ($("grantKind") && $("grantKind").value) || "core";
+    rpc("live_admin_grant", kind === "core" ? { p_token: S.token, p_email: v } : { p_token: S.token, p_email: v, p_kind: kind }).then(function (r) {
       $("grantGo").disabled = false;
       if (!r || !r.ok) return ownerSay("That didn't work. Try again.", false);
       $("grantEmail").value = "";
       showGrant(r);
-      ownerSay(r.existing ? "They already had access, so this is the same code again." : "Done. Send them the code below.", true);
+      ownerSay(r.existing ? "They already had access, so this is the same code again." + (r.kind && r.kind !== "core" ? " It opens " + (KIND_WORD[r.kind] || r.kind) + "." : "") : "Done. Send them the code below.", true);
       ownerLoad(true);
     }, function (e) {
       $("grantGo").disabled = false;
@@ -2809,7 +3081,7 @@ body.sheet-open{overflow:hidden}
   }
   function pctOf(w, l) { return (w + l) > 0 ? Math.round(100 * w / (w + l)) : null; }
   function cls(x) { return x > 0.004 ? "up" : x < -0.004 ? "down" : ""; }
-  function autoCoinName(c) { for (var i = 0; i < COINS.length; i++) if (COINS[i][0] === c) return COINS[i][1]; return c; }
+  function autoCoinName(c) { for (var i = 0; i < COINS.length; i++) if (COINS[i][0] === c) return COINS[i][1]; return isPlus(c) ? plusName(c) + (setOf(c) === "h1" ? " hourly" : "") : c; }
   function botNow() { var s = A.st && A.st.state; return s && A.st.age != null ? s.ts + A.st.age + (performance.now() - A.recv) / 1000 : Date.now() / 1000; }
   function botAge() { return A.st && A.st.age != null ? A.st.age + (performance.now() - A.recv) / 1000 : null; }
   function autoMoney() { return (A.set && A.set.mode === "live") ? "live" : "paper"; }
@@ -4396,12 +4668,13 @@ body.sheet-open{overflow:hidden}
     return (P.nCoins === "all" ? shown : P.nCoins === "pick" ? (P.nList || []) : []).filter(function (c) { return c !== S.coin && COINS.some(function (x) { return x[0] === c; }); });
   }
   function pulseCoins() {
-    var want = {}, shown = meCoinOrder().map(function (x) { return x[0]; });
+    var want = {}, shown = setLocked(S.set) ? [] : setCoins(S.set).map(function (x) { return x[0]; });     // the tabs on screen (a locked set has nothing to show)
     alertCoins().forEach(function (c) { want[c] = 1; });
     if (P.tShow !== "none" && !document.hidden) shown.forEach(function (c) { want[c] = 1; });
     delete want[S.coin];                                    // the coin on screen comes with the board's own reads
-    return Object.keys(want).filter(function (c) { return COINS.some(function (x) { return x[0] === c; }); });
+    return Object.keys(want).filter(function (c) { return COINS.some(function (x) { return x[0] === c; }) || isPlus(c); });
   }
+  function mePulseSoon() { if (ME.on) ME.pAt = 0; }
   function mePulse(hid) {
     var coins = pulseCoins();
     if (!coins.length) { ME.pAt = Date.now() + 2000; return; }
@@ -4671,7 +4944,7 @@ body.sheet-open{overflow:hidden}
     root.style.fontSize = P.text === "s" ? "93.75%" : P.text === "l" ? "110%" : "";
     document.body.classList.toggle("compact", !!P.compact);
     document.body.classList.toggle("beginner", !!P.beginner);
-    if (S.view && S.view[S.coin]) mePaintHints(S.view[S.coin]);
+    if (S.view && S.view[S.coin] && S.view[S.coin].data.call) mePaintHints(S.view[S.coin]);
     mePanelsApply();
     if (typeof musicSync === "function") musicSync();
   }
@@ -4713,7 +4986,7 @@ body.sheet-open{overflow:hidden}
     var h = "";
     if (open) {
       var amt = ME.amtTyped != null ? ME.amtTyped : P.amt;
-      h += "<div class='pickbox'><p class='sm'>Took a call on Kalshi? Mark it and the bot grades it when this " + esc(d.coin) + " market ends.</p>" +
+      h += "<div class='pickbox'><p class='sm'>Took a call on Kalshi? Mark it and the bot grades it when this " + esc(dispCoin(d)) + " market ends.</p>" +
         "<div class='pickrow'><label class='sm' for='mePickAmt'>Amount</label><span class='dol'>$</span><input class='at-in' id='mePickAmt' data-me-in='amt' type='number' inputmode='decimal' min='0.01' step='1' value='" + esc(amt) + "'>" +
         "<label class='sm' for='mePickPx'>Paid</label><input class='at-in' id='mePickPx' data-me-in='px' type='number' inputmode='numeric' min='1' max='99' step='1' placeholder='now' title='Leave empty to use Kalshi&rsquo;s price right now' value='" + esc(ME.pxTyped || "") + "'><span class='sm'>cents (empty: the price now)</span></div>" +
         "<div class='at-row'><button type='button' class='at-btn up-b' data-me='pick' data-side='UP'" + (upPx == null && !ME.pxTyped ? " disabled" : "") + ">I took UP" + (upPx != null ? " " + upPx + "c" : "") + "</button>" +
@@ -4864,16 +5137,16 @@ body.sheet-open{overflow:hidden}
   function meSaved(t) { var el = $("meSaved"); if (el) el.textContent = t || ""; }
 
   /* ---------- flip calls: how they turned out */
-  function fcStats(coin) {
-    var data = (S.rec && S.rec.data) || {}, coins = data.coins || {}, one = coins[coin] && coins[coin].fc, n = 0, ok = 0;
-    Object.keys(coins).forEach(function (c) { var f = coins[c].fc; if (f) { n += f.n | 0; ok += f.ok | 0; } });
-    return { one: one || null, n: n, ok: ok, prac: data.fcs || null };
+  function fcStats(coin) {                                  // Markets+ flip calls keep their own record and tune themselves apart from the crypto ones
+    var data = (S.rec && S.rec.data) || {}, coins = data.coins || {}, one = coins[coin] && coins[coin].fc, n = 0, ok = 0, plus = isPlus(coin);
+    Object.keys(coins).forEach(function (c) { var f = coins[c].fc; if (f && isPlus(c) === plus) { n += f.n | 0; ok += f.ok | 0; } });
+    return { one: one || null, n: n, ok: ok, prac: (plus ? data["fcs+"] : data.fcs) || null, bar: (plus ? data["fcbar+"] : data.fcbar) || 88, plus: plus };
   }
   function paintFcRec(r, coin) {
     if (!r || !r.fcRec) return;
     var f = fcStats(coin);
     if (!f.one || !f.one.n) { r.fcRec.hidden = true; return; }
-    r.fcRec.hidden = false; setText(r.fcRec, "The bot's flip pings on " + coin + ": " + f.one.ok + " of " + f.one.n + " right (" + Math.round(100 * f.one.ok / f.one.n) + "%).");
+    r.fcRec.hidden = false; setText(r.fcRec, "The bot's flip pings on " + (isPlus(coin) ? plusName(coin) : coin) + ": " + f.one.ok + " of " + f.one.n + " right (" + Math.round(100 * f.one.ok / f.one.n) + "%).");
   }
   function fcRow(x) {
     var kind = x[5], what = kind === "c" ? "flip seen with " + esc(tlMin(x[3])) + " left, " + x[4] + "% sure" : kind === "p" ? "flip called with " + esc(tlMin(x[3])) + " left at " + x[4] + "%" : "called with " + esc(tlMin(x[3])) + " left at " + x[4] + "%";
@@ -4882,13 +5155,13 @@ body.sheet-open{overflow:hidden}
   }
   function mePaintFc() {
     if (!R || !R.fcp) return;
-    var f = fcStats(S.coin), one = f.one, h = "", pr = f.prac;
-    setText(R.fcpSum, f.n ? f.ok + " of " + f.n + " right, all coins" : "");
+    var f = fcStats(S.coin), one = f.one, h = "", pr = f.prac, nm = esc(isPlus(S.coin) ? plusName(S.coin) : S.coin);
+    setText(R.fcpSum, f.n ? f.ok + " of " + f.n + " right, " + (f.plus ? "all Markets+" : "all coins") : "");
     if (one && one.n) {
-      h += "<p><b>" + one.ok + " of " + one.n + "</b> flip pings on " + esc(S.coin) + " were right (" + Math.round(100 * one.ok / one.n) + "%).</p>";
+      h += "<p><b>" + one.ok + " of " + one.n + "</b> flip pings on " + nm + " were right (" + Math.round(100 * one.ok / one.n) + "%).</p>";
       h += "<ul class='plist'>" + one.r.slice().reverse().slice(0, 6).map(fcRow).join("") + "</ul>";
-    } else h += "<p class='sm'>No flips graded on " + esc(S.coin) + " yet. The bot now pings a flip only when it is very sure, so there are fewer of them, and the record started fresh with these rules.</p>";
-    h += "<p class='sm'>The bot pings a flip in two cases. <b>Flipped</b>: a side led for at least 30 seconds, then the price crossed the target, stayed across, and the bot's odds give the new side " + ((S.rec && S.rec.data && S.rec.data.fcbar) || 88) + "% or more (10 minutes left or less). The bot raises that bar by itself if these pings slip under 82% right. " +
+    } else h += "<p class='sm'>No flips graded on " + nm + " yet. The bot now pings a flip only when it is very sure, so there are fewer of them, and the record started fresh with these rules.</p>";
+    h += "<p class='sm'>The bot pings a flip in two cases. <b>Flipped</b>: a side led for at least 30 seconds, then the price crossed the target, stayed across, and the bot's odds give the new side " + f.bar + "% or more (10 minutes left or less). The bot raises that bar by itself if these pings slip under 82% right" + (f.plus ? " (Markets+ tunes its own bar, apart from the crypto coins)" : "") + ". " +
       "<b>Flip call</b>: a tight setup before the flip (price close to the target and moving at it fast, with the charts agreeing). These only ping once they've been right 65% of the time over at least 40 practice calls" +
       (pr && pr[1] ? ". Practice so far: " + pr[0] + " of " + pr[1] + " right" + (pr[2] ? ", so they ping now" : ", so they don't ping yet") : "") +
       ". A ping is right when the market ends on the side it named. Nothing here uses Kalshi's prices.</p>";
