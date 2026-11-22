@@ -716,7 +716,7 @@ body.sheet-open{overflow:hidden}
       <p class="msg" id="gateMsg" role="status" aria-live="polite"></p>
     </form>
     <p class="fine">It&rsquo;s in the Stripe receipt email, written like 1234-5678. One receipt works on up to 2 devices. Bought before the website and got an access code from the owner? Type that code in the same box. On the free Discord trial? Tap the trial button in the server and the bot sends you a code to type here. It works until your trial ends. <a href="./#get">Get access</a></p>
-    <div class="plusnote" id="plusNote"><p><b>New: Markets+.</b> Currencies, commodities and the hourly crypto ladders on this same board, for $20. It has its own receipt: sign in with it above. Already signed in with Kiros helper? Add it from the Markets+ tabs.</p><a class="btn ghost" id="plusBuy" href="https://discord.gg/kiroskove" target="_blank" rel="noopener">Get Markets+</a></div>
+    <div class="plusnote" id="plusNote"><p><b>New: Markets+.</b> Currencies, commodities and the hourly crypto ladders on this same board, for $20. It has its own receipt: sign in with it above. Already signed in with Kiros helper? Add it from the Markets+ tabs.</p><a class="btn ghost" id="plusBuy" href="https://buy.stripe.com/eVqaEZa5o9Ny4io8j3efC03" target="_blank" rel="noopener">Get Markets+ for $20</a></div>
   </section>
 
   <!-- 2) the live board (blurred sample behind the gate, real data after sign-in) -->
@@ -755,7 +755,7 @@ body.sheet-open{overflow:hidden}
         <div id="grantResult" aria-live="polite"></div>
         <p class="hint">Giving the same email again with another choice changes what their code opens (no new code).</p>
         <h4>Markets+</h4>
-        <p class="hint">Payment link for the $20 Markets+ (the Stripe link people tap to pay). Turn promotion codes off on it. It shows on the sign-in page and on the locked Markets+ tabs. Leave it empty and those buttons point to your Discord.</p>
+        <p class="hint">Payment link for the $20 Markets+ (the Stripe link people tap to pay). Turn promotion codes off on it. It shows on the main page, the sign-in page and the locked Markets+ tabs. The built-in link already works: only paste a different one here if you change it.</p>
         <form id="plusForm" class="grant" autocomplete="off" novalidate>
           <input type="text" id="plusUrl" maxlength="300" placeholder="https://buy.stripe.com/..." inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Payment link for Markets+">
           <button type="submit" id="plusGo">Save link</button>
@@ -817,7 +817,7 @@ body.sheet-open{overflow:hidden}
               ["GOLD", "Gold", "cmd"], ["SILVER", "Silver", "cmd"], ["OIL", "Oil (WTI)", "cmd"], ["NATGAS", "Natural gas", "cmd"], ["COPPER", "Copper", "cmd"],
               ["BTCH", "BTC", "h1"], ["ETHH", "ETH", "h1"], ["SOLH", "SOL", "h1"], ["XRPH", "XRP", "h1"]];
   var SETS = [["c15", "Crypto 15m"], ["fx", "Currencies"], ["cmd", "Commodities"], ["h1", "Hourly crypto"]];
-  var CORE_URL = "./#get", DISCORD_URL = "https://discord.gg/kiroskove";
+  var CORE_URL = "./#get", DISCORD_URL = "https://discord.gg/kiroskove", PLUS_URL = "https://buy.stripe.com/eVqaEZa5o9Ny4io8j3efC03";   // the built-in Markets+ payment link (the owner panel can set another)
   function setOf(c) { for (var i = 0; i < PLUS.length; i++) if (PLUS[i][0] === c) return PLUS[i][2]; return "c15"; }
   function isPlus(c) { return setOf(c) !== "c15"; }
   function plusName(c) { for (var i = 0; i < PLUS.length; i++) if (PLUS[i][0] === c) return PLUS[i][1]; return c; }
@@ -1487,12 +1487,11 @@ body.sheet-open{overflow:hidden}
   }
   function lockHTML(kind) {
     if (kind === "plus") {
-      var buy = S.plusUrl ? "<a class='btn lkbuy' href='" + esc(S.plusUrl) + "' target='_blank' rel='noopener'>Get Markets+ for $20</a>"
-                          : "<a class='btn lkbuy' href='" + DISCORD_URL + "' target='_blank' rel='noopener'>Get Markets+ in Discord</a>";
+      var buy = "<a class='btn lkbuy' href='" + esc(S.plusUrl || PLUS_URL) + "' target='_blank' rel='noopener'>Get Markets+ for $20</a>";
       return "<article class='card lockcard'><p class='plustag big'>Markets+</p><h2>Currencies, commodities and hourly crypto</h2>" +
         "<p>The same board you use for crypto, on Kalshi&rsquo;s other short markets: the bot&rsquo;s call, the chance it flips, flip calls, candles with indicators, its record, and the Kalshi prices.</p>" +
         "<ul class='lklist'><li><b>Currencies</b>, 15-minute rounds: EUR/USD, GBP/USD, USD/JPY, AUD/USD, USD/CAD</li><li><b>Commodities</b>, 15-minute rounds: gold, silver, oil, natural gas, copper</li><li><b>Hourly crypto</b>: the BTC, ETH, SOL and XRP price ladders</li></ul>" +
-        "<p class='sm'>$20, paid once. You don&rsquo;t need the $45 bot for it. If you have the Auto-trader add-on, its stop loss and profit target cover these markets too.</p>" + buy + addForm("plus") + "</article>";
+        "<p class='sm'>$20, paid once, and all sales are final. You don&rsquo;t need the $45 bot for it. If you have the Auto-trader add-on, its stop loss and profit target cover these markets too.</p>" + buy + addForm("plus") + "</article>";
     }
     return "<article class='card lockcard'><h2>The 15-minute crypto markets</h2><p>BTC, ETH, SOL, XRP, DOGE, BNB and HYPE come with Kiros helper. Markets+ on its own covers currencies, commodities and the hourly crypto ladders.</p>" +
       "<a class='btn lkbuy' href='" + CORE_URL + "'>See Kiros helper</a>" + addForm("core") + "</article>";
@@ -2417,14 +2416,14 @@ body.sheet-open{overflow:hidden}
     $("plusGo").disabled = true;
     rpc("live_admin_plus_url", { p_token: S.token, p_url: v }).then(function (r) {
       $("plusGo").disabled = false; delete $("plusUrl").dataset.typed; S.plusUrl = (r && r.plus_url) || null;
-      ownerSay(r && r.plus_url ? "Saved. The sign-in page and the locked Markets+ tabs now show a Get Markets+ button with this link." : "Cleared. The Get Markets+ buttons point to your Discord again.", true);
+      ownerSay(r && r.plus_url ? "Saved. The Get Markets+ buttons now use this link." : "Cleared. The Get Markets+ buttons use the built-in link again.", true);
     }, function (e) { $("plusGo").disabled = false; if (/bad link/i.test(String((e && e.message) || ""))) return ownerSay("That doesn't look like a link. It should start with https://", false); ownerFail(e); });
   });
   /* the sign-in page: where to buy Markets+ (the link the owner saved, or the Discord) */
   function plusInfo() {
     rpc("live_plus_info", {}).then(function (r) {
       var u = r && r.url, b = $("plusBuy"); if (!b) return;
-      if (u) { S.plusUrl = u; b.href = u; b.textContent = "Get Markets+ for $20"; } else { b.href = DISCORD_URL; b.textContent = "Get Markets+ in Discord"; }
+      S.plusUrl = u || null; b.href = u || PLUS_URL; b.textContent = "Get Markets+ for $20";
     }, function () {});
   }
   $("grantForm").addEventListener("submit", function (ev) {
