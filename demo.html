@@ -941,7 +941,7 @@ body.sheet-open{overflow:hidden}
       sellnow: {},
       s: { v: 1, ts: Date.now() / 1000, since: Date.now() / 1000, open: 0, mode: "paper", paper: { bal: START_BAL, start: START_BAL }, pos: {}, trades: [], log: [],
            stats: { paper: { w: 0, l: 0, e: 0, net: 0, fees: 0, coins: {} } }, days: {}, day: dayKey(Date.now() / 1000), notes: {}, pause: 0, pause_why: "", live: null, max_bet: MAX_BET, alert: null,
-           gates: { BTC: { side: "UP", n: 4, all: false, g: [["data", true, "3 exchanges agree within 0.02%, Kalshi gap 1c"], ["time", true, "inside the trading window"],    // made-up example, for the demo only
+           gates: { DOGE: { side: "UP", n: 4, all: false, g: [["data", true, "3 exchanges agree within 0.02%, Kalshi gap 1c"], ["time", true, "inside the trading window"],    // made-up example, for the demo only
                    ["strength", false, "UP 61%, needs 65%"], ["lock", true, "held above the target, 34% chance it touches it again"], ["reversal", true, "no turn against UP"],
                    ["edge", false, "+1 points after fees, needs 3"], ["chop", false, "crossed the target 3 times this market"]] } },
            edge: { demo: true, on: true, at: Date.now() / 1000, markets: 412, learned: true, need: 60, min_trades: 30, tested: 124,     // a made-up example of the edge check, for the demo only
@@ -3558,8 +3558,8 @@ body.sheet-open{overflow:hidden}
   var GATE_NAMES = { data: "Data", time: "Time", strength: "Strength", lock: "Lock", reversal: "Reversal", edge: "Edge", chop: "Chop" };
   function paintGates(s) {
     if (!AK.gateBox) return;
-    var all = s.gates || {}, coins = Object.keys(all).filter(function (c) { return all[c] && all[c].g; });
-    if (!coins.length) { setHTML(AK.gateBox, "<p class='at-empty'>Press Start and pick some coins. Each coin's seven checks show up here.</p>"); return; }
+    var all = s.gates || {}, coins = Object.keys(all).filter(function (c) { return all[c] && all[c].g && autoCoinOk(c); });     /* only the Auto-trader's own markets */
+    if (!coins.length) { setHTML(AK.gateBox, "<p class='at-empty'>Press Start and pick some of DOGE, XRP, BNB, gold and NEAR. Each one's seven checks show up here.</p>"); return; }
     var coin = coins.indexOf(S.coin) >= 0 ? S.coin : coins[0], x = all[coin], n = x.g.filter(function (g) { return g[1]; }).length;
     var h = "<p class='at-gatehead'><b>" + esc(coin) + " " + esc(x.side) + "</b>: " + n + " of " + x.g.length + " gates passing</p>" +
       "<div class='at-gatebar' role='img' aria-label='" + n + " of " + x.g.length + " gates passing'><i style='width:" + Math.round(n / Math.max(x.g.length, 1) * 100) + "%'></i></div><div class='at-gates'>";
@@ -5066,9 +5066,9 @@ body.sheet-open{overflow:hidden}
     h += "<div class='mstats'><div><span>Balance</span><b>" + (bal != null ? esc(usd(bal)) : "-") + "</b><small>on Kalshi</small></div>" +
       "<div><span>Today</span><b class='" + cls(tot ? tot.day : 0) + "'>" + (tot ? esc(usd(tot.day, true)) : "-") + "</b><small>" + (tot ? tot.dw + " won, " + tot.dl + " lost" : "after fees") + "</small></div>" +
       "<div><span>All time</span><b class='" + cls(tot ? tot.net : 0) + "'>" + (tot ? esc(usd(tot.net, true)) : "-") + "</b><small>" + (tot ? tot.w + " won, " + tot.l + " lost" : "15-minute crypto") + "</small></div></div>";
-    h += "<h4>Open trades</h4><div data-me-hand='1'>" + handRows(st) + "</div>";
+    h += "<h4>Trades you placed on Kalshi</h4><div data-me-hand='1'>" + handRows(st) + "</div>";
     h += "<p class='sm guard'>" + esc(guardLine(st)) + " <button type='button' class='link sm' data-me='open' data-tab='kalshi'>Change</button></p>";
-    if (s.pos && Object.keys(s.pos).length) h += "<p class='sm'>The Auto-trader is finishing " + Object.keys(s.pos).length + " trade" + (Object.keys(s.pos).length === 1 ? "" : "s") + " it opened before it closed for maintenance.</p>";
+    if ((st.maint || s.maint) && s.pos && Object.keys(s.pos).length) h += "<p class='sm'>The Auto-trader is finishing " + Object.keys(s.pos).length + " trade" + (Object.keys(s.pos).length === 1 ? "" : "s") + " it opened before it closed for maintenance.</p>";
     if (k && k.rows && k.rows.length) h += "<h4>Recent results</h4><ul class='plist'>" + k.rows.slice(0, 5).map(function (r) {
       return "<li><span>" + esc(r[2]) + "</span><span class='sm'>" + esc(clockTime(r[1])) + "</span><b class='" + cls(r[3]) + "'>" + esc(usd(r[3], true)) + "</b></li>"; }).join("") + "</ul><p class='sm'>From your Kalshi account: every 15-minute crypto market you traded, by hand or not, after fees.</p>";
     if (!s.ts) h = "<p class='sm'>The bot is picking up your account. This takes a few seconds.</p>" + h;
