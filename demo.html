@@ -802,8 +802,8 @@ body.sheet-open{overflow:hidden}
   var TOKEN = "demo-token", RK = "DEMO0001", START_BAL = 1000, MAX_BET = 100;
   // starting prices if Coinbase can't be reached (rough levels, mid November 2026). When it can be, they are replaced with the real ones below.
   var CODES = [["BTC", "Bitcoin", 64200, 0.00009], ["ETH", "Ethereum", 1870, 0.00011], ["SOL", "Solana", 74, 0.00014], ["XRP", "XRP", 1.08, 0.00014],
-               ["DOGE", "Dogecoin", 0.081, 0.00017], ["BNB", "BNB", 590, 0.0001], ["HYPE", "Hyperliquid", 58, 0.00018]];
-  var CB = { BTC: "BTC-USD", ETH: "ETH-USD", SOL: "SOL-USD", XRP: "XRP-USD", DOGE: "DOGE-USD", BNB: "BNB-USD", HYPE: "HYPE-USD" };
+               ["DOGE", "Dogecoin", 0.081, 0.00017], ["BNB", "BNB", 590, 0.0001], ["HYPE", "Hyperliquid", 58, 0.00018], ["NEAR", "NEAR", 2.3, 0.00019]];
+  var CB = { BTC: "BTC-USD", ETH: "ETH-USD", SOL: "SOL-USD", XRP: "XRP-USD", DOGE: "DOGE-USD", BNB: "BNB-USD", HYPE: "HYPE-USD", NEAR: "NEAR-USD" };
   // Markets+ (made up too): [code, name, rough price, move per second, set, decimals, unit, coin an hourly ladder follows]
   var PCODES = [["EURUSD", "EUR/USD", 1.152, 0.000012, "fx", 5, ""], ["GBPUSD", "GBP/USD", 1.312, 0.000014, "fx", 5, ""], ["USDJPY", "USD/JPY", 153.8, 0.000014, "fx", 3, ""],
                 ["AUDUSD", "AUD/USD", 0.655, 0.000016, "fx", 5, ""], ["USDCAD", "USD/CAD", 1.38, 0.000011, "fx", 5, ""],
@@ -935,7 +935,7 @@ body.sheet-open{overflow:hidden}
   var ACC = null;
   function freshAcc(keepAccess) {
     ACC = { access: keepAccess !== false, running: false, loseRun: 0, cool: 0,
-      set: { coins: ["BTC", "ETH", "SOL"], bet: 5, mode: "paper", style: "balanced", pick: "best", daily_loss: 25, max_open: 3, streak: 3, flips: true, quick: true, catchup: false, always: false, stop_mode: "auto", stop_c: 15,
+      set: { coins: ["DOGE", "XRP", "BNB", "GOLD", "NEAR"], bet: 5, mode: "paper", style: "balanced", pick: "best", daily_loss: 25, max_open: 3, streak: 3, flips: true, quick: false, catchup: false, always: false, stop_mode: "auto", stop_c: 15,
              tp_mode: "auto", tp_c: 20, max_money: 0, hours_on: false, hours_from: "09:00", hours_to: "17:00", tz: "", alert_ntfy: "", alert_discord: "", alert_open: true, alert_close: true, alert_warn: true,
              guard_on: true, guard_act: "alert", g_stop: "manual", g_stop_c: 12, g_tp: "off", g_tp_c: 20, alert_guard: true },
       sellnow: {},
@@ -947,8 +947,7 @@ body.sheet-open{overflow:hidden}
            edge: { demo: true, on: true, at: Date.now() / 1000, markets: 412, learned: true, need: 60, min_trades: 30, tested: 124,     // a made-up example of the edge check, for the demo only
                    beat: { markets: 124, gain: -0.0004, z: -0.6, ok: false },
                    styles: { careful: { n: 31, w: 19, avg: -2.1, roi: -3.4, ok: false, beat: false }, balanced: { n: 58, w: 33, avg: -3.0, roi: -4.9, ok: false, beat: false },
-                             active: { n: 86, w: 44, avg: -4.6, roi: -7.8, ok: false, beat: false }, scalp: { n: 61, w: 35, avg: -2.7, roi: -4.5, ok: false, beat: false },
-                             smart: { n: 40, w: 26, avg: -0.8, roi: -1.2, ok: false, beat: false } },
+                             active: { n: 86, w: 44, avg: -4.6, roi: -7.8, ok: false, beat: false } },
                    ideas: [],
                    lab: { on: true, min_n: 300, pick: null, strats: [{ k: "fav_late", n: 212, w: 196, avg: -0.6, roi: -0.7, proven: false, kind: "taker" },
                      { k: "fav_mid", n: 187, w: 133, avg: 0.9, roi: 1.3, proven: false, kind: "taker" }, { k: "agree", n: 240, w: 171, avg: -0.4, roi: -0.6, proven: false, kind: "taker" },
@@ -956,7 +955,7 @@ body.sheet-open{overflow:hidden}
                      { k: "gates", n: 64, w: 49, avg: 0.4, roi: 0.6, proven: false, kind: "taker" }, { k: "model", n: 301, w: 159, avg: -3.9, roi: -6.6, t: -2.4, proven: false, kind: "taker" }, { k: "fav_any", n: 305, w: 220, avg: -1.6, roi: -2.3, proven: false, kind: "taker" }, { k: "settle", n: 64, w: 55, avg: 1.1, roi: 1.4, proven: false, kind: "taker" }, { k: "catch", n: 118, w: 71, avg: 0.8, roi: 1.3, proven: false, kind: "taker" }],
                      cells: [["fav_mid", "HYPE", 64, 47, 3.1, 4.4, 1.2, false], ["fav_late", "DOGE", 58, 54, 1.0, 1.1, 0.6, false], ["model", "BTC", 71, 33, -5.1, -8.8, -2.2, false]],
                      hours: [["lag", 1, 52, 31, 2.4, 3.9, 1.1], ["fav_any", 4, 66, 45, -2.6, -3.7, -1.3]], cell_n: 200, rewards: { ok: true, coins: [], n: 0, types: [] },
-                     feed: { on: true, ok: true, coins: ["BTC", "ETH", "SOL", "XRP", "DOGE", "BNB", "HYPE"], fast: ["BTC", "ETH", "SOL", "XRP", "DOGE"], quotes: 7, ms: 3.2 },
+                     feed: { on: true, ok: true, coins: ["BTC", "ETH", "SOL", "XRP", "DOGE", "BNB", "HYPE", "NEAR"], fast: ["BTC", "ETH", "SOL", "XRP", "DOGE"], quotes: 7, ms: 3.2 },
                      hist: { at: 1763490000, days: 7, markets: 4704, src: ["settlement index, second by second"], beat: { n: 4650, diff: 0.0008, z: 1.1 }, cf_denied: false,
                              strats: [["fav_late", 1810, 1702, 0.9, 1.3], ["fav_mid", 2204, 1453, -2.1, -2.4], ["agree", 1950, 1260, -3.2, -3.1], ["maker", 1388, 905, -1.4, -1.2],
                                       ["model", 2410, 1302, -4.4, -4.0], ["fav_any", 4688, 3170, -2.6, -4.6], ["settle", 205, 182, 2.2, 1.6], ["catch", 960, 571, 1.9, 1.8]] } } } } };
@@ -971,7 +970,7 @@ body.sheet-open{overflow:hidden}
     s.day = dayKey(t); var dd = s.days[s.day] || (s.days[s.day] = {}); dd.paper = r2((dd.paper || 0) + net);
     s.trades = s.trades.concat([{ t: Math.floor(t), c: pos.c, s: pos.s, n: n, e: pos.e, x: exitC, net: net, r: why, m: "paper", w: pos.w }]).slice(-40);
     delete s.pos[pos.c];
-    log("sell", pos.c + " " + pos.s + ": " + (why === "WON" ? "held to the end and won " : why === "LOST" ? "held to the end and lost " : (why === "FLIP" ? "the call flipped, got out at " + Math.round(exitC) + "c. " : why === "STOP" ? "hit your stop loss at " + Math.round(exitC) + "c. " : why === "TARGET" ? "hit your profit target at " + Math.round(exitC) + "c. " : why === "SELL" ? "you sold it at " + Math.round(exitC) + "c. " : why === "TP" ? "took profit at " + Math.round(exitC) + "c. " : why === "CUT" ? "cut the loss at " + Math.round(exitC) + "c. " : why === "BE" ? "got out at break-even, " + Math.round(exitC) + "c. " : why === "TIME" ? "sold before the last minute at " + Math.round(exitC) + "c. " : "sold at " + Math.round(exitC) + "c. ")) + (net >= 0 ? "+$" : "-$") + Math.abs(net).toFixed(2), t);
+    log("sell", pos.c + " " + pos.s + ": " + (why === "WON" ? "held to the end and won " : why === "LOST" ? "held to the end and lost " : (why === "FLIP" ? "no longer confident in the call, got out at " + Math.round(exitC) + "c. " : why === "STOP" ? "hit your stop loss at " + Math.round(exitC) + "c. " : why === "TARGET" ? "hit your profit target at " + Math.round(exitC) + "c. " : why === "SELL" ? "you sold it at " + Math.round(exitC) + "c. " : why === "TP" ? "took profit at " + Math.round(exitC) + "c. " : why === "CUT" ? "cut the loss at " + Math.round(exitC) + "c. " : why === "BE" ? "got out at break-even, " + Math.round(exitC) + "c. " : why === "TIME" ? "sold before the last minute at " + Math.round(exitC) + "c. " : "sold at " + Math.round(exitC) + "c. ")) + (net >= 0 ? "+$" : "-$") + Math.abs(net).toFixed(2), t);
     if (k === "l") ACC.loseRun++; else if (k === "w") ACC.loseRun = 0;
     var cap = ACC.set.streak;
     if (cap > 0 && ACC.loseRun >= cap) { s.pause = Math.floor(t) + 1800; s.pause_why = "streak"; ACC.loseRun = 0; log("warn", "Lost " + cap + " in a row. Taking a 30 minute break.", t); }
@@ -992,17 +991,13 @@ body.sheet-open{overflow:hidden}
       if (ACC.sellnow[code] && q.left > 3) { delete ACC.sellnow[code]; record(p, sellAt, "SELL", t); m.stopped = "you sold this one, waiting for the next market"; ACC.cool = t + 8; return; }
       if (set.stop_mode === "manual" && p.bid <= p.e - set.stop_c && q.left > 3) { record(p, sellAt, "STOP", t); m.stopped = "your stop loss sold this one, waiting for the next market"; ACC.cool = t + 8; return; }
       if (set.tp_mode === "manual" && p.bid >= p.e + set.tp_c && q.left > 3) { record(p, sellAt, "TARGET", t); ACC.cool = t + 8; return; }
-      var scalp = set.style === "scalp", sc = ROUND / 900;
       p.pk = Math.max(p.pk == null ? p.e : p.pk, p.bid);
-      if (scalp && set.tp_mode !== "manual" && p.bid - p.e >= 8 && q.left > 3) { record(p, sellAt, "TP", t); ACC.cool = t + 8; return; }
-      if (set.flips && call !== p.s && prob >= 0.62 && q.left > 8) { p.flipN = (p.flipN || 0) + 1; if (p.flipN >= 2) { record(p, sellAt, "FLIP", t); ACC.cool = t + 8; return; } } else p.flipN = 0;
-      if (set.tp_mode !== "manual" && p.bid - p.e >= 28 && q.left > 8) { record(p, sellAt, "TP", t); ACC.cool = t + 8; return; }
-      if (set.stop_mode !== "manual") {
-        var sideP = p.s === "UP" ? q.pm : 1 - q.pm, sideMid = p.s === "UP" ? q.mid : 100 - q.mid, autoStop = { careful: 12, balanced: 15, active: 20, scalp: 6 }[set.style] || 15;
-        if (p.bid <= p.e - autoStop && (scalp || sideP * 100 < sideMid) && q.left > 3) { record(p, sellAt, "CUT", t); ACC.cool = t + (scalp ? 45 : 8); return; }
-      }
-      if (scalp && p.pk - p.e >= 5 && p.bid <= p.e && q.left > 3) { record(p, sellAt, "BE", t); ACC.cool = t + 45; return; }
-      if (scalp && q.left <= 90 * sc && q.left > 3) { record(p, sellAt, "TIME", t); ACC.cool = t + 8; return; }
+      var sideP = p.s === "UP" ? q.pm : 1 - q.pm, gold = code === "GOLD", line = gold ? 0.2 : 0.3, now2 = gold ? 0.1 : 0.2, hold = 45 * (ROUND / 900);
+      if (sideP > line) { p.lost = 0; return; }                    // still confident enough: holds (Automatic never sells because of the price)
+      if (!p.lost) p.lost = t;
+      if (sideP > now2 && t - p.lost < hold) return;
+      var auto = p.bid > p.e ? set.tp_mode !== "manual" : set.stop_mode !== "manual";      // a winning trade follows the profit target setting, a losing one the stop loss
+      if (auto && q.left > 3) { record(p, sellAt, "FLIP", t); if (set.flips) m.flipTo = { side: p.s === "UP" ? "DOWN" : "UP", until: t + 90 * (ROUND / 900) }; ACC.cool = t + 8; return; }
     });
     var notes = {}, haveOpen = Object.keys(s.pos).length;
     set.coins.forEach(function (c) { notes[c] = ACC.running ? "" : (s.pos[c] ? "holding" : "stopped"); });
@@ -1011,29 +1006,29 @@ body.sheet-open{overflow:hidden}
     if (s.pause && s.pause <= t) { s.pause = 0; s.pause_why = ""; }
     var hrs = hoursState(set, t);
     if (!hrs.ok) { set.coins.forEach(function (c) { if (!s.pos[c]) notes[c] = "outside your trading hours, opens at " + hrs.opens; }); s.notes = notes; return; }
-    var need = { careful: [9, 4], balanced: [6, 3], active: [4, 2], scalp: [6, 2] }[set.style] || [6, 3], cap = set.pick === "all" ? set.max_open : 1, cands = [];
+    var need = { careful: [6, 4, 0.70], balanced: [4, 3, 0.64], active: [3, 2, 0.58] }[set.style] || [4, 3, 0.64], cap = set.pick === "all" ? set.max_open : 1, cands = [];
     set.coins.forEach(function (code) {
       var m = M[code], q = m && m.q; if (!q) return;
       if (s.pos[code]) { var pp = s.pos[code], pnl = pp.bid != null ? Math.round(pp.bid - pp.e) : 0; notes[code] = "holding " + pp.s + ", " + (pnl >= 0 ? "+" : "") + pnl + "c so far"; return; }
-      var side = q.pm >= 0.5 ? "UP" : "DOWN", prob = side === "UP" ? q.pm : 1 - q.pm, ask = side === "UP" ? q.ya : q.na, fill = Math.min(ask + 1, 99);
+      var side = q.pm >= 0.5 ? "UP" : "DOWN", lf = q.left * (900 / ROUND), gold = code === "GOLD";
+      var k = lf <= 240 ? 1 : gold ? (lf <= 420 ? 0.97 : lf <= 600 ? 0.92 : 0.77) : (lf <= 420 ? 0.9 : 0.85);       // the bot's odds, trusted only as far as this point of the market deserves
+      var pmA = 0.5 + (q.pm - 0.5) * k, prob = side === "UP" ? pmA : 1 - pmA, ask = side === "UP" ? q.ya : q.na, fill = Math.min(ask + 1, 99);
       var edge = prob * 100 - fill - 100 * fee(1, fill) ;
-      var cu = !!set.catchup && m.traded === 0 && q.left <= 780 * (ROUND / 900) && q.left >= 60 * (ROUND / 900) && ask >= 80 && ask <= 85 && prob >= 0.9 && prob * 100 - ask - 100 * fee(1, ask) >= 3;   // "buy at 80%": nothing traded here yet, a clear favourite the demo is sure of
-      var al = !!set.always && m.traded === 0 && q.left <= 360 * (ROUND / 900) && q.left >= 90 * (ROUND / 900) && prob >= 0.58 && ask >= 15 && ask <= 85;      // "trade every market": nothing traded here yet, take the side the demo leans to
-      var good = edge >= need[0] || cu || al;
+      var good = edge >= need[0] && prob >= need[2];
       var L = m.looks; if (L.side === side && good) L.n++; else L = m.looks = { side: good ? side : null, n: good ? 1 : 0 };
       if (today <= -set.daily_loss) { notes[code] = "daily loss limit reached, no more buys today"; return; }
       if (m.stopped) { notes[code] = typeof m.stopped === "string" ? m.stopped : "your stop loss sold this one, waiting for the next market"; return; }
-      var maxT = set.style === "scalp" ? 4 : set.flips ? 3 : 1;
+      var maxT = set.flips ? 3 : 1;
       if (m.traded >= maxT) { notes[code] = "already traded this round, waiting for the next one"; return; }
       var el = ROUND - q.left;
       if (el < 20) { notes[code] = "new round, watching for a few seconds first"; return; }
       if (q.left < 25) { notes[code] = "too close to the end to buy"; return; }
-      if (set.style === "scalp" && q.left < 150 * (ROUND / 900) && !cu && !al) { notes[code] = "too late in this market for a scalp, waiting for the next one"; return; }
-      if (prob < 0.58) { notes[code] = "call is too close to call"; return; }
-      if (edge < need[0] && !cu && !al) { notes[code] = side + " " + Math.round(prob * 100) + "% but the price is " + ask + "c, not enough edge"; return; }
-      if (set.quick && set.tp_mode === "manual" && fill + set.tp_c > 99) { notes[code] = "your profit target (+" + set.tp_c + "c) can't be reached from " + ask + "c"; return; }
-      if (set.quick && set.stop_mode === "manual" && fill - set.stop_c < 1) { notes[code] = "your stop loss (-" + set.stop_c + "c) can't trigger from " + ask + "c, the price has no room to fall that far"; return; }
-      if (L.n < (set.quick || cu ? 1 : need[1])) { notes[code] = side + " looks good (" + Math.round(edge) + " points of edge), confirming " + L.n + " of " + need[1]; return; }
+      if (gold && lf > 600) { notes[code] = "market just opened, starts looking with 10m 00s left"; return; }
+      if (prob < need[2]) { notes[code] = "call is only " + Math.round(prob * 100) + "% " + side + ", needs " + Math.round(need[2] * 100) + "% (too close to call)"; return; }
+      if (edge < need[0]) { notes[code] = side + " " + Math.round(prob * 100) + "% but the price is " + ask + "c, not enough edge"; return; }
+      if (set.tp_mode === "manual" && fill + set.tp_c > 99) { notes[code] = "your profit target (+" + set.tp_c + "c) can't be reached from " + ask + "c"; return; }
+      if (set.stop_mode === "manual" && fill - set.stop_c < 1) { notes[code] = "your stop loss (-" + set.stop_c + "c) can't trigger from " + ask + "c, the price has no room to fall that far"; return; }
+      if (L.n < need[1]) { notes[code] = side + " looks good (" + Math.round(edge) + " points of edge), confirming " + L.n + " of " + need[1]; return; }
       cands.push({ code: code, side: side, ask: ask, fill: fill, edge: edge, prob: prob, m: m, q: q });
     });
     s.notes = notes;
@@ -1181,8 +1176,14 @@ body.sheet-open{overflow:hidden}
       if (DEMO.sell === h.c) { code = "SELL"; DEMO.sell = null; }
       else if (set.g_stop === "manual" && bid <= h.e - set.g_stop_c) code = "STOP";
       else if (set.g_tp === "manual" && bid >= h.e + set.g_tp_c) code = "TARGET";
-      else if (set.g_stop === "auto" && ((bid <= h.e - 15 && sideP * 100 < (h.s === "UP" ? q.mid : 100 - q.mid)) || sideP < 0.3)) code = sideP < 0.3 ? "FLIP" : "CUT";
-      else if (set.g_tp === "auto" && bid - h.e >= 2 && bid / 100 - fee(1, bid) >= sideP + 0.01) code = "TP";
+      else {                                                        // Automatic: only when the bot is no longer confident in the side held (as the real bot)
+        var gl = h.c === "GOLD", ln = gl ? 0.2 : 0.3;
+        if (sideP > ln) h.lost = 0; else {
+          if (!h.lost) h.lost = t;
+          var ok = sideP <= (gl ? 0.1 : 0.2) || t - h.lost >= 45 * (ROUND / 900), aut = bid > h.e ? set.g_tp === "auto" : set.g_stop === "auto";
+          if (ok && aut) code = "FLIP";
+        }
+      }
       if (!code) return;
       if (code === "SELL" || set.guard_act === "sell") {
         var px = Math.max(bid - 1, 1), net = h.n * px / 100 - fee(h.n, px) - h.n * h.e / 100 - h.fe;
@@ -1223,10 +1224,10 @@ body.sheet-open{overflow:hidden}
 
   /* ---------- the fake server ---------- */
   function cleanSettings(p) {
-    var coins = [], seen = {}; (Array.isArray(p.coins) ? p.coins : []).forEach(function (c) { c = String(c).toUpperCase(); if (/^[A-Z0-9]{2,10}$/.test(c) && !seen[c] && coins.length < 8) { seen[c] = 1; coins.push(c); } });
+    var coins = [], seen = {}; (Array.isArray(p.coins) ? p.coins : []).forEach(function (c) { c = String(c).toUpperCase(); if (["DOGE", "XRP", "BNB", "GOLD", "NEAR"].indexOf(c) >= 0 && !seen[c] && coins.length < 8) { seen[c] = 1; coins.push(c); } });
     var num = function (v, d) { v = parseFloat(v); return isFinite(v) ? v : d; };
-    return { coins: coins, bet: r2(clamp(num(p.bet, 5), 1, 1000)), mode: p.mode === "live" ? "live" : "paper", style: ["careful", "balanced", "active", "scalp"].indexOf(p.style) >= 0 ? p.style : "balanced",
-      pick: p.pick === "all" ? "all" : "best", daily_loss: r2(clamp(num(p.daily_loss, 25), 1, 10000)), max_open: clamp(Math.floor(num(p.max_open, 3)), 1, 7), streak: clamp(Math.floor(num(p.streak, 3)), 0, 20), flips: p.flips !== false, quick: p.quick !== false, catchup: p.catchup === true, always: p.always === true,
+    return { coins: coins, bet: r2(clamp(num(p.bet, 5), 1, 1000)), mode: p.mode === "live" ? "live" : "paper", style: ["careful", "balanced", "active"].indexOf(p.style) >= 0 ? p.style : "balanced",
+      pick: p.pick === "all" ? "all" : "best", daily_loss: r2(clamp(num(p.daily_loss, 25), 1, 10000)), max_open: clamp(Math.floor(num(p.max_open, 3)), 1, 7), streak: clamp(Math.floor(num(p.streak, 3)), 0, 20), flips: p.flips !== false, quick: false, catchup: false, always: false,
       stop_mode: p.stop_mode === "manual" ? "manual" : "auto", stop_c: clamp(Math.round(num(p.stop_c, 15)), 5, 90),
       tp_mode: p.tp_mode === "manual" ? "manual" : "auto", tp_c: clamp(Math.round(num(p.tp_c, 20)), 5, 90), max_money: r2(clamp(num(p.max_money, 0), 0, 100000)),
       hours_on: p.hours_on === true, hours_from: /^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(p.hours_from) ? p.hours_from : "09:00", hours_to: /^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(p.hours_to) ? p.hours_to : "17:00",
@@ -1239,12 +1240,12 @@ body.sheet-open{overflow:hidden}
   }
   function statusOut() {
     var t = Date.now() / 1000;
-    if (!ACC.access) return { ok: true, access: false, pay_url: "about:blank", kill: false, trial: false, maint: true };
+    if (!ACC.access) return { ok: true, access: false, pay_url: "about:blank", kill: false, trial: false, maint: false };
     ACC.s.mode = ACC.set.mode;
     var st = JSON.parse(JSON.stringify(ACC.s));
-    st.hand = JSON.parse(JSON.stringify(DEMO.hand)); st.gev = DEMO.gev.slice(-12); st.gseq = DEMO.gseq; st.kal = demoKal(); st.live = { bal: DEMO.bal }; st.maint = true; st.guard = { on: ACC.set.guard_on !== false, act: ACC.set.guard_act };
+    st.hand = JSON.parse(JSON.stringify(DEMO.hand)); st.gev = DEMO.gev.slice(-12); st.gseq = DEMO.gseq; st.kal = demoKal(); st.live = { bal: DEMO.bal }; st.maint = false; st.guard = { on: ACC.set.guard_on !== false, act: ACC.set.guard_act };
     return { ok: true, access: true, ver: Math.floor(t * 1000), age: +(Math.max(t - ACC.s.ts, 0)).toFixed(1), rk: RK, vault: VAULT, settings: ACC.set, running: ACC.running,
-             key: { hint: "DEMO", status: { ok: true, bal: DEMO.bal, msg: "Demo key: nothing here is real." } }, state: st, kill: false, trial: false, maint: true };
+             key: { hint: "DEMO", status: { ok: true, bal: DEMO.bal, msg: "Demo key: nothing here is real." } }, state: st, kill: false, trial: false, maint: false };
   }
   function answer(name, a) {
     var tok = a && a.p_token, authed = typeof tok === "string" && tok.indexOf("demo-") === 0;
@@ -1300,7 +1301,6 @@ body.sheet-open{overflow:hidden}
       }
       case "auto_run": {
         if (!authed || !ACC.access) return { __err: "no access" };
-        if (a.p_on) return { ok: true, running: false, maint: true };
         if (a.p_on && !ACC.set.coins.length) return { ok: true, running: false, need_coins: true };
         ACC.running = !!a.p_on; if (ACC.running) log("info", "Started. Watching " + ACC.set.coins.join(", ") + ".", Date.now() / 1000);
         else log("info", "Stopped. No new trades. Open trades are still watched.", Date.now() / 1000);
@@ -1395,9 +1395,9 @@ body.sheet-open{overflow:hidden}
   var API_URL = "https://dgpxbinbtpapjoganfmw.supabase.co";
   var API_KEY = "sb_publishable_q9asvXJt3nJgEH_5Ikac9A_zb1j1oDa";
   var POLL_VIS = 1000, POLL_HID = 10000, WAIT_MS = 1000, HIDDEN_IDLE_MS = 30 * 60 * 1000;      // a background tab asks every 10 s and pauses after 30 minutes
-  var COINS = [["BTC", "Bitcoin"], ["ETH", "Ethereum"], ["SOL", "Solana"], ["XRP", "XRP"], ["DOGE", "Dogecoin"], ["BNB", "BNB"], ["HYPE", "Hyperliquid"]];
+  var COINS = [["BTC", "Bitcoin"], ["ETH", "Ethereum"], ["SOL", "Solana"], ["XRP", "XRP"], ["DOGE", "Dogecoin"], ["BNB", "BNB"], ["HYPE", "Hyperliquid"], ["NEAR", "NEAR"]];
   var TV_SRC = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-  var TV_SYM = { BTC: "COINBASE:BTCUSD", ETH: "COINBASE:ETHUSD", SOL: "COINBASE:SOLUSD", XRP: "COINBASE:XRPUSD", DOGE: "COINBASE:DOGEUSD", BNB: "COINBASE:BNBUSD", HYPE: "KUCOIN:HYPEUSDT",
+  var TV_SYM = { BTC: "COINBASE:BTCUSD", ETH: "COINBASE:ETHUSD", SOL: "COINBASE:SOLUSD", XRP: "COINBASE:XRPUSD", DOGE: "COINBASE:DOGEUSD", BNB: "COINBASE:BNBUSD", HYPE: "KUCOIN:HYPEUSDT", NEAR: "COINBASE:NEARUSD",
                  EURUSD: "FX:EURUSD", GBPUSD: "FX:GBPUSD", USDJPY: "FX:USDJPY", AUDUSD: "FX:AUDUSD", USDCAD: "FX:USDCAD", GOLD: "OANDA:XAUUSD", SILVER: "OANDA:XAGUSD",
                  OIL: "TVC:USOIL", NATGAS: "TVC:NATURALGAS", COPPER: "COMEX:HG1!", BTCH: "COINBASE:BTCUSD", ETHH: "COINBASE:ETHUSD", SOLH: "COINBASE:SOLUSD", XRPH: "COINBASE:XRPUSD" };
   /* Markets+ (the $20 add-on): currencies and commodities (15-minute up/down) and the hourly crypto ladders. [code, name, set] */
@@ -2081,7 +2081,7 @@ body.sheet-open{overflow:hidden}
         "<ul class='lklist'><li><b>Currencies</b>, 15-minute rounds: EUR/USD, GBP/USD, USD/JPY, AUD/USD, USD/CAD</li><li><b>Commodities</b>, 15-minute rounds: gold, silver, oil, natural gas, copper</li><li><b>Hourly crypto</b>: the BTC, ETH, SOL and XRP price ladders</li></ul>" +
         "<p class='sm'>$20, paid once, and all sales are final. You don&rsquo;t need the $45 bot for it. If you have the Auto-trader add-on, its stop loss and profit target cover these markets too.</p>" + buy + addForm("plus") + "</article>";
     }
-    return "<article class='card lockcard'><h2>The 15-minute crypto markets</h2><p>BTC, ETH, SOL, XRP, DOGE, BNB and HYPE come with Kiros helper. Markets+ on its own covers currencies, commodities and the hourly crypto ladders.</p>" +
+    return "<article class='card lockcard'><h2>The 15-minute crypto markets</h2><p>BTC, ETH, SOL, XRP, DOGE, BNB, HYPE and NEAR come with Kiros helper. Markets+ on its own covers currencies, commodities and the hourly crypto ladders.</p>" +
       "<a class='btn lkbuy' href='" + CORE_URL + "'>See Kiros helper</a>" + addForm("core") + "</article>";
   }
   function closedHTML(d) {
@@ -3051,16 +3051,16 @@ body.sheet-open{overflow:hidden}
      ==================================================================================================================== */
   var AUTO_TABS = [["trade", "Trade"], ["settings", "Settings"], ["record", "Record"], ["setup", "Key and alerts"]];
   var AUTO_PAY = "https://buy.stripe.com/cNifZj3H0bVGdSY56RefC02";            /* the built-in $15 Stripe link; a link the owner saves in the Owner panel is used instead */
-  var AUTO_DEF = { coins: [], bet: 5, mode: "paper", style: "balanced", pick: "best", daily_loss: 25, max_open: 3, streak: 3, flips: true, quick: true, catchup: false, always: false, stop_mode: "auto", stop_c: 15,
+  var AUTO_DEF = { coins: [], bet: 5, mode: "paper", style: "balanced", pick: "best", daily_loss: 25, max_open: 3, streak: 3, flips: true, quick: false, catchup: false, always: false, stop_mode: "auto", stop_c: 15,
                    tp_mode: "auto", tp_c: 20, max_money: 0, hours_on: false, hours_from: "09:00", hours_to: "17:00", tz: "", alert_ntfy: "", alert_discord: "", alert_open: true, alert_close: true, alert_warn: true,
                    guard_on: true, guard_act: "alert", g_stop: "auto", g_stop_c: 15, g_tp: "off", g_tp_c: 20, alert_guard: true };
   var AUTO_STYLES = [
-    ["smart", "Smart", "Recommended. Reads every chart on its own (1 minute up to 1 hour, plus the other exchanges) and grades each one against how markets really ended, so it learns which time frames to trust. It buys when those learned odds beat the price after fees, in any minute of a market, so a confident market gets a trade each round. It asks for a bigger edge for as long as those learned odds haven't yet beaten Kalshi's own price on markets it hadn't seen. Sells only when the price pays more than the trade is worth, and can switch sides when the call flips. It does not bet until it has graded 40 finished markets (about 90 minutes after the bot first starts), and nothing here guarantees a profit."],
-    ["proven", "Proven only", "Follows only a strategy that has made money in the bot's own live test (Edge check, on the Record tab), using that strategy's buy rule, and holds each trade to the end. Real money waits until one passes, which can take days or may never happen. Practice follows the current leader so you can watch it."],
-    ["careful", "Careful", "Fewer trades. Only strong calls with a clear gap to the price."],
+    ["careful", "Careful", "Fewer trades. Only strong calls with a clear gap to the price, checked 4 times in a row before it buys."],
     ["balanced", "Balanced", "The middle path. A good place to start."],
-    ["active", "Active", "More trades. Accepts smaller gaps, so expect more small losses too."],
-    ["scalp", "Scalp", "Quick small trades. Sells at about +8c, cuts a loss at about -6c, and is out before the last minute. Can trade a coin up to 4 times in one market."]];
+    ["active", "Active", "More trades. Accepts smaller gaps, so expect more small losses too."]];
+  /* the markets the Auto-trader trades (for now). Gold is a Markets+ market, open to everyone with the Auto-trader. */
+  var AUTO_COINS = [["DOGE", "Dogecoin"], ["XRP", "XRP"], ["BNB", "BNB"], ["GOLD", "Gold"], ["NEAR", "NEAR"]];
+  function autoCoinOk(c) { for (var i = 0; i < AUTO_COINS.length; i++) if (AUTO_COINS[i][0] === c) return true; return false; }
   var AUTO_PICKS = [
     ["best", "Best one at a time", "Looks at all your coins and trades only the strongest one."],
     ["all", "All coins at once", "Trades every coin that qualifies, up to the most-open-trades limit."]];
@@ -3080,7 +3080,7 @@ body.sheet-open{overflow:hidden}
   }
   function pctOf(w, l) { return (w + l) > 0 ? Math.round(100 * w / (w + l)) : null; }
   function cls(x) { return x > 0.004 ? "up" : x < -0.004 ? "down" : ""; }
-  function autoCoinName(c) { for (var i = 0; i < COINS.length; i++) if (COINS[i][0] === c) return COINS[i][1]; return isPlus(c) ? plusName(c) + (setOf(c) === "h1" ? " hourly" : "") : c; }
+  function autoCoinName(c) { for (var i = 0; i < COINS.length; i++) if (COINS[i][0] === c) return COINS[i][1]; if (c === "GOLD") return "Gold"; return isPlus(c) ? plusName(c) + (setOf(c) === "h1" ? " hourly" : "") : c; }
   function botNow() { var s = A.st && A.st.state; return s && A.st.age != null ? s.ts + A.st.age + (performance.now() - A.recv) / 1000 : Date.now() / 1000; }
   function botAge() { return A.st && A.st.age != null ? A.st.age + (performance.now() - A.recv) / 1000 : null; }
   function autoMoney() { return (A.set && A.set.mode === "live") ? "live" : "paper"; }
@@ -3219,7 +3219,7 @@ body.sheet-open{overflow:hidden}
   var STOP_CHIPS = [10, 15, 20, 30], TP_CHIPS = [10, 20, 30, 40];
   function autoBuild() {
     var tabs = AUTO_TABS.map(function (t) { return "<button type='button' class='at-tab' role='tab' data-a='tab' data-tab='" + t[0] + "' aria-selected='" + (A.tab === t[0]) + "'>" + t[1] + "</button>"; }).join("");
-    var coinChips = COINS.map(function (c) { return "<button type='button' class='at-chip' data-a='coin' data-coin='" + c[0] + "' aria-pressed='false' title='" + esc(c[1]) + "'>" + c[0] + "</button>"; }).join("");
+    var coinChips = AUTO_COINS.map(function (c) { return "<button type='button' class='at-chip' data-a='coin' data-coin='" + c[0] + "' aria-pressed='false' title='" + esc(c[1]) + "'>" + c[0] + "</button>"; }).join("");
     var betChips = BET_CHIPS.map(function (n) { return "<button type='button' class='at-chip' data-a='betchip' data-bet='" + n + "' aria-pressed='false'>$" + n + "</button>"; }).join("");
     var styles = AUTO_STYLES.map(function (s) { return "<button type='button' class='at-opt' data-a='style' data-v='" + s[0] + "' aria-pressed='false'><b>" + s[1] + "</b><span>" + s[2] + "</span></button>"; }).join("");
     var picks = AUTO_PICKS.map(function (s) { return "<button type='button' class='at-opt' data-a='pick' data-v='" + s[0] + "' aria-pressed='false'><b>" + s[1] + "</b><span>" + s[2] + "</span></button>"; }).join("");
@@ -3249,24 +3249,21 @@ body.sheet-open{overflow:hidden}
         "</div>" +
         "<div class='at-pane' data-pane='settings' hidden>" +
           "<section class='at-card'>" +
-            "<div class='at-field'><span class='lbl'>Coins to trade</span><div class='at-chips' data-k='coins' role='group' aria-label='Coins to trade'>" + coinChips + "</div><p class='hint sm'>Only these coins are traded. Tap the coin above the chart to look at its chart.</p></div>" +
+            "<div class='at-field'><span class='lbl'>Coins to trade</span><div class='at-chips' data-k='coins' role='group' aria-label='Coins to trade'>" + coinChips + "</div><p class='hint sm'>Only these markets are traded. Tap the coin above the chart to look at its chart (gold's chart is on the Markets+ tab).</p></div>" +
             "<div class='at-field'><label for='atBet'>Bet per trade</label><div class='at-bet'><span>$</span><input class='at-in' id='atBet' data-k='bet' type='number' inputmode='decimal' min='1' max='1000' step='1'></div><div class='at-chips' data-k='betchips'>" + betChips + "</div><p class='hint sm' data-k='betHint'>The most one trade will spend. The bot works out how many contracts that buys.</p></div>" +
             "<div class='at-field'><span class='lbl'>Style</span><div class='at-opts' data-k='styles'>" + styles + "</div></div>" +
             "<div class='at-field'><span class='lbl'>How many at a time</span><div class='at-opts' data-k='picks'>" + picks + "</div></div>" +
-            "<div class='at-field'><label class='at-switch'><input type='checkbox' data-k='flips' data-a='flips'><span><b>Catch flips</b><small>The bot always sells when a call flips. Turn this on and it also buys the other side if that still looks good.</small></span></label></div>" +
-            "<div class='at-field'><label class='at-switch'><input type='checkbox' data-k='quick' data-a='quick'><span><b>Bet right away</b><small>Buy the first time the bot is confident, instead of waiting for a few checks in a row. It also skips a trade when your own profit target or stop loss can't work at that price. You get in sooner, but a quick blip on the chart can fool it more often.</small></span></label></div>" +
-            "<div class='at-field'><label class='at-switch'><input type='checkbox' data-k='catchup' data-a='catchup'><span><b>Buy at 80% if nothing else traded</b><small>If the bot hasn't traded a coin in a market, it buys the second a side (UP or DOWN) reaches 80c to 85c, with no waiting. It only does this when its own call for that side is 90% or more and clearly better than the price. These trades win more often but pay little, about 15c a contract or less, and lose 80c or more when wrong. Set your own stop loss if you use this.</small></span></label></div>" +
-            "<div class='at-field'><label class='at-switch'><input type='checkbox' data-k='always' data-a='always'><span><b>Trade every market</b><small>If the bot hasn't traded a coin in a market by the last 6 minutes, it buys the side it leans to (its call has to be 58% or more, the price sensible and the chart not against it), even when the price isn't clearly good. You get a trade in most markets, but trades without a clear edge lose to fees more often than they win. Try it on practice money first.</small></span></label></div>" +
+            "<div class='at-field'><label class='at-switch'><input type='checkbox' data-k='flips' data-a='flips'><span><b>Catch flips</b><small>When the bot gets out of a trade because it is no longer confident, it may buy the other side if that now passes every rule.</small></span></label></div>" +
             "<h4>Safety limits</h4>" +
             "<div class='at-field'><span class='lbl'>Stop loss</span><div class='at-opts' data-k='stops'>" +
-              "<button type='button' class='at-opt' data-a='stopmode' data-v='auto' aria-pressed='true'><b>Automatic</b><span>The bot decides when a falling trade should be sold. Roughly 12 to 20 cents under what it paid, depending on your style, and only when its own odds agree the trade is going wrong.</span></button>" +
+              "<button type='button' class='at-opt' data-a='stopmode' data-v='auto' aria-pressed='true'><b>Automatic</b><span>The bot never sells just because the price fell. It sells only when it is no longer confident in its call: its own chance for your side has stayed at 30% or less for 45 seconds (20% for gold). Otherwise it holds to the end.</span></button>" +
               "<button type='button' class='at-opt' data-a='stopmode' data-v='manual' aria-pressed='false'><b>Manual</b><span>You pick how far the price may fall. The bot sells every time it gets there, whatever it thinks.</span></button></div>" +
               "<div data-k='stopF' hidden style='margin-top:10px'><label for='atStop'>Sell when the price falls this many cents under what the bot paid</label><div class='at-bet'><input class='at-in' id='atStop' data-k='stopc' type='number' inputmode='numeric' min='5' max='90' step='1' style='max-width:110px'><span>cents</span></div>" +
               "<div class='at-chips' data-k='stopchips' style='margin-top:10px'>" + STOP_CHIPS.map(function (n) { return "<button type='button' class='at-chip' data-a='stopchip' data-c='" + n + "' aria-pressed='false'>" + n + "c</button>"; }).join("") + "</div>" +
               "<p class='hint sm' data-k='stopEx' style='margin-top:10px'></p><p class='at-warn' data-k='stopWarn' hidden></p></div></div>" +
             "<div class='at-field'><span class='lbl'>Take profit</span><div class='at-opts' data-k='tps'>" +
-              "<button type='button' class='at-opt' data-a='tpmode' data-v='auto' aria-pressed='true'><b>Automatic</b><span>The bot sells a winning trade once the price has caught up with what it thinks the trade is worth. There is no fixed number.</span></button>" +
-              "<button type='button' class='at-opt' data-a='tpmode' data-v='manual' aria-pressed='false'><b>Manual</b><span>You pick how far the price has to rise. The bot sells every time it gets there. A flip or your stop loss can still sell earlier.</span></button></div>" +
+              "<button type='button' class='at-opt' data-a='tpmode' data-v='auto' aria-pressed='true'><b>Automatic</b><span>No early profit-taking: a winning trade is held to the end, and sold only if the bot is no longer confident in its call.</span></button>" +
+              "<button type='button' class='at-opt' data-a='tpmode' data-v='manual' aria-pressed='false'><b>Manual</b><span>You pick how far the price has to rise. The bot sells every time it gets there. Your stop loss can still sell earlier.</span></button></div>" +
               "<div data-k='tpF' hidden style='margin-top:10px'><label for='atTp'>Sell when the price rises this many cents over what the bot paid</label><div class='at-bet'><input class='at-in' id='atTp' data-k='tpc' type='number' inputmode='numeric' min='5' max='90' step='1' style='max-width:110px'><span>cents</span></div>" +
               "<div class='at-chips' data-k='tpchips' style='margin-top:10px'>" + TP_CHIPS.map(function (n) { return "<button type='button' class='at-chip' data-a='tpchip' data-c='" + n + "' aria-pressed='false'>" + n + "c</button>"; }).join("") + "</div>" +
               "<p class='hint sm' data-k='tpEx' style='margin-top:10px'></p></div></div>" +
@@ -3414,10 +3411,10 @@ body.sheet-open{overflow:hidden}
     setText(AK.balLab, live ? "Your Kalshi balance" : "Practice money");
     setText(AK.bal, bal != null ? usd(bal) : (live ? "-" : "$200.00"));
     setText(AK.balSub, live ? "Real money. Open trades are included once they close." : "Not real. Test the bot with this.");
-    var ed = s.edge, sty = A.set && A.set.style, ex = ed && ed.styles && sty ? ed.styles[sty] : null, isPv = sty === "proven";
-    var held = live && ed && (isPv ? !(ed.lab && ed.lab.pick) : (ed.on !== false && !(ex && ex.ok)));
+    var ed = s.edge, sty = A.set && A.set.style, ex = ed && ed.styles && sty ? ed.styles[sty] : null;
+    var held = live && ed && ed.on !== false && !(ex && ex.ok);
     AK.edgeNote.hidden = !held;
-    if (held) setHTML(AK.edgeNote, "<b>Real money is waiting.</b> " + (isPv ? "No strategy in the lab has proven itself yet." : ex && ex.wait === "learning" ? "Smart is still learning." : !ex ? "The edge check needs more finished markets first." : ex.beat === false ? "The bot's odds haven't beaten Kalshi's own price yet, so a real bet would mostly pay fees." : "Your style (" + esc(EDGE_NAMES[sty] || sty) + ") hasn't made money after fees in the edge check yet.") + " No real trades start until it passes. Practice keeps going. <a href='#' data-a='edgego'>See the Edge check</a>");
+    if (held) setHTML(AK.edgeNote, "<b>Real money is waiting.</b> " + (!ex ? "The edge check needs more finished markets first." : ex.beat === false ? "The bot's odds haven't beaten Kalshi's own price yet, so a real bet would mostly pay fees." : "Your style (" + esc(EDGE_NAMES[sty] || sty) + ") hasn't made money after fees in the edge check yet.") + " No real trades start until it passes. Practice keeps going. <a href='#' data-a='edgego'>See the Edge check</a>");
     Array.prototype.forEach.call(AK.head.querySelectorAll("[data-a=money]"), function (b) { b.setAttribute("aria-pressed", b.dataset.m === mode ? "true" : "false"); });
     var pos = s.pos ? Object.keys(s.pos).length : 0;
     setText(AK.go, st.running ? "Stop" : "Start");
@@ -3493,15 +3490,16 @@ body.sheet-open{overflow:hidden}
     }
     pos.forEach(function (c) { paintPosLive(s.pos[c]); });
     var coins = (A.set && A.set.coins) || [], notes = s.notes || {};
-    var rows = COINS.filter(function (c) { return coins.indexOf(c[0]) >= 0 || (s.pos && s.pos[c[0]]); }).map(function (c) {
+    var rows = AUTO_COINS.concat(COINS.filter(function (c) { return !autoCoinOk(c[0]); })).filter(function (c) { return (autoCoinOk(c[0]) && coins.indexOf(c[0]) >= 0) || (s.pos && s.pos[c[0]]); }).map(function (c) {
       var n = notes[c[0]] || (st.running ? (st.state ? "" : "waiting for the bot") : "stopped");
       var hp = s.pos && s.pos[c[0]], chip = hp ? sideChip(hp.s, "Betting ") : "<span class='at-side none'>No bet</span>";
       var w = !hp && s.why && s.why[c[0]], wt = "";
       if (w && w.n >= 5) wt = "<small style='display:block;margin-top:4px;opacity:.75'>Last hour, " + w.n + " looks: " + (w.top && w.top.length ? w.top.map(function (t) { return esc(t[0]) + " " + Number(t[1]) + "%"; }).join(", ") : "nothing blocked it") + (w.ok ? ". " + w.ok + " passed every rule." : ".") + "</small>";
       return "<li><b>" + c[0] + "</b><span>" + chip + " " + esc(n || "checking") + wt + "</span></li>";
     });
-    var quiet = !pos.length && st.running && rows.length && coins.every(function (c) { var w = s.why && s.why[c]; return w && w.n >= 60 && !w.ok; });
-    setHTML(AK.why, rows.join("") || "<li><span>No coins picked yet. Pick some in Settings.</span></li>");
+    var picked = coins.filter(autoCoinOk);
+    var quiet = !pos.length && st.running && rows.length && picked.every(function (c) { var w = s.why && s.why[c]; return w && w.n >= 60 && !w.ok; });
+    setHTML(AK.why, rows.join("") || "<li><span>" + (coins.length ? "The Auto-trader now trades DOGE, XRP, BNB, gold and NEAR. Pick the ones you want in Settings." : "No coins picked yet. Pick some in Settings.") + "</span></li>");
     paintGates(s);
     setText(AK.whyNote, rows.length ? "The chart and indicators are for the coin you tap above. This list shows every coin you picked." + (quiet && A.set && (A.set.style === "careful" || A.set.style === "balanced") ? " No coin has passed every rule in the last hour. Careful and Balanced only buy when the bot's call clearly beats Kalshi's price, so quiet stretches are normal. Active buys more often (Settings, then Style)." : "") + (s.learn ? " " + s.learn : "") : "");
     var log = (s.log || []).slice().reverse().slice(0, 25);
@@ -3516,7 +3514,7 @@ body.sheet-open{overflow:hidden}
     setIfIdle(AK.bet, s.bet); setActive(AK.betchips, "data-bet", s.bet);
     var cap = A.st && A.st.state && A.st.state.max_bet; setText(AK.betHint, "The most one trade will spend. The bot works out how many contracts that buys." + (cap ? " The owner's cap is $" + cap + "." : ""));
     setActive(AK.styles, "data-v", s.style); setActive(AK.picks, "data-v", s.pick);
-    AK.flips.checked = !!s.flips; AK.quick.checked = !!s.quick; AK.catchup.checked = !!s.catchup; AK.always.checked = !!s.always;
+    AK.flips.checked = !!s.flips;
     var man = s.stop_mode === "manual", sc = Math.round(Number(s.stop_c)) || 15;
     setActive(AK.stops, "data-v", man ? "manual" : "auto"); AK.stopF.hidden = !man; setIfIdle(AK.stopc, sc); setActive(AK.stopchips, "data-c", sc);
     setText(AK.stopEx, "Example: if the bot pays 60c for a contract, it sells when the price falls to " + Math.max(60 - sc, 1) + "c. The bot checks your stop about 3 times a second. A fast drop can still sell lower than that, because the order goes in after the price has already moved, and it can't sell in the last few seconds of a market.");
@@ -3595,13 +3593,13 @@ body.sheet-open{overflow:hidden}
     AK.resetRow.hidden = d.mode !== "paper";
     autoPaintEdge(d.s.edge);
   }
-  var EDGE_NAMES = { careful: "Careful", balanced: "Balanced", active: "Active", scalp: "Scalp", smart: "Smart" };
+  var EDGE_NAMES = { careful: "Careful", balanced: "Balanced", active: "Active" };
   function per100(roi) { var v = Number(roi) || 0; return (v >= 0 ? "+" : "-") + "$" + Math.abs(v).toFixed(2); }
   var LAB_NAMES = { fav_late: ["Late favourite", "Kalshi's favourite at 85c to 95c in the last 3 minutes, when the bot agrees."],
     fav_mid: ["Favourite, mid-market", "Kalshi's favourite at 60c to 80c with 3 to 8 minutes left, when the bot is at least as sure."],
     agree: ["Bot and Kalshi agree", "Same side, within 5 points of each other, at 55c to 85c."],
     lag: ["Catch the lag", "The bot's odds jumped 8+ points in 30 seconds and Kalshi's price hasn't followed yet."],
-    maker: ["Favourite with a limit order", "Waits at Kalshi's bid instead of paying the ask, and pays no fee on these markets (or the lower maker fee). The Proven style can trade it with real limit orders."],
+    maker: ["Favourite with a limit order", "Waits at Kalshi's bid instead of paying the ask, and pays no fee on these markets (or the lower maker fee)."],
     gates: ["All 7 gates", "Buys only when Data, Time, Strength, Lock, Reversal, Edge and Chop all pass."],
     model: ["Current method", "The bot is 6+ points more sure than Kalshi, like Balanced. For comparison."],
     fav_any: ["Always the favourite", "Kalshi's favourite once a market at any price. Shows what the market itself pays."],
@@ -3632,13 +3630,13 @@ body.sheet-open{overflow:hidden}
   }
   function labHTML(lb) {
     if (!lb || !lb.strats || !lb.strats.length) return "";
-    var need = lb.min_n || 300, h = "<h4>Strategy lab</h4><p class='sm'>The bot tests these on every coin with pretend money, the way a real buy would happen: Kalshi's price plus a cent, the fee, held to the end. A strategy is proven after " + need + " trades if its profit is bigger than luck explains. The Proven style trades only a proven one with real money.</p>";
+    var need = lb.min_n || 300, h = "<h4>Strategy lab</h4><p class='sm'>The bot tests these on every coin with pretend money, the way a real buy would happen: Kalshi's price plus a cent, the fee, held to the end. A strategy is proven after " + need + " trades if its profit is bigger than luck explains.</p>";
     var picked = lb.pick && LAB_NAMES[lb.pick] ? LAB_NAMES[lb.pick][0] : "";
     h += !picked ? "" : lb.pick_src === "history"
-      ? "<div class='at-ok'><b>Proven by the history test: " + esc(picked) + ".</b> The Proven style trades it with real money at small bets ($" + Number(lb.hist_bet || 2).toFixed(2) + ") until the live lab confirms it.</div>"
-      : "<div class='at-ok'><b>Proven: " + esc(picked) + ".</b> The Proven style follows it with real money.</div>";
+      ? "<div class='at-ok'><b>Proven by the history test: " + esc(picked) + ".</b> The live lab still has to confirm it.</div>"
+      : "<div class='at-ok'><b>Proven: " + esc(picked) + ".</b> A research result: the Auto-trader's styles don't follow lab strategies.</div>";
     var pc = (lb.cells || []).filter(function (c) { return c[7] && LAB_NAMES[c[0]]; });
-    if (pc.length) h += "<div class='at-ok'><b>Proven on one coin:</b> " + pc.map(function (c) { return esc(LAB_NAMES[c[0]][0]) + " on " + esc(c[1]); }).join(", ") + ". The Proven style follows it on that coin only.</div>";
+    if (pc.length) h += "<div class='at-ok'><b>Proven on one coin:</b> " + pc.map(function (c) { return esc(LAB_NAMES[c[0]][0]) + " on " + esc(c[1]); }).join(", ") + ".</div>";
     h += "<table class='at-table at-lab'><thead><tr><th>Strategy</th><th>Trades</th><th>Won</th><th>Per $100 bet</th></tr></thead><tbody>" + lb.strats.filter(function (x) { return LAB_NAMES[x.k]; }).map(function (x) {
       var st = x.proven ? " <span class='up'>proven</span>" : (x.n >= 100 && x.t <= -2 ? " <span class='down'>losing</span>" : (x.n || 0) >= need ? " <small>not proven</small>" : " <small>testing " + (x.n || 0) + "/" + need + "</small>");
       var fill = x.kind === "maker" && x.placed ? " Filled " + (x.filled || 0) + " of " + x.placed + " orders." : "";
@@ -3692,7 +3690,7 @@ body.sheet-open{overflow:hidden}
     h += "<p class='sm'>A high win rate is not the same as making money: buying at 90c wins 9 times out of 10 and still loses if it should have won 9.5. These are past markets, not a promise, and a few dozen trades can swing a lot by luck.</p>";
     setHTML(AK.edgeBox, h);
   }
-  function autoReason(r) { return { TP: "Took profit", FLIP: "Call flipped, got out", CUT: "Cut the loss", STOP: "Hit your stop loss", TARGET: "Hit your profit target", BE: "Got out at break-even", TIME: "Sold before the last minute", SELL: "You sold it", WON: "Held to the end: won", LOST: "Held to the end: lost", FLAT: "You sold everything", ERR: "Closed" }[r] || r; }
+  function autoReason(r) { return { TP: "Took profit", FLIP: "No longer confident, got out", CUT: "Cut the loss", STOP: "Hit your stop loss", TARGET: "Hit your profit target", BE: "Got out at break-even", TIME: "Sold before the last minute", SELL: "You sold it", WON: "Held to the end: won", LOST: "Held to the end: lost", FLAT: "You sold everything", ERR: "Closed" }[r] || r; }
   function keyBoxHTML(k, hasVault) {
     if (!hasVault) return "<div class='at-warn'>The bot hasn't published its vault key yet, so a key can't be saved right now. This fixes itself once the bot is running.</div>";
     if (!k) return "<div class='at-key'><b>No key saved</b><span class='sm'>Add one below to trade with real money.</span></div>";
@@ -3744,7 +3742,7 @@ body.sheet-open{overflow:hidden}
     if (a === "money") return autoSetMoney(b.dataset.m);
     if (a === "go") return autoGo();
     if (a === "flat") return armOrRun(b, autoFlat);
-    if (a === "coin") { var c = b.dataset.coin, cs = A.set.coins.slice(), i = cs.indexOf(c); if (i >= 0) cs.splice(i, 1); else cs.push(c); cs.sort(function (x, y) { return coinIndex(x) - coinIndex(y); }); return autoEdit({ coins: cs }); }
+    if (a === "coin") { var c = b.dataset.coin, cs = A.set.coins.filter(autoCoinOk), i = cs.indexOf(c); if (i >= 0) cs.splice(i, 1); else cs.push(c); cs.sort(function (x, y) { return coinIndex(x) - coinIndex(y); }); return autoEdit({ coins: cs }); }
     if (a === "betchip") return autoEdit({ bet: Number(b.dataset.bet) });
     if (a === "style") return autoEdit({ style: b.dataset.v });
     if (a === "pick") return autoEdit({ pick: b.dataset.v });
@@ -3770,7 +3768,7 @@ body.sheet-open{overflow:hidden}
     if (a === "keycheck") return autoCmd("check_key", "Checking the key...");
     if (a === "keydel") return armOrRun(b, autoKeyDelete);
   }
-  function coinIndex(c) { for (var i = 0; i < COINS.length; i++) if (COINS[i][0] === c) return i; return 99; }
+  function coinIndex(c) { for (var i = 0; i < AUTO_COINS.length; i++) if (AUTO_COINS[i][0] === c) return i; return 99; }
   function numIn(el, lo, hi, dflt) { var v = parseFloat(String(el.value).replace(",", ".")); return isFinite(v) ? Math.min(Math.max(v, lo), hi) : dflt; }
   function autoInput(ev) {
     var t = ev.target;
@@ -3787,9 +3785,6 @@ body.sheet-open{overflow:hidden}
   function autoChange(ev) {
     var t = ev.target;
     if (t === AK.flips) return autoEdit({ flips: !!t.checked });
-    if (t === AK.quick) return autoEdit({ quick: !!t.checked });
-    if (t === AK.catchup) return autoEdit({ catchup: !!t.checked });
-    if (t === AK.always) return autoEdit({ always: !!t.checked });
     if (t === AK.pemFile && t.files && t.files[0]) return autoReadPem(t.files[0]);
     if (t === AK.stopc) { var cv = Math.round(numIn(t, 5, 90, 15)); t.value = cv; return autoEdit({ stop_mode: "manual", stop_c: cv }); }
     if (t === AK.tpc) { var tcv = Math.round(numIn(t, 5, 90, 20)); t.value = tcv; return autoEdit({ tp_mode: "manual", tp_c: tcv }); }
@@ -4770,7 +4765,7 @@ body.sheet-open{overflow:hidden}
     s.gev.filter(function (e) { return e && e.i > ME.gseq; }).sort(function (a2, b2) { return a2.i - b2.i; }).forEach(function (e) {
       ME.gseq = Math.max(ME.gseq, e.i);
       var px = e.px != null ? Math.round(e.px) + "c" : "", paid = "you paid " + Math.round(e.e) + "c", net = e.net != null ? (e.net >= 0 ? "+" : "-") + "$" + Math.abs(e.net).toFixed(2) : "";
-      var head = { STOP: "Stop loss hit", TARGET: "Profit target hit", CUT: "Automatic stop", FLIP: "Automatic stop: the call turned", TP: "Automatic profit", SELL: "Sold" }[e.k];
+      var head = { STOP: "Stop loss hit", TARGET: "Profit target hit", CUT: "Automatic stop", FLIP: "Automatic: no longer confident in your side", TP: "Automatic profit", SELL: "Sold" }[e.k];
       if (e.k === "new") emit("nStop", e.c, "Watching your " + e.c + " " + e.s, e.n + " at " + Math.round(e.e) + "c. Your stop loss is on it.", e.s, "g" + e.i);
       else if (e.k === "gone") emit("nStop", e.c, "Your " + e.c + " " + e.s + " closed", "It isn't on your Kalshi account any more (sold, or the market ended).", e.s, "g" + e.i);
       else if (e.a === "sold") emit("nStop", e.c, (head || "Sold") + ": " + e.c + " " + e.s + " sold " + net, "Sold at about " + px + ", " + paid + ". After fees.", e.s, "g" + e.i, "stop");
@@ -5270,10 +5265,10 @@ body.sheet-open{overflow:hidden}
       "<div class='at-field'><span class='lbl'>Stop loss</span>" + seg("Stop loss", [["g_stop", "off", "Off"], ["g_stop", "auto", "Automatic"], ["g_stop", "manual", "My own"]], s.g_stop, "set") +
       (s.g_stop === "manual" ? "<div class='at-bet'><input class='at-in' data-set='g_stop_c' type='number' inputmode='numeric' min='3' max='90' step='1' value='" + s.g_stop_c + "' aria-label='Cents under what you paid'><span class='sm'>cents under what you paid</span></div>" +
         "<div class='at-chips'>" + [5, 10, 15, 20, 30].map(function (n) { return "<button type='button' class='at-chip' data-set='g_stop_c' data-v='" + n + "' aria-pressed='" + (s.g_stop_c === n) + "'>" + n + "c</button>"; }).join("") + "</div>" : "") +
-      "<p class='sm'>" + (s.g_stop === "auto" ? "Automatic: the bot's own judgement. It acts when its call turns hard against your side, or when you're 15 cents down and the market agrees it's losing." : s.g_stop === "manual" ? "Checked about 3 times a second." : "No stop loss.") + "</p></div>" +
+      "<p class='sm'>" + (s.g_stop === "auto" ? "Automatic: it never acts just because the price fell. It acts only when the bot is no longer confident in your side: its own chance for it has stayed at 30% or less for 45 seconds (20% for gold)." : s.g_stop === "manual" ? "Checked about 3 times a second." : "No stop loss.") + "</p></div>" +
       "<div class='at-field'><span class='lbl'>Take profit</span>" + seg("Take profit", [["g_tp", "off", "Off"], ["g_tp", "auto", "Automatic"], ["g_tp", "manual", "My own"]], s.g_tp, "set") +
       (s.g_tp === "manual" ? "<div class='at-bet'><input class='at-in' data-set='g_tp_c' type='number' inputmode='numeric' min='3' max='90' step='1' value='" + s.g_tp_c + "' aria-label='Cents over what you paid'><span class='sm'>cents over what you paid</span></div>" : "") +
-      "<p class='sm'>" + (s.g_tp === "auto" ? "Automatic: when the price pays more than the bot thinks the trade is worth." : s.g_tp === "manual" ? "When someone pays this much more than you did." : "No profit target: the trade rides to the end unless a stop hits.") + "</p></div>" +
+      "<p class='sm'>" + (s.g_tp === "auto" ? "Automatic: no fixed number. A winning trade is only sold if the bot is no longer confident in your side." : s.g_tp === "manual" ? "When someone pays this much more than you did." : "No profit target: the trade rides to the end unless a stop hits.") + "</p></div>" +
       sw("alert_guard", "Also message my phone or Discord", s.alert_ntfy || s.alert_discord ? "Set up already." : "Set it up in the Auto-trader tab, Key and alerts.", s.alert_guard !== false, "set") +
       "<p class='sm'>The bot never adds to a trade or buys anything for you here. Prices move fast, so a sale can fill a little under the line.</p>";
     return h;
