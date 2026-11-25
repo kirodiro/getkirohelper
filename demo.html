@@ -656,7 +656,8 @@ body.sheet-open{overflow:hidden}
 .at-maint{border-color:rgba(227,169,59,.5);background:linear-gradient(180deg,rgba(227,169,59,.10),rgba(227,169,59,.02))}
 .mt-sign{display:inline-block;margin:0 0 12px;padding:6px 12px;border:2px solid var(--warn);border-radius:6px;color:var(--warn);font:800 1.05rem/1 var(--font);font-stretch:120%;letter-spacing:.08em;text-transform:uppercase;background:repeating-linear-gradient(-45deg,rgba(227,169,59,.16) 0 10px,transparent 10px 20px)}
 .at-maint h2{font:800 1.35rem/1.15 var(--font);margin:0 0 8px}.at-maint p{margin:0 0 8px}
-.autowrap.maint>.at-card[data-k=head],.autowrap.maint .at-tab[data-tab=trade],.autowrap.maint .at-tab[data-tab=settings],.autowrap.maint .at-pane[data-pane=trade],.autowrap.maint .at-pane[data-pane=settings]{display:none!important}
+.autowrap.maint>.at-card[data-k=head],.autowrap.maint .at-tab[data-tab=trade],.autowrap.maint .at-pane[data-pane=trade]{display:none!important}
+.at-owner-maint{border:2px solid var(--down);border-radius:10px;padding:12px;margin:0 0 14px;line-height:1.45}.at-owner-maint .at-btn{margin-top:10px;display:block}
 /* Markets+ (currencies, commodities, hourly crypto): the set switch, locked and closed markets, the hourly ladder */
 .sets{display:flex;gap:6px;margin-top:12px;overflow-x:auto;scrollbar-width:none}
 .sets::-webkit-scrollbar{display:none}
@@ -3100,6 +3101,8 @@ body.sheet-open{overflow:hidden}
   /* the markets the Auto-trader trades (for now). Gold is a Markets+ market, open to everyone with the Auto-trader. */
   var AUTO_COINS = [["DOGE", "Dogecoin"], ["XRP", "XRP"], ["BNB", "BNB"], ["GOLD", "Gold"], ["NEAR", "NEAR"]];
   function autoCoinOk(c) { for (var i = 0; i < AUTO_COINS.length; i++) if (AUTO_COINS[i][0] === c) return true; return false; }
+  /* the markets an account trades: its picks among the five, or all five when it was saved with only coins the Auto-trader no longer trades (as the bot does) */
+  function autoCoinsOf(cs) { cs = cs || []; var c = cs.filter(autoCoinOk); return c.length || !cs.length ? c : AUTO_COINS.map(function (x) { return x[0]; }); }
   var AUTO_PICKS = [
     ["best", "Best one at a time", "Looks at all your coins and trades only the strongest one."],
     ["all", "All coins at once", "Trades every coin that qualifies, up to the most-open-trades limit."]];
@@ -3391,14 +3394,16 @@ body.sheet-open{overflow:hidden}
     AK.maint.hidden = !on;
     if (AK.main) AK.main.classList.toggle("maint", on);
     if (!on) return;
-    var sig = "m|" + (st.access ? 1 : 0) + "|" + (st.key ? 1 : 0) + "|" + (st.trial ? 1 : 0);
+    var sig = "m|" + (st.access ? 1 : 0) + "|" + (st.key ? 1 : 0) + "|" + (st.trial ? 1 : 0) + "|" + (S.owner ? 1 : 0);
     if (AK.maint.dataset.sig === sig) return;
     AK.maint.dataset.sig = sig;
-    AK.maint.innerHTML = "<p class='mt-sign' role='status'>Under maintenance</p><h2>The Auto-trader is closed for now</h2>" +
-      "<p>It doesn't start new trades while it's being worked on. Any trade it already had open is still watched and sold by its rules until it ends.</p>" +
+    AK.maint.innerHTML = (S.owner ? "<div class='at-owner-maint' role='alert'><b>Only you see this:</b> the Auto-trader is closed for maintenance for everyone, so nobody's trades start and customers can't press Start. " +
+        "<button type='button' class='at-btn go' data-a='ownerOpen'>Open the Auto-trader now</button></div>" : "") +
+      "<p class='mt-sign' role='status'>Under maintenance</p><h2>The Auto-trader is closed for now</h2>" +
+      "<p>It doesn't start new trades while it's being worked on. Any trade it already had open is still watched and sold by its rules until it ends." + (st.access ? " You can still change your settings (coins, bet, style) so it's ready when it reopens." : "") + "</p>" +
       "<p>Your Kalshi tools moved to the Live board: your balance, your win and loss record, and a stop loss that watches the trades you place on Kalshi yourself." +
       (st.access ? " You already have them, because you paid for the Auto-trader." : " They come with the $15 unlock.") + "</p>" +
-      "<div class='at-row'><button type='button' class='at-btn go' data-a='toboard'>Go to the Live board</button>" + (st.access ? "<button type='button' class='at-btn' data-a='tab' data-tab='setup'>Your key and alerts</button>" : "") + "</div>";
+      "<div class='at-row'><button type='button' class='at-btn go' data-a='toboard'>Go to the Live board</button>" + (st.access ? "<button type='button' class='at-btn' data-a='tab' data-tab='settings'>Settings</button><button type='button' class='at-btn' data-a='tab' data-tab='setup'>Your key and alerts</button>" : "") + "</div>";
   }
   function autoRender() {
     if (!A.built || !A.st) return;
@@ -3406,7 +3411,7 @@ body.sheet-open{overflow:hidden}
     autoPaintMaint();
     if (!st.access) return autoPaintLock();
     AK.lock.hidden = true; AK.main.hidden = false;
-    if (autoMaint() && (A.tab === "trade" || A.tab === "settings")) autoTab("setup", true);
+    if (autoMaint() && A.tab === "trade") autoTab("settings", true);                // closed: no Start, but settings can still be changed
     if (!A.set || (Date.now() - A.editAt > 3000 && !A.saveT && !A.saving)) A.set = Object.assign({}, AUTO_DEF, st.settings || {});
     if (!A.rec) A.rec = autoMoney();
     autoPaintHead(); autoPaintTrade(); autoPaintSettings(); autoPaintRecord(); autoPaintSetup(); autoPaintChecklist();
@@ -3528,7 +3533,7 @@ body.sheet-open{overflow:hidden}
       AK.pos.innerHTML = (pos.length || ords.length) ? "<div style='display:grid;gap:8px'>" + pos.map(function (c) { return posHTML(s.pos[c]); }).join("") + oh + "</div>" : "<p class='at-empty'>No open trades. When a coin qualifies, the bot buys and the trade shows up here.</p>";
     }
     pos.forEach(function (c) { paintPosLive(s.pos[c]); });
-    var coins = (A.set && A.set.coins) || [], notes = s.notes || {};
+    var coins = autoCoinsOf(A.set && A.set.coins), notes = s.notes || {};
     var rows = AUTO_COINS.concat(COINS.filter(function (c) { return !autoCoinOk(c[0]); })).filter(function (c) { return (autoCoinOk(c[0]) && coins.indexOf(c[0]) >= 0) || (s.pos && s.pos[c[0]]); }).map(function (c) {
       var n = notes[c[0]] || (st.running ? (st.state ? "" : "waiting for the bot") : "stopped");
       var hp = s.pos && s.pos[c[0]], chip = hp ? sideChip(hp.s, "Betting ") : "<span class='at-side none'>No bet</span>";
@@ -3549,7 +3554,8 @@ body.sheet-open{overflow:hidden}
   function autoPaintSettings() {
     if (!A.built || !AK.main) return;
     var s = A.set; if (!s) return;
-    Array.prototype.forEach.call(AK.coins.children, function (b) { b.setAttribute("aria-pressed", s.coins.indexOf(b.dataset.coin) >= 0 ? "true" : "false"); });
+    var effc = autoCoinsOf(s.coins);
+    Array.prototype.forEach.call(AK.coins.children, function (b) { b.setAttribute("aria-pressed", effc.indexOf(b.dataset.coin) >= 0 ? "true" : "false"); });
     setIfIdle(AK.bet, s.bet); setActive(AK.betchips, "data-bet", s.bet);
     var cap = A.st && A.st.state && A.st.state.max_bet; setText(AK.betHint, "The most one trade will spend. The bot works out how many contracts that buys." + (cap ? " The owner's cap is $" + cap + "." : ""));
     setActive(AK.styles, "data-v", s.style); setActive(AK.picks, "data-v", s.pick);
@@ -3778,10 +3784,16 @@ body.sheet-open{overflow:hidden}
     var a = b.dataset.a;
     if (a === "tab") return autoTab(b.dataset.tab);
     if (a === "toboard") { setMode("board"); try { window.scrollTo(0, 0); } catch (e) {} return; }
+    if (a === "ownerOpen") {
+      b.disabled = true;
+      rpc("auto_admin_maint", { p_token: S.token, p_on: false }).then(function () { if (typeof ownerSay === "function") ownerSay("The Auto-trader is open again.", true); if (typeof ownerLoad === "function") ownerLoad(true); autoNow(0); },
+        function () { b.disabled = false; b.textContent = "Couldn't open it. Try the Owner panel"; });
+      return;
+    }
     if (a === "money") return autoSetMoney(b.dataset.m);
     if (a === "go") return autoGo();
     if (a === "flat") return armOrRun(b, autoFlat);
-    if (a === "coin") { var c = b.dataset.coin, cs = A.set.coins.filter(autoCoinOk), i = cs.indexOf(c); if (i >= 0) cs.splice(i, 1); else cs.push(c); cs.sort(function (x, y) { return coinIndex(x) - coinIndex(y); }); return autoEdit({ coins: cs }); }
+    if (a === "coin") { var c = b.dataset.coin, cs = autoCoinsOf(A.set.coins).slice(), i = cs.indexOf(c); if (i >= 0) cs.splice(i, 1); else cs.push(c); cs.sort(function (x, y) { return coinIndex(x) - coinIndex(y); }); return autoEdit({ coins: cs }); }
     if (a === "betchip") return autoEdit({ bet: Number(b.dataset.bet) });
     if (a === "style") return autoEdit({ style: b.dataset.v });
     if (a === "pick") return autoEdit({ pick: b.dataset.v });
