@@ -158,6 +158,15 @@ button{font-family:inherit}
 .tfs button{appearance:none;cursor:pointer;min-height:36px;min-width:42px;padding:0 10px;border:0;border-radius:6px;background:none;color:var(--muted);font:600 .86rem/1 var(--font);font-variant-numeric:tabular-nums}
 .tfs button[aria-pressed=true]{background:var(--line);color:var(--ink)}
 .tfs button:focus-visible,.tabs button:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.tfread{margin:10px 0 2px}
+.tfr-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;font-size:.9rem;color:var(--muted)}
+.tfr-top .tfr-l{color:var(--ink);font-weight:600}.tfr-top>b{font-size:1rem}
+.tfr-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+.tfc{appearance:none;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:48px;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--muted);font:500 .8rem/1.1 var(--font);text-align:left}
+.tfc b{font-size:.88rem;font-weight:700;white-space:nowrap}.tfc.up b{color:var(--up)}.tfc.down b{color:var(--down)}.tfc.flat b{color:var(--flat)}
+.tfc[aria-pressed=true]{border-color:var(--ink);color:var(--ink)}
+.tfc:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.tfr-note{margin-top:6px}
 .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
 .lg::before{content:"";display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle;background:currentColor}
 .lg.e9::before{background:var(--e9)}.lg.e21::before{background:var(--e21)}.lg.tg::before{background:var(--target)}.lg.px::before{background:#fff}
@@ -1081,6 +1090,9 @@ body.sheet-open{overflow:hidden}
   seedLive();
 
   /* ---------- what the board reads ---------- */
+  function tfOf(ind) {                                              // what each chart says, as the bot sends it: UP, DOWN or flat
+    var o = {}; ["1m", "5m", "15m", "1h"].forEach(function (k) { if (ind[k]) o[k] = ind[k].gap / Math.max(ind[k].e21, 1e-12) < 0.00005 ? "flat" : ind[k].side; }); return o;
+  }
   function boardData(code) {
     var m = M[code], q = m.q, t = Date.now() / 1000, side = q.pm >= 0.5 ? "UP" : "DOWN", prob = side === "UP" ? q.pm : 1 - q.pm, price = side === "UP" ? q.ya : q.na;
     var flipP = 1 - Math.max(cdf(Math.log(m.p / m.target) / (m.sig * Math.sqrt(Math.max(q.left, 1)))), 1 - cdf(Math.log(m.p / m.target) / (m.sig * Math.sqrt(Math.max(q.left, 1))))), lead = m.p >= m.target ? "UP" : "DOWN";
@@ -1091,7 +1103,8 @@ body.sheet-open{overflow:hidden}
     var d = { coin: code, name: m.name, ticker: m.tk, details: true, built: t, close_ts: m.close, left_s: +q.left.toFixed(2), spot: sig(m.p), target: sig(m.target), target_src: "made-up", diff: sig(m.p - m.target),
       call: { side: side, prob: +prob.toFixed(4), conf: confLabel(prob), text: prob < 0.58 ? "Too close to call. Skip this one." : "Bet " + side + ". Buy at " + price + "c.", price: price, edge: +edge.toFixed(2) }, p_up: +q.pm.toFixed(4),
       flip: { pct: +(flipP * 100).toFixed(1), level: flipLevel(flipP), leader: lead, gap: sig(Math.abs(m.p - m.target)), cross: null, crossings: 0 },
-      trend: c5 >= 0 ? "UP" : "DOWN", chg5: +c5.toFixed(4), chg15: +c15.toFixed(4), rsi: ind["1m"] ? ind["1m"].rsi : 50,
+      trend: (function () { var o = tfOf(ind), u = 0, dn = 0; Object.keys(o).forEach(function (k) { if (o[k] === "UP") u++; else if (o[k] === "DOWN") dn++; }); return u > dn ? "UP" : dn > u ? "DOWN" : "SIDEWAYS"; })(), chg5: +c5.toFixed(4), chg15: +c15.toFixed(4), rsi: ind["1m"] ? ind["1m"].rsi : 50,
+      tf: tfOf(ind),
       charts: (Object.keys(ind).filter(function (k) { return ind[k].side === side; }).length >= 3 ? "Most charts back " + side + "." : "The charts are split."),
       finish: { exp: sig(m.p), band: sig(m.p * m.sig * Math.sqrt(Math.max(q.left, 1))) }, ind: ind,
       kalshi: { yes_ask: q.ya, yes_bid: q.yb, no_ask: q.na, no_bid: q.nb, buy: "Buy " + (side === "UP" ? "Yes" : "No") + " at " + price + "c. It pays 100c if the market ends " + side + "." },
@@ -1980,6 +1993,7 @@ body.sheet-open{overflow:hidden}
         "<div class='chead'><div class='chtools'><div class='tabs' role='group' aria-label='Chart type'><button type='button' data-tab='bot' aria-pressed='true' aria-selected='true'>Candles</button><button type='button' data-tab='tv' aria-pressed='false' aria-selected='false'>TradingView</button></div>" +
           "<div class='tfs' role='group' aria-label='Candle size'><button type='button' data-tf='1' aria-pressed='true'>1m</button><button type='button' data-tf='5' aria-pressed='false'>5m</button><button type='button' data-tf='15' aria-pressed='false'>15m</button><button type='button' data-tf='60' aria-pressed='false'>1h</button></div></div>" +
           "<div class='legend' data-k='legend'><span class='lg tg'>Target</span><span class='lg px'>Price</span></div></div>" +
+        "<div class='tfread' data-k='tfread' hidden></div>" +
         "<div class='inds' data-k='inds' role='group' aria-label='Chart indicators'>" + indChips() + "</div>" +
         "<p class='bhint' data-k='hChart' hidden></p>" +
         "<div class='readout' data-k='readout' aria-live='off'></div>" +
@@ -2358,7 +2372,7 @@ body.sheet-open{overflow:hidden}
     if (r.ladderP) paintLadder(r, d);
     paintSignals(r, v, buildSeries(v, ch, "1", sample));      // the indicator panel is always the 1-minute view
     var ser = (sample || S.tab !== "tv") ? buildSeries(v, ch, sample ? "1" : S.tf, sample) : null;
-    paintKalshi(r, d); paintScalp(r, d); paintDetails(r, d); paintAlerts(r, v, sample);
+    paintKalshi(r, d); paintScalp(r, d); paintDetails(r, d); paintTrend(r, d); paintAlerts(r, v, sample);
     if (ser) drawChart(r, v, ser, sample);
     if (sample) paintTvTarget(); else tvSync();
   }
@@ -2454,6 +2468,31 @@ body.sheet-open{overflow:hidden}
     if (s.on) h = "<div class='scalpbox on " + esc(s.side) + "'><b>" + (s.side === "UP" ? "▲" : "▼") + " Buy " + esc(s.side) + " now, about " + Math.round(s.entry) + "c</b><div class='kv' style='margin-top:8px'><span>Sell for profit</span><span>~" + Math.round(s.tp) + "c</span><span>Get out if it falls to</span><span>~" + Math.round(s.sl) + "c</span></div></div><p class='sm' style='margin-top:8px'>On Kalshi, open the " + esc(d.coin) + " 15-minute market and buy " + (s.side === "UP" ? "Yes (Up)" : "No (Down)") + ".</p>";
     else h = "<div class='scalpbox'><b>No scalp right now</b><p class='sm' style='margin-top:4px'>" + esc(s.why || "conditions not met") + "</p></div>";
     setHTML(r.scalp, h);
+  }
+  /* ---------- the trend, and what each chart (1m, 5m, 15m, 1h) says: up, down or flat. Tap one to see that chart. ---------- */
+  var TFREAD = [["1", "1m", "1 minute"], ["5", "5m", "5 minute"], ["15", "15m", "15 minute"], ["60", "1h", "1 hour"]];
+  function tfWord(x) { x = String(x || "").toUpperCase(); return x === "UP" ? ["up", "\u25B2", "Up"] : x === "DOWN" ? ["down", "\u25BC", "Down"] : ["flat", "\u25AC", "Flat"]; }
+  function paintTrend(r, d) {
+    if (!r.tfread) return;
+    var tf = d.tf || {}, have = TFREAD.filter(function (x) { return tf[x[1]]; }), h = "";
+    if (!d.trend && !have.length) { r.tfread.hidden = true; return; }
+    if (d.trend) {
+      var t = tfWord(d.trend);
+      h += "<div class='tfr-top'><span class='tfr-l'>Trend</span><b class='" + t[0] + "'>" + t[1] + " " + t[2] + "</b>" +
+        (d.chg5 != null ? "<span>last 5 min <b class='" + (d.chg5 > 0 ? "up" : d.chg5 < 0 ? "down" : "") + "'>" + esc(signed(d.chg5, 3)) + "%</b></span>" : "") +
+        (d.chg15 != null ? "<span>last 15 min <b class='" + (d.chg15 > 0 ? "up" : d.chg15 < 0 ? "down" : "") + "'>" + esc(signed(d.chg15, 3)) + "%</b></span>" : "") + "</div>";
+    }
+    if (have.length) {
+      var ups = have.filter(function (x) { return tfWord(tf[x[1]])[0] === "up"; }).length, downs = have.filter(function (x) { return tfWord(tf[x[1]])[0] === "down"; }).length;
+      h += "<div class='tfr-row' role='group' aria-label='What each chart says'>" + have.map(function (x) {
+        var q = tfWord(tf[x[1]]);
+        return "<button type='button' class='tfc " + q[0] + "' data-tf='" + x[0] + "' aria-pressed='" + (S.tf === x[0] ? "true" : "false") + "' aria-label='The " + x[2] + " chart says " + q[2] + "'><span>" + x[1] + "</span><b>" + q[1] + " " + q[2] + "</b></button>";
+      }).join("") + "</div>";
+      var c = d.call || {}, lean = ups > downs ? "UP" : downs > ups ? "DOWN" : "";
+      h += "<p class='sm tfr-note'>" + (ups === have.length ? "Every chart is going up." : downs === have.length ? "Every chart is going down." : ups + " up, " + downs + " down, " + (have.length - ups - downs) + " flat.") +
+        (lean && c.side && c.conf !== "TOSS-UP" ? (lean === c.side ? " They agree with the bot's call." : " They point the other way from the bot's call, which is about where the price ends against the target.") : "") + " Tap one to see that chart.</p>";
+    }
+    setHTML(r.tfread, h); r.tfread.hidden = false;
   }
   function paintDetails(r, d) {
     var h = "";
